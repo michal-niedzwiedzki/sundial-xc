@@ -1,0 +1,25 @@
+<table>
+
+	<thead>
+		<tr>
+			<th>Member</th>
+			<th>Phone</th>
+			<?php if ($displayBalance): ?>
+				<th>Saldo</th>
+			<?php endif ?>
+		</tr>
+	</thead>
+
+	<tbody>
+		<?php foreach ($rows as $row): ?>
+			<tr>
+				<td><a href="member_summary.php?member_id=<?= e($row["id"]) ?>"><?= e($row["names"]) ?></a></td>
+				<td><?= e($row["phones"]) ?></td>
+				<?php if ($displayBalance): ?>
+					<td><?= e($row["balance"]) ?></td>
+				<?php endif ?>
+			</tr>
+		<?php endforeach ?>
+	</tbody>
+
+</table>

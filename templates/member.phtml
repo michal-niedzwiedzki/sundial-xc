@@ -1,0 +1,47 @@
+<h3><?= $name ?></h3>
+
+<div style="float: right; box-shadow: 0 .3em .6em gray">
+	<?= cMember::DisplayMemberImg($memberId) ?>
+</div>
+<?php if ($about): ?>
+	<p><?= $about ?></p>
+<?php endif ?>
+
+<?php if ($mostRecentTrade): ?>
+	<p>
+		<a href="trade_history.php?mode=other&member_id=<?= $memberId ?>">Con un total de <?= $totalTrades ?> intercambios</a>
+		sumando <?= $totalUnits ?>, último el <?= $mostRecentTrade ?>
+	</p>
+<?php else: ?>
+	<p>Ningún intercambio de momento.</p>
+<?php endif ?>
+
+<?php if (isset($feedbackgrp->feedback)): ?>
+	<ul>
+		<li>Feedback: <a href="feedback_all.php?mode=other&member_id=<?= $memberId ?>"><?= $feedbackgrp->PercentPositive() ?>% positive</a></li>
+		<li><?= $feedbackgrp->TotalFeedback() ?> total</li>
+		<li><?= $feedbackgrp->num_negative ?> negative</li>
+		<li><?= $feedbackgrp->num_neutral ?> neutral</li>
+	</ul>
+<?php endif ?>
+
+<p>
+	Socio desde: <?= $joiningDate->ShortDate() ?><br/>
+	Edad: <?= $age ?><br/>
+	<?php if ($sex): ?>
+		Sexo: <?= $sex ?><br/>
+	<?php endif ?>
+	<?php if ($email): ?>
+		Correo electronico: <a href="email.php?email_to=<?= urlencode($email) ?>&member_to=<?= urlencode($memberId) ?>"><?= $email ?></a><br/>
+	<?php endif ?>
+	<?php if ($phone1): ?>
+		Primer teléfono: <?= $phone1 ?><br/>
+	<?php endif ?>
+	<?php if ($phone2): ?>
+		Segundo teléfono: <?= $phone2 ?><br/>
+	<?php endif ?>
+	<?php if ($address2): ?>
+		Direccion: <?= $address2 ?><br/>
+	<?php endif ?>
+	<?= $postCode ?> <?= $city ?>
+</p>

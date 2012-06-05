@@ -1,0 +1,8 @@
+<ul>
+	<?php foreach ($rows as $row): ?>
+		<li>
+			<a href="listing_edit.php?title=<?= urlencode($row["title"]) ?>&member_id=<?= urlencode($memberId) ?>&type=<?= urlencode($type) ?>&mode=<?= urlencode($mode) ?>"><?= e($row["title"]) ?></a>
+		</li>
+	<?php endforeach ?>
+</ul>
+

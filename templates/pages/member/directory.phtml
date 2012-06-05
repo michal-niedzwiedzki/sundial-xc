@@ -1,0 +1,31 @@
+<h2>Directorio de Socios</h2>
+
+<form action="member_directory.php" method="get">
+<table>
+	<tr>
+		<td>ID de Socio:</td>
+		<td><input type="text" name="uID" size="4" value="<?= $searchId ?>"/></td>
+	</tr>
+	<tr>
+		<td>Nombre:</td>
+		<td><input type="text" name="uName" value="<?= $searchName ?>"/></td>
+	</tr>
+	<tr>
+		<td>Ordenar por:</td>
+		<td>
+			<select name="orderBy">
+				<option value="idA" <?= $searchOrder == "idA" ? "selected" : "" ?>>ID de socio</option>
+				<option value="fl" <?= $searchOrder == "fl" ? "selected" : "" ?>>Nombre</option>
+		                <option value="fml" <?= $searchOrder == "fml" ? "selected" : "" ?>>Primer Apellido</option>
+				<option value="lf" <?= $searchOrder == "lf" ? "selected" : "" ?>>Segundo Apellido</option>
+			</select>
+		</td>
+	</tr>
+	<tr>
+		<td>&nbsp;</td>
+		<td><input type="submit" value="Buscar"></td>
+	</tr>
+</table>
+</form>
+
+<?= $table ?>

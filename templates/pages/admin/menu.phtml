@@ -1,0 +1,88 @@
+<p>El saldo total es <?= $balance ?></p>
+
+<h2>Cuentas</h2>
+<ul>
+	<li><a href="member_create.php">Crear una cuenta de soci@ nuevo</a></li>
+	<li><a href="member_to_edit.php">Editar la cuenta de un soci@</a></li>
+	<?php if ($config->legacy->ALLOW_IMAGES): ?>
+		<li><a href="member_to_edit_photo.php?mode=admin">Subir/cambiar una foto</a></li>
+	<?php endif ?>
+	<!--
+	<?php if ($user->member_role > 1): ?>
+		<li><a href="member_choose.php?action=member_status_change&inactive=Y">Desactivar/reactivar una cuenta</a></li>
+	<?php endif ?>
+	-->
+	<!--
+	<?php if ($user->member_role > 1): ?>
+		<li><a href="member_unlock.php">Desbloquear cuenta con contraseña nueva</a></li>
+	<?php endif ?>
+	-->
+	<?php if ($config->legacy->OVRIDE_BALANCES): ?>
+		<li><a href="balance_to_edit.php">Cambiar saldo para un soci@</a></li>
+	<?php endif ?>
+	<?php if ($user->member_role>1): ?>
+		<li><a href="manage_restrictions.php">Gestionar restricciones de cuentas</a></li>
+	<?php endif ?>
+</ul>
+
+<?php if ($user->member_role > 1): ?>
+<h2>Intercambios</h2>
+<ul>
+	<li><a href="member_choose.php?action=trade">Añadir un intercambio</a></li>
+	<li><a href="trade_reverse.php">Deshacer un intercambio erróneo</a></li>
+</ul>
+<?php endif ?>
+
+<h2>Listado de servicios</h2>
+
+<h3>Servicios ofrecidos</h3>
+<ul>
+	<li><a href="listing_create.php?type=Offer&mode=admin">Crear nueva oferta para un soci@</a></li>
+	<li><a href="member_choose.php?action=listing_to_edit&get1=type&get1val=Offer">Editar listado de servicios ofrecidos por un soci@</a></li>
+	<li><a href="member_choose.php?action=listing_delete&get1=type&get1val=Offer">Borrar servicios ofrecidos por un soci@</a></li>
+</ul>
+
+<h3>Servicios solicitados</h3>
+<ul>
+	<li><a href="listing_create.php?type=Wanto&mode=admin">Crear un servicio solicitado por un soci@</a></li>
+	<li><a href="member_choose.php?action=listing_to_edit&get1=type&get1val=Want">Editar los servicios solicitados por un soci@</a></li>
+	<li><a href="member_choose.php?action=listing_delete&get1=type&get1val=Want">Borrar los servicios solicitados por un soci@</a></li>
+</ul>
+
+<h3>Otras funciones</h3>
+<ul>
+	<li><a href="member_choose.php?action=holiday">Soci@ de vacaciones</a></li>
+	<?php if ($user->member_role > 1): ?>
+		<li><a href="category_create.php">Crear nueva categoria de servicios</a></li>
+		<li><a href="category_choose.php">Editar o borrar categoria de servicios</a></li>
+	<?php endif ?>
+</ul>
+
+<h2>Contenido</h2>
+
+<h3>Páginas de Información</h3>
+<ul>
+	<li><a href="create_info.php">Crear una nueva página</a></li>
+	<li><a href="edit_info.php">Editar las páginas</a></li>
+	<li><a href="delete_info.php">Borrar una página</a></li>
+	<li><a href="info_permissions.php">Editar permisos de páginas</a></li>
+	<li><a href="info_url.php">Ver URL de las páginas</a></li>
+</ul>
+
+<h3>Noticias</h3>
+<ul>
+	<li><a href="news_create.php">Crear una noticia nueva</a></li>
+	<li><a href="news_to_edit.php">Editar una noticia</a></li>
+	<li><a href="newsletter_upload.php">Subir un boletín de noticias</a></li>
+	<li><a href="newsletter_delete.php">Borrar un boletín</a></li>
+</ul>
+
+<h2>Sistema e informes</h2>
+<ul>
+	<?php if ($user->member_role > 1): ?>
+		<li><a href="settings.php">Configuración de la aplicación</a></li>
+		<li><a href="mysql_backup.php">Copia de seguridad MySQL</a></li>
+	<?php endif ?>
+	<li><a href="report_no_login.php">Ver soci@s que no han entrado</a></li>
+	<li><a href="contact_all.php">Enviar un correo a los soci@s</a></li>
+</ul>

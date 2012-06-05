@@ -1,0 +1,7 @@
+<h2><?= $title ?></h2>
+
+<?php if ($isEmpty): ?>
+	<?= $errorMsg ?>
+<?php else: ?>
+	<?= $form->toHTML() ?>
+<?php endif ?>

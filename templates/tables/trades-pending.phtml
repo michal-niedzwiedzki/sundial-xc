@@ -1,0 +1,44 @@
+<h2><?= $title ?></h2>
+
+<?php if (empty($rows)): ?>
+
+	<p>¡Ninguno encontrado!</p>
+
+<?php else: ?>
+
+	<table>
+		<thead>
+			<tr>
+				<th>Fecha</th>
+				<th>Desde</th>
+				<th>A</th>
+				<th>Horas</th>
+				<th>Descripción</th>
+				<th>Acción</th>
+			</tr>
+		</thead>
+		<tbody>
+			<?php foreach ($rows as $row): ?>
+				<tr>
+					<td><?= $row["tradeDate"] ?></a></td>
+					<td><?= $row["from"] ?></td>
+					<td><?= $row["to"] ?></td>
+					<td><?= $row["amount"] ?></td>
+					<td><?= $row["description"] ?></td>
+					<td>
+						<ul>
+						<?php foreach ($row["actions"] as $action): ?>
+							<?php if (isset($action["link"])): ?>
+								<li><a href="<?= $action['link'] ?>"><?= e($action["text"]) ?></a></li>
+							<?php else: ?>
+								<li><?= e($action["text"]) ?></li>
+							<?php endif ?>
+						<?php endforeach ?>
+						</ul>
+					</td>
+				</tr>
+			<?php endforeach ?>
+		</tbody>
+	</table>
+
+<?php endif ?>

@@ -1,0 +1,18 @@
+<div style="background: black; padding: .5em">
+
+	<h2>Missing template</h2>
+	<div style="background: gray">
+		<pre style="overflow: auto"><?= $templateFile ?></pre>
+	</div>
+
+	<h2>Call trace</h2>
+	<div style="background: gray">
+		<pre style="overflow: auto"><?php debug_print_backtrace() ?></pre>
+	</div>
+
+	<h2>Template vars</h2>
+	<div style="background: gray">
+		<pre style="overflow: auto"><?php var_dump($templateVars) ?></pre>
+	</div>
+
+</div>

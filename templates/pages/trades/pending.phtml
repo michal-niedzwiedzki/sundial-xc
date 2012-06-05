@@ -1,0 +1,33 @@
+<h2>Intercambios pedientes</h2>
+
+<p>
+	Aquí solo se ve las transacciones pendientes.<br/>
+	Para ver todo el historial hay que pulsar <a href="trade_history.php?mode=self">aquí</a>.
+<p>
+
+<p>
+	<a href="trades_pending.php">Resumen</a> |
+	<a href="trades_pending.php?action=incoming">Ingresos para confirmar (<?= $numToConfirm ?>)</a> |
+	<?php if ($membersCanInvoice): ?>
+		<a href="trades_pending.php?action=outgoing">Pagos para hacer (<?= $numToPay ?>)</a> |
+	<?php endif ?>
+	<a href="trades_pending.php?action=payments_sent">Pagos confirmados (<?= $numToHaveConfirmed ?>)</a>
+	<?php if ($membersCanInvoice): ?>
+		<a href="trades_pending.php?action=invoices_sent">Pagos hechos (<?= $numToBePayed ?></a>
+	<?php endif ?>
+</p>
+
+<?php if ($table): ?>
+	<?= $table ?>
+<?php else: ?>
+	<ul>
+		<?php if ($config->legacy->MEMBERS_CAN_INVOICE): ?>
+			<li>Necesito pagar <?= $numToPay ?> transacciones</li>
+		<?php endif ?>
+		<li>Necesito confirmar <?= $numToConfirm ?> pago(s) recibido(s)</li>
+		<?php if ($config->legacy->MEMBERS_CAN_INVOICE): ?>
+			<li>Estoy esperando el pago de <?= $numToBePayed ?> transacciones</li>
+		<?php endif ?>
+		<li>Estoy esperando confirmación de <?= $numToHaveConfirmed ?> pagos hechos</li>
+	</ul>
+<?php endif ?>

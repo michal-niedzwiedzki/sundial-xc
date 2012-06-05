@@ -1,0 +1,25 @@
+<table>
+
+	<?php foreach ($data as $category => $rows): ?>
+
+		<thead>
+			<tr>
+				<th><?= $rows[0]["categoryTitle"] ?></th>
+				<th>Person</th>
+				<th>Details</th>
+			</tr>
+		</thead>
+
+		<tbody>
+			<?php foreach ($rows as $row): ?>
+				<tr>
+					<td><a href="<?= $row["listingLink"] ?>"><?= $row["listingTitle"] ?></a></td>
+					<td><a href="<?= $row["profileLink"] ?>"><?= $row["person"] ?></a></td>
+					<td><?= $row["listingDetails"] ?></td>
+				</tr>
+			<?php endforeach ?>
+		</tbody>
+
+	<?php endforeach ?>
+
+</table>

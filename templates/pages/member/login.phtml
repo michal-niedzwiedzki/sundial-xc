@@ -1,0 +1,31 @@
+<h2>Bienvenido al <?= $title ?></h2>
+
+<?php if ($isLoggedOn): ?>
+
+	<p>
+		Si no tienes todavía el fichero con el cheque para tus intercambios
+		puedes bajarlo <a href="downloads/cheques.pdf">aquí</a>.
+	</p>
+
+<?php else: ?>
+
+	<form action="login.php" method="post">
+		<input type="hidden" name="action" value="login">
+		<input type="hidden" name="location" value="<?= e(HTTPHelper::rq("REQUEST_URI")) ?>">
+		<table>
+			<tr>
+				<td>ID Socio:</td>
+				<td><input type="TEXT" name="user"></td>
+			</tr>
+			<tr>
+				<td>Contraseña:</td>
+				<td><input type="PASSWORD" name="pass"></td>
+			</tr>
+			<tr>
+				<td>&nbsp;</td>
+				<td><input type="submit" value="Entrar"></td>
+		</table>
+	</form>
+	<p>Si no tienes una cuenta pónte en contacto con nosotros para obtenerla.</p>
+
+<?php endif ?>

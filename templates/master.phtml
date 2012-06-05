@@ -1,0 +1,70 @@
+<html>
+
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+	<meta name="description" content="<?= $description ?>"/>
+	<meta name="keywords" content="<?= $keywords ?>"/>
+	<link rel="stylesheet" href="<?= HTTP_BASE ?>/style.css" type="text/css"/>
+	<title><?= $short ?> &ndash; <?= $title ?></title>
+</head>
+
+<body>
+
+	<div id="header">
+		<div class="standard-page">
+		<a href="index.php" style="float: left"><img src="<?= HTTP_BASE ?>/images/a2manos_logo.png" alt="<?= $description ?>"/></a>
+			<h1><?= $description ?></h1>
+			<p><?= $tagline ?></p>
+		</div>
+	</div>
+
+	<div id="main">
+		<div id="sidebar">
+			<ul>
+			<?php foreach ($sidebar as $s): ?>
+				<li><a href="<?= $s["link"] ?>"><?= $s["text"] ?></a></li>
+			<?php endforeach ?>
+			</ul>
+		</div>
+		<div id="content">
+			<?php if ($message): ?>
+				<div class="message"><?= $message ?></div>
+			<?php endif ?>
+			<?= $content ?>
+		</div>
+		<div style="clear: both"></div>
+	</div>
+
+	<div id="footer" class="standard-page">
+		<p><strong><?= $description ?></strong></p>
+		<p><a href="mailto:<?= $adminEmail ?>"><?= $adminEmail ?></a> &#8226; tlf. <?= $adminPhone ?></p>
+		<p>
+			<a href="">Sundial XC</a> version <?= $version ?>
+			&#8226; Licensed under the <a href="http://www.gnu.org/licenses/agpl-3.0.txt">AGPL version 3.0</a> or later
+			&#8226; Based on Local Exchange UK version 1.01
+		</p>
+	</div>
+
+	<?php if (!empty($log)): ?>
+		<table id="debug" class="standard-page">
+		<?php $prevTime = 0 ?>
+		<?php $lastTime = $log[count($log) - 1]["duration"] ?>
+		<?php foreach ($log as $logEvent): ?>
+			<tr class="level<?= $logEvent["severity"] ?>">
+				<td>
+					<span>&Sigma;&nbsp;<?= number_format($logEvent["duration"], 3) ?></span>
+					<span>&Delta;&nbsp;+<?= number_format($logEvent["duration"] - $prevTime, 3) ?></span>
+					<span><?= number_format(($logEvent["duration"] - $prevTime) * 100 / $lastTime, 1) ?>%</span>
+				</td>
+				<td>
+					<pre><?= e($logEvent["message"]) ?></pre>
+				</td>
+			</tr>
+			<?php $prevTime = $logEvent["duration"] ?>
+		<?php endforeach ?>
+		</table>
+	<?php endif ?>
+
+</body>
+
+</html>

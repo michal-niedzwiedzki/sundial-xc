@@ -1,0 +1,25 @@
+<table>
+
+	<thead>
+		<tr>
+			<th>Fecha</th>
+			<th>Desde</th>
+			<th>A</th>
+			<th>Horas</th>
+			<th>Descripción</th>
+		</tr>
+	</thead>
+
+	<tbody>
+		<?php foreach ($rows as $row): ?>
+			<tr style="color: <?= $row["fgColor"] ?>">
+				<td><?= $row["tradeDate"]->ShortDate() ?></a></td>
+				<td><?= $row["from"]->member_id ?></td>
+				<td><?= $row["to"]->member_id ?></td>
+				<td><?= $row["amount"] ?></td>
+				<td><?= $row["description"] ?></td>
+			</tr>
+		<?php endforeach ?>
+	</tbody>
+
+</table>

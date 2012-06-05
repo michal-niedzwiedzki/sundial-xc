@@ -1,0 +1,66 @@
+{
+	"live": false,
+	"site": {
+		"title": "Banco de Tiempo A2Manos",
+		"short": "A2Manos",
+		"tagline": "your talents * your energy * your community",
+		"keywords": "banco de tiempo, a2manos, malasaña",
+		"maintenance": false,
+		"version": "0.0.1"
+	},
+	"admin": {
+		"email": "admin@localhost",
+		"phone": "1234567890"
+	},
+	"db": {
+		"database": "bdt-test",
+		"server": "localhost",
+		"username": "bdt",
+		"password": "bdt"
+	},
+	"log": {
+		"LogWriterScreen": {
+			"level": 1
+		},
+		"LogWriterFile": {
+			"file": "log/dev.log",
+			"level": 1
+		}
+	},
+	"server": {
+		"host": "bdt",
+		"base": "http://bdt",
+		"relative": ""
+	},
+	"legacy": {
+		"MEM_LIST_DISPLAY_BALANCE": false,
+		"SEARCHABLE_MEMBERS_LIST": true,
+		"KEYWORD_SEARCH_DIR": true,
+		"SHOW_INACTIVE_MEMBERS": false,
+		"MEMBERS_CAN_INVOICE": false,
+		"EMAIL_LISTING_UPDATES": true,
+		"DAILY_LISTING_UPDATES": true,
+		"WEEKLY_LISTING_UPDATES": false,
+		"MONTHLY_LISTING_UPDATES": false,
+		"MEMBERS_CAN_INVOICE": false,
+		"ALLOW_IMAGES": false,
+		"OVRIDE_BALANCES": false,
+		"DEFAULT_UPDATE_INTERVAL": null,
+		"KEYWORD_SEARCH_DIR": true,
+		"SHOW_RATE_ON_LISTINGS": true,
+		"SHOW_POSTCODE_ON_LISTINGS": true,
+		"NUM_CHARS_POSTCODE_SHOW_ON_LISTINGS": 5,
+		"ERROR_SEVERITY_INFO": "LOW",
+		"USE_RATES": true,
+		"LEECH_EMAIL_URLOCKED": "Your account is now locked",
+		"LEECH_EMAIL_URUNLOCKED": "Your account is now unlocked",
+		"SHOW_GLOBAL_FEES": true
+	},
+	"mime": {
+		"text/html": "",
+		"application/xhtml+xml": "",
+		"application/json": ".json",
+		"application/x-json": ".json",
+		"application/xml": ".xml"
+	}
+}

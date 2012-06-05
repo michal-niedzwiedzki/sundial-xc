@@ -1,0 +1,36 @@
+<h2>Gestionar restricciones de cuentas</h2>
+
+<p>
+	La restricción sobre el uso de una cuenta se hace cuando el saldo negativo del socio con el banco es
+	demasiado grande y no ha hecho nada para solucionar el problema.
+</p>
+
+<form method="POST">
+
+	<input type="hidden" name="process" value="actionOnMember">
+
+	<p>
+		Socios sin restricciones
+		<select name="ok">
+		<?php foreach ($okM as $key => $m): ?>
+			<option value="<?= e($m["member_id"]) ?>">
+				<?= e($m["first_name"]) ?> <?= e($m["mid_name"]) ?>
+			</option>
+		<?php endforeach ?>
+		</select>
+		<input name="doRestrict" type="submit" value="Añadir restricción">
+	</p>
+
+	<p>
+		Socios con restricciones
+		<select name="restricted">
+		<?php foreach($restrictedM as $key => $m): ?>
+			<option value="<?= e($m["member_id"]) ?>">
+				<?= e($m["first_name"]) ?> <?= e($m["mid_name"]) ?>
+			</option>
+		<?php endforeach ?>
+		</select>
+		<input name="liftRestrict" type="submit" value="Levantar restricción">
+	</p>
+
+</form>
