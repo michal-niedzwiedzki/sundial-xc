@@ -1,0 +1,28 @@
+<h2>Elegir una categoría</h2>
+
+<?= $form->toHTML() ?>
+
+<?php if ($cannotDelete): ?>
+
+	<p>
+		Esta categoría tiene servicios asociados. Hay que mover estos servicios a otras categorias o borrarlos antes de borrar la categoría.
+		Es posible que han sido temporalmente desactivados, y en este caso no aparecen en los listados.
+	</p>
+
+	<h3>Servicios definidos en esta categoría:</h3>
+
+	<p>Offered:</p>
+	<ul>
+		<?php foreach ($offeredListings as $listing): ?>
+			<li><?= e($listing->description) ?> &ndash; <?= e($listing->member_id) ?></li>
+		<?php endforeach ?>
+	</ul>
+
+	<p>Wanted:</p>
+	<ul>
+		<?php foreach ($wantedListings as $listing): ?>
+			<li><?= e($listing->description) ?> &ndash; <?= e($listing->member_id) ?></li>
+		<?php endforeach ?>
+	</ul>
+
+<?php endif ?>
