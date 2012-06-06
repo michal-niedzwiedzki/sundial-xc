@@ -1,3 +1,6 @@
-log/
-config/
+log/*
+config/*
 env.txt
+.project
+.buildpath
+.settings/

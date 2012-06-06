@@ -2,6 +2,9 @@
 
 require_once ROOT_DIR . "/external/pear/HTML/QuickForm.php";
 
+/**
+ * @deprecated in favour of separate form classes extending Form
+ */
 final class FormHelper {
 
 	public static function standard() {

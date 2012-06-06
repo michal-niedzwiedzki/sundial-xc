@@ -1,5 +1,16 @@
 <?php
 
+/**
+ * Dispatch filter picking up template and setting up View object on controller
+ *
+ * Picks up template by looking at @Page annotation.
+ * If no annotation picks up template using the following convention: pages/[controller]/[action].phtml
+ * where [controller] is lower case and does not have the suffix "Controller".
+ *
+ * Warns in case when no template could be found.
+ *
+ * @author Michał Rudnicki <michal.rudnicki@epsi.pl>
+ */
 final class PageTemplateDispatchFilter implements DispatchFilter {
 
 	public function before() {

@@ -1,21 +1,23 @@
 # Sundial XC
 
-Sundial XC is a software to facilitate time bakning and to support local communities built around the idea of a time bank.
-If you want to know more about the concept of "time banks" - and you really should - just look up prof. Edgar Cahn on YouTube.
+Sundial XC is a software to facilitate time bakning and to support local communities built around the idea of time bank.
+If you want to know more about the concept of "time banks" - and you really should - just look up
+[prof. Edgar Cahn on YouTube](www.youtube.com/results?search_query=Edgar+Cahn+RSA).
 
-# Setup
+## Setup
 
 To install Sundial XC you need a web server with PHP 5.3+ and MySQL 5.1+.
 
-* Set up your web server to serve directory public/www/
-* Create file env.txt with environment name in single line
-* Copy config/example.json to config/<environment_name>.json and amend to suit your needs
-* Create log/ directory with 777 permissions
 * Set up a MySQL database and user
-* Open create_db.php file in your browser
-* Once installed delete create_db.php from server
+* Set up your web server to serve directory _public/www/_
+* Create file _env.txt_ with environment name in single line
+* Copy _config/example.json_ to _config/environment_name.json_
+* Amend config to suit your needs, specifically providing database connection information
+* Create _log/_ directory with 777 permissions
+* Open _create_db.php_ file in your browser
+* Once installed delete _create_db.php_ from server
 
-# Credits and history
+## Credits and history
 
 Sundial XC is based on [Local-Exchange-UK](https://github.com/cdmweb/Local-Exchange-UK) v1.01 translated into Spanish by
 [Graeme Herbert](http://www.linkedin.com/pub/graeme-herbert/9/503/794) for local time bank
@@ -26,14 +28,12 @@ Sundial XC was massively refactored and largely reimplemented from scratch by Mi
 The URL structure, config entries, and UI flows remain the same as in original work,
 but it's not guaranteed and may change in future.
 
-# Future versions
+## Future versions
 
-* Installer
-* Migration script from Local-Excahnge-UK
-* Restful API version 0.0 with 100% test coverage
-* Android client
-* Database normalization
-* Restful API version 1.0
-* Interoperability between instances of Sundial XC
-* Printed money and cards
-* Internationalization with gettext
+* **Installer.** Separate from the rest of the application. Several pages to guide user through installation process.
+* **Migration script from Local-Excahnge-UK.**
+* **Restful API version 0.0**. API for existing model classes shielded by authorization layer. Covered in 100% with tests.
+* **Android client.** Nice to have to explore correctness and completeness of API v 0.0.
+* **Database normalization.** You will see the need for this one as soon as you look into existing database.
+* **Interoperability between instances of Sundial XC.** Very important to connect not only members of communities, but also communities with each other.
+* **Internationalization with gettext.** Yeah, currently it's in Spanish.

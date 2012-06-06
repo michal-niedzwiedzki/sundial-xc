@@ -6,6 +6,10 @@ final class HTTPHelper {
 		return $_SERVER["REQUEST_METHOD"];
 	}
 
+	public static function pathInfo() {
+		return isset($_SERVER["PATH_INFO"]) ? $_SERVER["PATH_INFO"] : "";
+	}
+	
 	public static function get($parameter, $default = NULL) {
 		return isset($_GET[$parameter]) ? $_GET[$parameter] : $default;
 	}

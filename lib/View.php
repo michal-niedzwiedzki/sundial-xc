@@ -1,5 +1,13 @@
 <?php
 
+/**
+ * View to be rendered using given template
+ *
+ * All assigned properties of type string are automatically escaped.
+ * Other properties are not escaped automatically.
+ *
+ * @author Michał Rudnicki <michal.rudnicki@epsi.pl>
+ */
 class View {
 
 	protected $templateVars = array();

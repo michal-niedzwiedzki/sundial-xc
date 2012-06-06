@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * Dispatch filter for debugging POST parameters
+ *
+ * @author Michał Rudnicki <michal.rudnicki@epsi.pl>
+ */
 final class RequestDebugDispatchFilter implements DispatchFilter {
 
 	public function before() {
