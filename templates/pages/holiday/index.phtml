@@ -1,0 +1,16 @@
+<h2>Desactivar listado por vacaciones</h2>
+
+<p>
+	Cuando estan desactivados no aparecen en la aplicación.
+	En la fecha seleccionada volverán a estar visibles.
+</p>
+
+<p>
+	<?php if ($adminMode): ?>
+		Esta función desactiva temporalmente el listado de servicios de un soci@.
+	<?php else: ?>
+		Esta función desactiva temporalmente tu listado de servicios.
+	<?php endif ?>
+</p>
+
+<?= $form->toHTML() ?>
