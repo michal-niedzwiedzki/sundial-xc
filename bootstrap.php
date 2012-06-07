@@ -45,7 +45,7 @@ final class Bootstrap {
 	public static function initPaths() {
 		define("ROOT_DIR", realpath(dirname(__FILE__)));
 		chdir(ROOT_DIR);
-		set_include_path(ROOT_DIR . "/legacy" . PATH_SEPARATOR . ROOT_DIR . "/external/pear");
+		set_include_path(ROOT_DIR . "/legacy" . PATH_SEPARATOR . ROOT_DIR . "/external/pear" . PATH_SEPARATOR . get_include_path());
 		spl_autoload_register("Bootstrap::autoloadHandler");
 	}
 

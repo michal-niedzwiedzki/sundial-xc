@@ -127,14 +127,14 @@ class Dispatcher {
 		return $this->actionName;
 	}
 
-	public function getAnnotation($name) {
+	public function getAnnotation($annotation) {
 		static $reflectors = array();
 		static $annotations = array();
 
 		// return cached annotation if present
 		$key = "{$this->controllerName}.{$this->actionName}";
-		if (isset($annotations[$key][$name])) {
-			return $annotations[$key][$name];
+		if (isset($annotations[$key][$annotation])) {
+			return $annotations[$key][$annotation];
 		}
 
 		// get controller and initialize cache
@@ -142,23 +142,9 @@ class Dispatcher {
 		isset($reflectors[$key]) or $reflectors[$key] = new ReflectionMethod($c, $this->actionName);
 		isset($annotations[$key]) or $annotations[$key] = array();
 
-		// parse annotation
-		$lines = explode("\n", $reflectors[$key]->getDocComment());
-		foreach ($lines as $line) {
-			$line = trim($line, "\t\n *");
-			$words = explode(" ", $line);
-			if ($words[0] === "@" . $name) {
-				if (count($words) === 1) {
-					return $annotations[$key][$name] = TRUE;
-				}
-				$out = json_decode(substr($line, $rest = strlen($words[0])));
-				if ($out === NULL and strtolower($rest) !== "null") {
-					Debug::log("Annotation value $line could not be parsed in " . get_class($c) . "::" . $this->actionName, Debug::WARNING);
-				}
-				return $annotations[$key][$name] = $out;
-			}
-		}
-		return $annotations[$key][$name] = FALSE;
+		// fetch annotation
+		$annotations[$key][$annotation] = AnnotationParser::get($reflectors[$key], $annotation);
+		return $annotations[$key][$annotation];
 	}
 
 }

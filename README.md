@@ -18,7 +18,7 @@ To install Sundial XC you need a web server with PHP 5.3+ and MySQL 5.1+.
 * Create file _env.txt_ with environment name in single line
 * Copy _config/example.json_ to _config/environment_name.json_
 * Amend config to suit your needs, specifically providing database connection information
-* Create file _log/environment_name.log_ with 666 permissions 
+* Create file _log/environment_name.log_ with 666 permissions
 * Open _create_db.php_ file in your browser
 * Once installed delete _create_db.php_ from server
 
@@ -32,6 +32,21 @@ Sundial XC is based on [Local-Exchange-UK](https://github.com/cdmweb/Local-Excha
 Sundial XC was massively refactored and largely reimplemented from scratch by Michał Rudnicki.
 The URL structure, config entries, and UI flows remain the same as in original work,
 but it's not guaranteed and may change in future.
+
+## Refactoring old code
+
+Code refactor is progressing in many fronts simultaneously:
+
+* **Controllers.** Old _./*.php_ files from root directory are being trainsitioned into controller actions.
+See directory _controllers/_ to see how this is done. Files not yet transitioned are included from within controllers.
+If you want to help moving this code, this is probably the easiest bit to start with.
+* **Forms.** Old in-line forms are extracted to _forms/_ directory as standalone, reusable, loosely coupled components.
+This is also a good place to begin helping. Look at some of existing forms and start extracting in-code ones
+from old _./*.php_ files to separate classes.
+* **Templates.** PHTML templates are extracted from old in-line code to separate files that match controller action names.
+See directory _templates/pages/_ to get to the core of this change.
+* **Model.** Business logic is broken into separate files in _model/legacy/_ directory. The biggest part in this field
+is to migrate from using global $cDB object to PDOHelper. Another challenge is to free the model from UI rendering code.
 
 ## Future versions
 
