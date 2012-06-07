@@ -23,58 +23,85 @@
  * @author Michał Rudnicki <michal.rudnicki@epsi.pl>
  */
 
-// locale and encoding
-setlocale(LC_ALL, "es_ES");
-mb_internal_encoding("UTF-8");
-mb_regex_encoding("UTF-8");
+/**
+ * Bootstrap
+ *
+ * @author Michał Rudnicki <michal.rudnicki@epsi.pl>
+ */
+final class Bootstrap {
 
-// paths
-define("ROOT_DIR", realpath(dirname(__FILE__)));
-set_include_path(ROOT_DIR . "/legacy" . PATH_SEPARATOR . ROOT_DIR . "/external/pear");
-
-// class loader
-function __autoload($className) {
-	static $map;
-	$map or $map = parse_ini_file(ROOT_DIR . "/classmap.ini", INI_SCANNER_RAW);
-	if (isset($map[$className])) {
-		include $map[$className];
+	/**
+	 * Init locale settings and character encoding
+	 */
+	public static function initLocale() {
+		setlocale(LC_ALL, "es_ES");
+		mb_internal_encoding("UTF-8");
+		mb_regex_encoding("UTF-8");
 	}
-}
 
-// check preconditions and make comfortable
-Assert::fileExists(ROOT_DIR . "/env.txt");
-define("ENV", trim(file_get_contents(ROOT_DIR . "/env.txt")));
-define("LIVE", Config::getInstance()->live);
-Debug::log("Init", Debug::DEBUG);
-
-// shutdown handler
-function applicationShutdown() {
-	$pdo = DB::getPDO();
-	if ($pdo->inTransaction()) {
-		$pdo->rollBack();
-		Debug::log("Unfinished transaction - rollback initiated", Debug::WARNING);
+	/**
+	 * Init inclusion paths and autoloading
+	 */
+	public static function initPaths() {
+		define("ROOT_DIR", realpath(dirname(__FILE__)));
+		chdir(ROOT_DIR);
+		set_include_path(ROOT_DIR . "/legacy" . PATH_SEPARATOR . ROOT_DIR . "/external/pear");
+		spl_autoload_register("Bootstrap::autoloadHandler");
 	}
-}
-register_shutdown_function("applicationShutdown");
 
-// error handler
-function applicationError($severity, $message, $file, $line, $context = array()) {
-	Debug::log("PHP {$severity}: {$message}\nFile {$file}\nLine {$line}", Debug::ERROR);
+	/**
+	 * Init global defines and handlers
+	 */
+	public static function initEnvironment() {
+		Assert::fileExists(ROOT_DIR . "/env.txt");
+		define("ENV", trim(file_get_contents(ROOT_DIR . "/env.txt")));
+		define("LIVE", Config::getInstance()->live);
+		Debug::log("Init", Debug::DEBUG);
+		register_shutdown_function("Bootstrap::shutdownHandler");
+		set_error_handler("Bootstrap::errorHandler");
+	}
+
+	/**
+	 * Class loading handler
+	 */
+	public static function autoloadHandler($className) {
+		static $map;
+		$map or $map = parse_ini_file(ROOT_DIR . "/classmap.ini", INI_SCANNER_RAW);
+		if (isset($map[$className])) {
+			include $map[$className];
+		}
+	}
+
+	/**
+	 * Shutdown handler
+	 */
+	public static function shutdownHandler() {
+		$pdo = DB::getPDO();
+		if ($pdo->inTransaction()) {
+			$pdo->rollBack();
+			Debug::log("Unfinished transaction - rollback initiated", Debug::WARNING);
+		}
+	}
+
+	/**
+	 * Error handler
+	 */
+	public static function errorHandler($severity, $message, $file, $line, $context = array()) {
+		Debug::log("PHP {$severity}: {$message}\nFile {$file}\nLine {$line}", Debug::ERROR);
+	}
+
 }
-set_error_handler("applicationError");
+
+// bootstrap
+Bootstrap::initLocale();
+Bootstrap::initPaths();
+Bootstrap::initEnvironment();
 
 // legacy code
 require_once ROOT_DIR . "/legacy/includes/inc.global.php";
 require_once ROOT_DIR . "/legacy/includes/inc.config.php";
 
-// maintenance
-if (Config::getInstance()->site->maintenance) {
-	header("HTTP/1.4 503 Service unavailable");
-	echo "<html><head></head><body><h2>Service has been taken off-line for maintenance</h2><p>Apologies for inconveniences, please come back later.</p><pre>HTTP/1.1 503 Service unavailable</pre></body></html>";
-	die();
-}
-
 // shorthand for html escaping
 function e($text) {
-	return htmlspecialchars($text, ENT_QUOTES, 'UTF-8');
+	return htmlspecialchars($text, ENT_QUOTES, "UTF-8");
 }
