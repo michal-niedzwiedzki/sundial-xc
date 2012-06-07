@@ -186,4 +186,4 @@ table#debug tr.level1 td { color: #606060; background-color: #d0d0d0 }
 table#debug tr.level2 td { color: darkred; background-color: #d0d0d0 }
 table#debug tr.level3 td { color: darkred; background-color: orange }
 table#debug tr.level4 td { color: white; background-color: red }
-table#debug span { background: gray; color: white; margin: 0 1em 0 0; padding: 0 .5em; -moz-border-radius: 1em; font-size: 7pt; float: left }
+table#debug span { background: gray; color: white; margin: 0 1em 0 0; padding: 0 .5em; border-radius: 1em; font-size: 7pt; float: left }
