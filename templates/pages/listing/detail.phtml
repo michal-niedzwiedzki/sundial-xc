@@ -1,0 +1,11 @@
+<h2><?= $title ?></h2>
+
+<?php if ($description): ?>
+	<p>Descripción: <?= $description ?></p>
+<?php endif ?>
+
+<?php if ($rate): ?>
+	<p>Rate: <?= $rate ?></p>
+<?php endif ?>
+
+<?= $member->DisplayMember() ?>

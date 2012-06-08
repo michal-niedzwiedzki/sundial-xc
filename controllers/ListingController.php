@@ -136,8 +136,18 @@ final class ListingController extends Controller {
 		}
 	}
 
+	/**
+	 * @Title "Servicio sin titulo"
+	 */
 	public function detail() {
-		include ROOT_DIR . "/legacy/listing_detail.php";
+		$title = HTTPHelper::get("title");
+		$listing = new cListing();
+		$listing->LoadListing($title, HTTPHelper::get("member_id"), substr(HTTPHelper::get("type"), 0, 1));
+		$this->page->description = $listing->description;
+		$this->page->rate = $listing->rate;
+		$this->page->member = $listing->member;
+		$this->page->title = $title;
+		$title and PageView::getInstance()->title = $title;
 	}
 
 	/**

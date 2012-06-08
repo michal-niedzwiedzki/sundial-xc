@@ -47,13 +47,12 @@ final class ListingsController extends Controller {
 	/**
 	 * @Title "Actualizar listados de servicios"
 	 */
-	public function menu() {
-		cMember::getCurrent()->MustBeLoggedOn();
-	}
+	public function menu() { }
 
-	public function create() {
-		include ROOT_DIR . "/legacy/listings_create.php";
-	}
+	/**
+	 * @Title "Create Listings"
+	 */
+	public function create() { }
 
 	/**
 	 * @Public
