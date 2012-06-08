@@ -285,8 +285,24 @@ final class MemberController extends Controller {
 		include ROOT_DIR . "/legacy/member_to_edit_photo.php";
 	}
 
+	/**
+	 * @Title "Elegir soci@ para editar"
+	 * @Level 1
+	 */
 	public function to_edit() {
-		include ROOT_DIR . "/legacy/member_to_edit.php";
+		$ids = new cMemberGroup;
+		$ids->LoadMemberGroup(null,true);
+
+		$form = new UsersListForm($ids->MakeIDArray());
+		$this->page->form = $form;
+
+		if (!$form->validate()) {
+			return;
+		}
+		$form->freeze();
+		$form->process();
+		$values = $form->exportValues();
+		header("Location: ".HTTP_BASE."/member_edit.php?mode=admin&member_id=".$values["member_id"]);
 	}
 
 	public function unlock() {
