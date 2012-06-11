@@ -13,17 +13,18 @@ if (Config::getInstance()->site->maintenance) {
 
 // set up dispatcher and filtering
 $d = Dispatcher::getInstance();
-LIVE or $d->addFilter(new DebugViewDispatchFilter());
-LIVE or $d->addFilter(new RequestDebugDispatchFilter());
-$d->addFilter(new PathInfoDispatchFilter());
-$d->addFilter(new PublicPageDispatchFilter());
-$d->addFilter(new AccessLevelDispatchFilter());
-$d->addFilter(new PageTitleDispatchFilter());
-$d->addFilter(new PageTemplateDispatchFilter());
+LIVE or $d->addFilter(new DebugViewDispatchFilter()); // outputs logged events to the screen
+LIVE or $d->addFilter(new RequestDebugDispatchFilter()); // debugs POST requests
+$d->addFilter(new PathInfoDispatchFilter()); // picks up route info from $_SERVER['PATH_INFO']
+$d->addFilter(new PageNotFoundDispatchFilter()); // produces 404 error when page not found
+$d->addFilter(new PublicPageDispatchFilter()); // produces 403 error if not logged in while accessing non-public page
+$d->addFilter(new AccessLevelDispatchFilter()); // produces 403 error if insufficient access level
+$d->addFilter(new PageTitleDispatchFilter()); // picks up page title and injects into HTML head
+$d->addFilter(new PageTemplateDispatchFilter()); // picks up page template and injects view instance into controller
 
-Debug::log("Prefiltering", Debug::DEBUG);
+LIVE or Debug::log("Prefiltering", Debug::DEBUG);
 $d->preFilter();
-Debug::log("Dispatch and execution", Debug::DEBUG);
+LIVE or Debug::log("Dispatch and execution", Debug::DEBUG);
 try {
 	$d->dispatch();
 } catch (Exception $e) {
@@ -32,7 +33,7 @@ try {
 	}
 	PageView::getInstance()->displayError("Action could not be completed due to software problem.");
 }
-Debug::log("Postfiltering", Debug::DEBUG);
+LIVE or Debug::log("Postfiltering", Debug::DEBUG);
 $d->postFilter();
 
 echo PageView::getInstance()->__toString();

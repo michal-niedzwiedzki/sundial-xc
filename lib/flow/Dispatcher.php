@@ -71,6 +71,9 @@ class Dispatcher {
 	public function dispatch() {
 		$c = $this->getController();
 		$a = $this->actionName;
+		if (!method_exists($c, $a)) {
+			throw new Exception("Action '$a' not found on controller '{$this->controllerName}'");
+		}
 		$c->$a();
 	}
 
@@ -139,8 +142,13 @@ class Dispatcher {
 
 		// get controller and initialize cache
 		$c = $this->getController();
-		isset($reflectors[$key]) or $reflectors[$key] = new ReflectionMethod($c, $this->actionName);
 		isset($annotations[$key]) or $annotations[$key] = array();
+		try {
+			isset($reflectors[$key]) or $reflectors[$key] = new ReflectionMethod($c, $this->actionName);
+		} catch (ReflectionException $e) {
+			$annotations[$key][$annotation] = NULL;
+			return NULL;
+		}
 
 		// fetch annotation
 		$annotations[$key][$annotation] = AnnotationParser::get($reflectors[$key], $annotation);
