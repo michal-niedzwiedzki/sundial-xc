@@ -1,8 +1,4 @@
-<?
-require_once("includes/inc.global.php");
-require_once("includes/inc.forms.php");
-include_once("classes/class.uploads.php");
-require_once('Image/Transform.php');
+<?php
 
 if (ALLOW_IMAGES!=true) 
 	header("location:http://".HTTP_BASE."/");
@@ -13,6 +9,7 @@ if(!extension_loaded('gd')) {
 }
 
 $p->site_section = EVENTS;
+$user = cMember::getCurrent();
 
 $member = new cMember;
 
@@ -29,10 +26,13 @@ if($_REQUEST["mode"] == "admin") {
 
 }
 
-$query = $cDB->Query("SELECT filename FROM ".DB::UPLOADS." WHERE title=".$cDB->EscTxt("mphoto_".$member->member_id)." limit 0,1;");
+#$tableName = DB::UPLOADS;
+#$sql = "SELECT filename FROM $tableName WHERE title = :$title";
+#$row = PDOHelper::fetchRow($sql, array("title" => "mphoto_" . $member->member_id));
 		
-$num_results = mysql_num_rows($query);
 $mIMG = cMember::DisplayMemberImg($member->member_id);
+
+$form = FormHelper::standard();
 
 if ($mIMG!=false) {
 			
@@ -131,9 +131,6 @@ function process_data ($values) {
 	      $loadprofile = true;
 	    	}
 	}
-
-  
-	
 	$name = "mphoto_".$member->member_id;
 	$nameprofile = "mphoto_".$member->member_id ."_profile";
 	$copy = false;
@@ -169,11 +166,7 @@ function process_data ($values) {
 	    $_FILES['userfile']['name']= $_FILES['profilefile']['name'];
 	    $_FILES['userfile']['tmp_name']= $_FILES['profilefile']['tmp_name'];
 	  }	
-	  
-	    
 	}
-  
-
 
 	$upload = new cUpload("P", $name, $publish, $name);
 	
@@ -194,9 +187,5 @@ function process_data ($values) {
 
 	$p->DisplayPage($output);
 }
-
-
-
-
 
 ?>

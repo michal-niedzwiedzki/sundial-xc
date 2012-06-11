@@ -281,8 +281,24 @@ final class MemberController extends Controller {
 		$master = PageView::getInstance()->title = "Perfil de " . $member->PrimaryName();
 	}
 
+	/**
+	 * @Title "Elegir soci@ para subir o cambiar foto"
+	 * @Level 1
+	 */
 	public function to_edit_photo() {
-		include ROOT_DIR . "/legacy/member_to_edit_photo.php";
+		$ids = new cMemberGroup();
+		$ids->LoadMemberGroup(NULL, TRUE);
+		
+		$form = new MemberChooseForm(NULL, $ids->MakeIDArray());
+		$this->page->form = $form;
+		
+		if (!$form->validate()) {
+			return;
+		}
+		$form->freeze();
+		$form->process();
+		$values = $form->exportValues();
+		header("Location: " . HTTP_BASE . "/member_photo_upload.php?mode=admin&member_id=" . urlencode($values["member_id"]));
 	}
 
 	/**
@@ -302,11 +318,55 @@ final class MemberController extends Controller {
 		$form->freeze();
 		$form->process();
 		$values = $form->exportValues();
-		header("Location: ".HTTP_BASE."/member_edit.php?mode=admin&member_id=".$values["member_id"]);
+		header("Location: " . HTTP_BASE . "/member_edit.php?mode=admin&member_id=" . $values["member_id"]);
 	}
 
+	/**
+	 * @Title "Desbloquear cuenta y crear contraseña nueva"
+	 * @Level 1
+	 */
 	public function unlock() {
-		include ROOT_DIR . "/legacy/member_unlock.php";
+
+		$ids = new cMemberGroup;
+		$ids->LoadMemberGroup();
+
+		$form = FormHelper::standard();
+		$form->addElement("select", "member_id", "Seleccionar cuenta", $ids->MakeIDArray());
+		$form->addElement("submit", "btnSubmit", "Desbloquear");
+		$form->addElement("radio", "emailTyp", "", "Enviar correo con nueva contraseña","pword");
+		$form->addElement("radio", "emailTyp", "", "Mostrar la contraseña nueva en pantalla","show_pword");
+
+		$this->page->form = $form;
+		
+		if (!$form->validate()) {
+			return;
+		}
+		$form->freeze();
+		$form->process();
+		$values = $form->exportValues();
+		$member = new cMember();
+		$member->LoadMember($values["member_id"]);
+
+		$message = "";
+		if ($consecutive_failures = $member->UnlockAccount()) {
+			$message .= "Esta cuenta estaba bloqueada debido a ". $consecutive_failures ." intentos fallidos de entrar. Ahora esta activa otra vez. ";
+		}
+		$password = $member->GeneratePassword();
+		$member->ChangePassword($password);
+		$message .= "La nueva contraseña ha sido generada";
+
+		$whEmail = "'Contraseña cambiada'";
+		if (HTTPHelper::rq("emailTyp") == 'pword') {
+			$mailed = LIVE
+				? $member->esmail($member->person[0]->email, PASSWORD_RESET_SUBJECT, PASSWORD_RESET_MESSAGE . "\n\nID de soci@: ". $member->member_id ."\nNueva contraseña: ". $password)
+				: TRUE;
+			$message .= $mailed
+				? " y un correo de $whEmail ha sido enviado a la dirección del soci@ (". $member->person[0]->email .")."
+				: ". El intento de enviar por correo la nueva contraseña no ha funcionado. Avisa al administrador del banco de tiempo.";
+		} else {
+			  $message .= " y el valor nuevo es: $password" ;
+		}
+		PageView::getInstance()->setMessage($message);
 	}
 
 }
