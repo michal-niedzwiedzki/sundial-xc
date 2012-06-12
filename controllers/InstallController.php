@@ -59,6 +59,15 @@ final class InstallController extends Controller {
 	 * @Title "Sundial XC installation wizard - Step 2: Configuration setup"
 	 */
 	public function step4_admin() {
+		$admin = new cMember();
+		$admin->LoadMember("admin");
+		$defaultPassword = $admin->password === "355c8f65bdcf7dcd187f6ca492014f6eb6c47d67";
+		$this->page->defaultPassword = $defaultPassword;
+		$this->page->passwordChanged = FALSE;
+		if ($defaultPassword and $password = HTTPHelper::post("password")) {
+			PDOHelper::update(DB::MEMBERS, array("password" => md5($password)), "id = :id", array("id" => "admin"));
+			$this->passwordChanged = TRUE;
+		}
 	}
 
 }
