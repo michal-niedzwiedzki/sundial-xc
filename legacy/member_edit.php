@@ -1,7 +1,5 @@
 <?php
 
-require_once "../bootstrap.php";
-
 $user = cMember::getCurrent();
 $master = PageView::getInstance();
 $form = FormHelper::standard();
