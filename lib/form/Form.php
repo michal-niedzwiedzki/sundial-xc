@@ -6,11 +6,19 @@ abstract class Form extends HTML_QuickForm {
 
 	public function __construct() {
 		parent::HTML_QuickForm();
+		$this->addElement("hidden", "csrf", CSRF);
 		$this->setRequiredNote("<tr><td colspan=\"2\"><span class=\"required\">*</span> &ndash; campo obligatorio</td></tr>");
 		$renderer = $this->defaultRenderer();
 		$renderer->setFormTemplate("<form{attributes}><table>{content}</table></form>");
 		$renderer->setHeaderTemplate("<tr><th colspan=\"2\">{header}</th></tr>");
 		$renderer->setElementTemplate("<tr><td class=\"label-column\">{label}<!-- BEGIN required --> <span class=\"required\">*</span><!-- END required --></td><td class=\"field-column\">{element}<!-- BEGIN error --><span class=\"error\">{error}</span><!-- END error --></td></tr>");
+	}
+
+	public function validate() {
+		if (CSRF !== $this->getElementValue("csrf")) {
+			return FALSE;
+		}
+		return parent::validate();
 	}
 
 	public static function nop() {

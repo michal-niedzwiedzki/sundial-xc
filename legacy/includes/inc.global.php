@@ -60,9 +60,3 @@ define("ACCOUT_EXPIRATION","E"); // Logging event category - System Event
 define ("SITE_SECTION_DEFAULT",-1);
 define ("SITE_SECTION_OFFER_LIST",0);
 /*********************************************************/
-
-/* Initial session handling code starts */
-#require_once("session_handler.php");
-session_name("LOCAL_EXCHANGE");
-session_start();
-/* Initial session handling code ends */

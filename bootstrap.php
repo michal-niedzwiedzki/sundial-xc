@@ -77,6 +77,20 @@ final class Bootstrap {
 	}
 
 	/**
+	 * Init user session
+	 */
+	public static function initSession() {
+		session_start();
+		if (isset($_SERVER["REQUEST_METHOD"]) and $_SERVER["REQUEST_METHOD"] === "POST") {
+			define("CSRF", isset($_SESSION["csrf"]) ? $_SESSION["csrf"] : NULL);
+		} else {
+			define("CSRF", rand());
+			$_SESSION["csrf"] = CSRF;
+		}
+		Debug::log("CSRF token is " . CSRF, Debug::DEBUG);
+	}
+
+	/**
 	 * Class loading handler
 	 */
 	public static function autoloadHandler($className) {
@@ -114,6 +128,7 @@ final class Bootstrap {
 Bootstrap::initPaths();
 Bootstrap::initLocale();
 Bootstrap::initEnvironment();
+Bootstrap::initSession();
 
 // legacy code
 require_once ROOT_DIR . "/legacy/includes/inc.global.php";

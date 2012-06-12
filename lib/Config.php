@@ -46,4 +46,13 @@ final class Config {
 		return self::$instance;
 	}
 
+	/**
+	 * Mocks config using passed configuration properties
+	 *
+	 * @author Michał Rudnicki <michal.rudnicki@epsi.pl>
+	 */
+	public static function mock(stdClass $object) {
+		self::$instance = new Config($object);
+	}
+
 }
