@@ -17,6 +17,10 @@ class View {
 		$this->templateFile = ROOT_DIR . "/templates/" . $templateFile;
 	}
 
+	public function __get($var) {
+		return isset($this->templateVars[$var]) ? $this->templateVars[$var] : NULL;
+	}
+
 	public function __set($var, $value) {
 		is_string($value)
 			? $this->templateVars[$var] = htmlspecialchars((string)$value, ENT_QUOTES, "UTF-8")

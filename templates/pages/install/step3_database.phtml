@@ -1,0 +1,59 @@
+<h2>Step 3: Database setup</h2>
+
+<?php if (!$connection && $default): ?>
+
+	<p>
+		Now you need to create a database for Sundial XC.
+	</p>
+	<p>
+		Create a MySQL database with username and password.<br/>
+		Then open up <?= $configName ?> and amend section <em>database</em>
+		to match your database connection details.
+	</p>
+	<ul>
+		<li><a href="install_step3_database.php">Reload the page when done</a></li>
+	</ul>
+
+<?php elseif (!$connection): ?>
+
+	<p>
+		Bumped into the following error trying to connect to the database:
+	</p>
+	<blockquote>
+		<?= $errorMessage ?>
+	</blockquote>
+	<ul>
+		<li><a href="install_step3_database.php">Review connection details and reload the page when done</a></li>
+	</ul>
+
+<?php elseif ($alreadyInstalled): ?>
+
+	<p>
+		It seems that database tables are already created.
+	</p>
+	<ul>
+		<li><a href="install_step4_admin.php">Click here to continue installation</a></li>
+	</ul>
+	<p>
+		If you wish to reinstall all tables go to your database management utility
+		and just drop all tables in the database. Then reload the page.
+		WARNING: This will completely erase all existing data in Sundial XC database.
+	</p>
+
+<?php elseif (!$ok): ?>
+
+	<p>
+		There was problem creating database structure.<br/>
+		Sorry, you will have to investigate method <code>DB::create()</code> yourself.
+	</p>
+
+<?php else: ?>
+
+	<p>
+		Database structure created successfully.
+	</p>
+	<ul>
+		<li><a href="install_step4_admin.php">Click here to continue installation</a></li>
+	</ul>
+
+<?php endif ?>

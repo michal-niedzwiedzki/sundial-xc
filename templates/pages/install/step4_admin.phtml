@@ -1,0 +1,28 @@
+<h2>Step 4: Administrator password</h2>
+
+<?php if ($defaultPassword): ?>
+
+	<p>
+		Time to set up administrator password.<br/>
+		Please type new password for user <em>admin</em>.
+	</p>
+	<form method="post">
+		<input type="password" name="password"/>
+		<input type="submit" value="Submit"/>
+	</form>
+
+<?php elseif (!$passwordChanged): ?>
+
+	<p>
+		Administrator password could not be changed because it is not set to default.<br/>
+		This would overwrite the password.
+	</p>
+
+<?php else: ?>
+
+	<ul>
+		<li><a href="install_step5_done.php">Click here to finish installation</a></li>
+	</ul>
+
+<?php endif ?>
+
