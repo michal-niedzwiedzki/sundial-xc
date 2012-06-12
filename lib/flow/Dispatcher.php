@@ -42,6 +42,13 @@ class Dispatcher {
 	}
 
 	/**
+	 * Remove all filters from the flow
+	 */
+	public function resetFilters() {
+		$this->filters = array();
+	}
+
+	/**
 	 * Apply filters before dispatch
 	 *
 	 * @author Michał Rudnicki <michal.rudnicki@epsi.pl>
@@ -82,11 +89,13 @@ class Dispatcher {
 	 *
 	 * @param string $controllerName
 	 * @param string $actionName
+	 * @return $this
 	 * @author Michał Rudnicki <michal.rudnicki@epsi.pl>
 	 */
 	public function configure($controllerName, $actionName) {
 		$this->controllerName = $controllerName;
 		$this->actionName = $actionName;
+		return $this;
 	}
 
 	/**
