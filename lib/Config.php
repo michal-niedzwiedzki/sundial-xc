@@ -37,7 +37,6 @@ final class Config {
 	 */
 	public static function getInstance() {
 		if (!self::$instance) {
-			Assert::isDefined("ENV");
 			$fn = ROOT_DIR . "/config/" . ENV . ".json";
 			Assert::fileExists($fn);
 			$object = json_decode(trim(file_get_contents($fn)));

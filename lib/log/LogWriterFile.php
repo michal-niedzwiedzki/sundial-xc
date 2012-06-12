@@ -43,12 +43,14 @@ final class LogWriterFile implements LogWriter {
 	 */
 	public function __construct($startTime, stdClass $options) {
 		$this->startTime = $startTime;
+		if (!isset($options->enabled) or !$options->enabled) {
+			return;
+		}
 		if (!isset($options->file) or !$options->file) {
 			throw new Exception("Missing mandatory config param 'file'");
 		}
 		$this->file = ROOT_DIR . "/" . $options->file;
 		if (!file_exists($this->file) and !is_writable(dirname($this->file))) {
-
 			throw new Exception("Cannot create file '{$this->$file}' - directory not wriable");
 		} elseif (!is_writable($this->file)) {
 			throw new Exception("File '{$this->file}' not writable");

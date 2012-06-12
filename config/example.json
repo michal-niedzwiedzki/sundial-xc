@@ -1,10 +1,10 @@
 {
-	"live": false,
 	"site": {
-		"title": "Banco de Tiempo A2Manos",
-		"short": "A2Manos",
+		"live": false,
+		"title": "Example Local Time Bank",
+		"short": "Example Bank",
 		"tagline": "your talents * your energy * your community",
-		"keywords": "banco de tiempo, a2manos, malasaña",
+		"keywords": "time bank, sundial xc",
 		"maintenance": false,
 		"version": "0.0.1"
 	},
@@ -13,17 +13,19 @@
 		"phone": "1234567890"
 	},
 	"db": {
-		"database": "bdt-test",
+		"database": "sundialxc",
 		"server": "localhost",
-		"username": "bdt",
-		"password": "bdt"
+		"username": "sundialxca",
+		"password": "sundialxca"
 	},
 	"log": {
 		"LogWriterScreen": {
+			"enabled": true,
 			"level": 1
 		},
 		"LogWriterFile": {
-			"file": "log/dev.log",
+			"enabled": false,
+			"file": "log/example.log",
 			"level": 1
 		}
 	},

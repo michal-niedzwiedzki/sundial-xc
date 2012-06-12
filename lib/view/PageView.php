@@ -43,6 +43,7 @@ final class PageView extends View {
 			$sidebar[] = array("text" => "Entrar", "link" => "member_login.php");
 		}
 		$this->sidebar = $sidebar;
+		$this->showSidebar = TRUE;
 	}
 
 	public function displayError($message) {

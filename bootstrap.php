@@ -31,15 +31,6 @@
 final class Bootstrap {
 
 	/**
-	 * Init locale settings and character encoding
-	 */
-	public static function initLocale() {
-		setlocale(LC_ALL, "es_ES");
-		mb_internal_encoding("UTF-8");
-		mb_regex_encoding("UTF-8");
-	}
-
-	/**
 	 * Init inclusion paths and autoloading
 	 */
 	public static function initPaths() {
@@ -50,13 +41,37 @@ final class Bootstrap {
 	}
 
 	/**
+	 * Init locale settings and character encoding
+	 */
+	public static function initLocale() {
+		mb_internal_encoding("UTF-8");
+		mb_regex_encoding("UTF-8");
+
+		if (isset($_COOKIE["locale"]) and $_COOKIE["locale"]) {
+			$locale = $_COOKIE["locale"];
+		} elseif (isset($_SERVER["HTTP_ACCEPT_LANGUAGE"])) {
+			$locale = $_SERVER["HTTP_ACCEPT_LANGUAGE"];
+		} else {
+			$locale = "en_US";
+		}
+		preg_match("/[A-Za-z_]+/", $locale) or $locale = "en_US";
+		file_exists(ROOT_DIR . "/locale/{$locale}/MESSAGES") or $locale = "en_US";
+
+		putenv("LC_ALL={$locale}");
+		setlocale(LC_ALL, $locale);
+		bindtextdomain("messages", ROOT_DIR . "/locale");
+		textdomain("messages");
+	}
+
+	/**
 	 * Init global defines and handlers
 	 */
 	public static function initEnvironment() {
-		Assert::fileExists(ROOT_DIR . "/env.txt");
-		define("ENV", trim(file_get_contents(ROOT_DIR . "/env.txt")));
-		define("LIVE", Config::getInstance()->live);
-		Debug::log("Init", Debug::DEBUG);
+		$readable = is_readable(ROOT_DIR . "/env.txt");
+		define("ENV", $readable ? trim(file_get_contents(ROOT_DIR . "/env.txt")) : "example");
+		define("LIVE", Config::getInstance()->site->live);
+		Debug::log("Bootstrap", Debug::DEBUG);
+		$readable or Debug::log("Cannot read file 'env.txt', assuming 'example' as environment", Debug::WARNING);
 		register_shutdown_function("Bootstrap::shutdownHandler");
 		set_error_handler("Bootstrap::errorHandler");
 	}
@@ -76,10 +91,13 @@ final class Bootstrap {
 	 * Shutdown handler
 	 */
 	public static function shutdownHandler() {
-		$pdo = DB::getPDO();
-		if ($pdo->inTransaction()) {
-			$pdo->rollBack();
-			Debug::log("Unfinished transaction - rollback initiated", Debug::WARNING);
+		if (DB::hasPDO()) {
+			$pdo = DB::getPDO();
+			if ($pdo->inTransaction()) {
+				Debug::log("Unfinished transaction - rollback initiated", Debug::WARNING);
+				$pdo->rollBack();
+				Debug::log("Unfinished transaction - rollback complete", Debug::WARNING);
+			}
 		}
 	}
 
@@ -93,8 +111,8 @@ final class Bootstrap {
 }
 
 // bootstrap
-Bootstrap::initLocale();
 Bootstrap::initPaths();
+Bootstrap::initLocale();
 Bootstrap::initEnvironment();
 
 // legacy code

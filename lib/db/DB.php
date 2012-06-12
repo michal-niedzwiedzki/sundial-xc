@@ -292,6 +292,15 @@ final class DB {
 	private function __construct() { }
 
 	/**
+	 * Indicate if PDO instance is created
+	 *
+	 * @return boolean
+	 */
+	public static function hasPDO() {
+		return self::$pdo instanceof PDO;
+	}
+	
+	/**
 	 * Return PDO instance
 	 *
 	 * @return PDO

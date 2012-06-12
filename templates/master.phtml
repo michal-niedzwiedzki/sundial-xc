@@ -19,13 +19,15 @@
 	</div>
 
 	<div id="main">
-		<div id="sidebar">
-			<ul>
-			<?php foreach ($sidebar as $s): ?>
-				<li><a href="<?= $s["link"] ?>"><?= $s["text"] ?></a></li>
-			<?php endforeach ?>
-			</ul>
-		</div>
+		<?php if ($showSidebar): ?>
+			<div id="sidebar">
+				<ul>
+				<?php foreach ($sidebar as $s): ?>
+					<li><a href="<?= $s["link"] ?>"><?= $s["text"] ?></a></li>
+				<?php endforeach ?>
+				</ul>
+			</div>
+		<?php endif ?>
 		<div id="content">
 			<?php if ($message): ?>
 				<div class="message"><?= $message ?></div>
