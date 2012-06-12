@@ -20,6 +20,7 @@ final class InstallController extends Controller {
 		$this->page->gettext = function_exists("gettext");
 		$this->page->gd = function_exists("gd_info");
 		$this->page->pdo = class_exists("PDO");
+		$this->page->log = is_writable(ROOT_DIR . "/log");
 	}
 
 	/**
@@ -51,23 +52,40 @@ final class InstallController extends Controller {
 			and $config->db->username === "sundialxc" and $config->db->password === "sundialxc";
 
 		// check if already installed
-		$this->page->alreadyInstalled = $connection and DB::checkMissingTables() === array();
+		$alreadyInstalled = $connection and DB::checkMissingTables() === array();
+		$this->page->alreadyInstalled = $alreadyInstalled;
+
+		// install
+		$this->page->ok = FALSE;
+		if ($connection and !$alreadyInstalled) {
+			try {
+				DB::create();
+				$this->page->ok = TRUE;
+			} catch (Exception $e) {
+			}
+		}
 	}
 
 	/**
 	 * @Public
-	 * @Title "Sundial XC installation wizard - Step 2: Configuration setup"
+	 * @Title "Sundial XC installation wizard - Step 4: Administrator password"
 	 */
 	public function step4_admin() {
 		$admin = new cMember();
 		$admin->LoadMember("admin");
-		$defaultPassword = $admin->password === "355c8f65bdcf7dcd187f6ca492014f6eb6c47d67";
+		$defaultPassword = $admin->password === sha1("password");
 		$this->page->defaultPassword = $defaultPassword;
 		$this->page->passwordChanged = FALSE;
 		if ($defaultPassword and $password = HTTPHelper::post("password")) {
-			PDOHelper::update(DB::MEMBERS, array("password" => md5($password)), "id = :id", array("id" => "admin"));
+			PDOHelper::update(DB::MEMBERS, array("password" => sha1($password)), "id = :id", array("id" => "admin"));
 			$this->passwordChanged = TRUE;
 		}
 	}
+
+	/**
+	 * @Public
+	 * @Title "Sundial XC installation wizard - Installation complete"
+	 */
+	public function step5_done() { }
 
 }

@@ -12,11 +12,18 @@
 		"email": "admin@localhost",
 		"phone": "1234567890"
 	},
-	"db": {
-		"database": "sundialxc",
-		"server": "localhost",
-		"username": "sundialxc",
-		"password": "sundialxc"
+	"database": {
+		"development": {
+			"database": "sundialxc",
+			"server": "localhost",
+			"username": "sundialxc",
+			"password": "sundialxc"
+		},
+		"test": {
+		},
+		"production": {
+		},
+		"silo": "development"
 	},
 	"log": {
 		"LogWriterScreen": {

@@ -7,7 +7,7 @@
 	</p>
 	<p>
 		Create a MySQL database with username and password.<br/>
-		Then open up <?= $configName ?> and amend section <em>db</em>
+		Then open up <?= $configName ?> and amend section <em>database</em>
 		to match your database connection details.
 	</p>
 	<ul>
@@ -39,5 +39,21 @@
 		and just drop all tables in the database. Then reload the page.
 		WARNING: This will completely erase all existing data in Sundial XC database.
 	</p>
+
+<?php elseif (!$ok): ?>
+
+	<p>
+		There was problem creating database structure.<br/>
+		Sorry, you will have to investigate method <code>DB::create()</code> yourself.
+	</p>
+
+<?php else: ?>
+
+	<p>
+		Database structure created successfully.
+	</p>
+	<ul>
+		<li><a href="install_step4_admin.php">Click here to continue installation</a></li>
+	</ul>
 
 <?php endif ?>

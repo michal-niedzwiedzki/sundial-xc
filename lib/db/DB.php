@@ -27,6 +27,12 @@ final class DB {
 	const PAGES = "cdm_pages";
 	const TRADES_PENDING = "trades_pending";
 
+	/**
+	 * Database silo (development, test, production)
+	 * @var string
+	 */
+	private static $silo = NULL;
+
 	private static $tables = array(
 		DB::MEMBERS => "
 			CREATE TABLE member (
@@ -289,7 +295,17 @@ final class DB {
 	 */
 	private static $pdo;
 
-	private function __construct() { }
+	/**
+	 * Request use of specific database silo
+	 *
+	 * @param $silo string
+	 */
+	public static function useSilo($silo) {
+		if (self::$silo) {
+			throw new Exception("Silo already set, cannot change");
+		}
+		self::$silo = $silo;
+	}
 
 	/**
 	 * Indicate if PDO instance is created
@@ -307,22 +323,33 @@ final class DB {
 	 * @author Michał Rudnicki <michal.rudnicki@epsi.pl>
 	 */
 	public static function getPDO() {
-		if (!isset(self::$pdo)) {
-			$config = Config::getInstance();
-			Assert::isObject($config->db);
-			Assert::hasProperty("database", $config->db);
-			Assert::hasProperty("server", $config->db);
-			Assert::hasProperty("username", $config->db);
-			Assert::hasProperty("password", $config->db);
-			$dsn = "mysql:dbname={$config->db->database};host={$config->db->server}";
-			$options = array(
-				PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES 'UTF8'",
-				PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
-				PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
-			);
-			self::$pdo = new PDO($dsn, $config->db->username, $config->db->password, $options);
+		if (isset(self::$pdo)) {
+			return self::$pdo;
 		}
-		return self::$pdo;
+
+		// check silo config
+		$config = Config::getInstance();
+		Assert::hasProperty("silo", $config->database);
+		$silo = $config->database->silo;
+		self::$silo or self::$silo = $silo;
+		Assert::isObject($config->database);
+		Assert::hasProperty($silo, $config->database);
+
+		// check connection details
+		$connection = $config->database->$silo;
+		Assert::hasProperty("database", $connection);
+		Assert::hasProperty("server", $connection);
+		Assert::hasProperty("username", $connection);
+		Assert::hasProperty("password", $connection);
+
+		// connect to database
+		$dsn = "mysql:dbname={$connection->database};host={$connection->server}";
+		$options = array(
+			PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES 'UTF8'",
+			PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+			PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+		);
+		return self::$pdo = new PDO($dsn, $connection->username, $connection->password, $options);
 	}
 
 	/**
@@ -476,7 +503,19 @@ final class DB {
 	public static function drop() {
 		$pdo = DB::getPDO();
 		foreach (DB::$tables as $table => $create) {
-			Assert::true($db->query("DROP TABLE IF EXISTS $database CASCADE"));
+			Assert::true($db->query("DROP TABLE IF EXISTS $table CASCADE"));
+		}
+	}
+
+	/**
+	 * Truncate all tables used by system
+	 *
+	 * @author Michał Rudnicki <michal.rudnicki@epsi.pl>
+	 */
+	public static function truncate() {
+		$pdo = DB::getPDO();
+		foreach (DB::$tables as $table => $create) {
+			Assert::true($db->query("TRUNCATE TABLE $table"));
 		}
 	}
 

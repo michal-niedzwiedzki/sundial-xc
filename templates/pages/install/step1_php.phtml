@@ -3,20 +3,34 @@
 <p>
 	The following PHP modules are required for Sundial XC to work:
 </p>
-
 <ul>
 	<li><strong>PDO</strong> &ndash; <?php if ($pdo): ?>Installed<?php else: ?>Not installed<?php endif ?></li>
 	<li><strong>GD</strong> &ndash; <?php if ($gd): ?>Installed<?php else: ?>Not installed<?php endif ?></li>
 	<li><strong>GNU gettext</strong> &ndash; <?php if ($gettext): ?>Installed<?php else: ?>Not installed<?php endif ?></li>
 </ul>
 
+<?php if (!$log): ?>
+
+	<p>
+		Directory <code>log/</code> is not writable for server.<br/>
+		This is not fatal, but you will not be able to store application logs.
+	</p>
+
+<?php endif ?>
+
 <?php if ($pdo and $gd and $gettext): ?>
+
 	<p>
 		Looks like all required modules are installed.
 	</p>
 	<ul>
 		<li><a href="install_step2_config.php">Click here to continue installation</a></li>
 	</ul>
+
 <?php else: ?>
-	<p>Please install missing modules to continue installation.</p>
+
+	<ul>
+		<li><a href="install_step1_php.php">Please install missing modules and click here to reload page</a></li>
+	</ul>
+
 <?php endif ?>
