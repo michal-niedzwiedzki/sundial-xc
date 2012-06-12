@@ -15,8 +15,8 @@
 	"db": {
 		"database": "sundialxc",
 		"server": "localhost",
-		"username": "sundialxca",
-		"password": "sundialxca"
+		"username": "sundialxc",
+		"password": "sundialxc"
 	},
 	"log": {
 		"LogWriterScreen": {

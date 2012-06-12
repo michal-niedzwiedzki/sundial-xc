@@ -1,0 +1,35 @@
+<h2>Step 2: Configuration setup</h2>
+
+<?php if ($defaultConfig): ?>
+	<p>
+		You are using default configuration called <em><?= $env ?></em>.
+	</p>
+	<p>
+		It is highly recommended that you change to a custom configuration.<br/>
+		To do so, please copy file <code>config/example.json</code> to <code>config/custom.json</code>.<br/>
+		You can use different name for your config file, too.
+	</p>
+	<p>
+		Next, create file <code>env.txt</code> and put single line in it with
+		the name of your configuration, for instance <code>custom</code>.<br/>
+		Ommit the <em>.json</em> extension.
+	</p>
+	<ul>
+		<li><a href="install_step2_config.php">Reload the page when done changing your configuration</a></li>
+	</ul>
+	<p>
+		If you are having problems setting up custom environment you can easily revert
+		to default one by deleting file <code>env.txt</code>.
+	</p>
+<?php else: ?>
+	<p>
+		Your current configuration is <em><?= $env ?></em>.
+	</p>
+	<p>
+		If you wish to revert to default configuration just delete file <code>env.txt</code>.
+	</p>
+<?php endif ?>
+
+<ul>
+	<li><a href="install_step3_database.php">Click here to continue instasllation</a></li>
+</ul>

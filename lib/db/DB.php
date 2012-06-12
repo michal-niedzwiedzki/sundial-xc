@@ -299,7 +299,7 @@ final class DB {
 	public static function hasPDO() {
 		return self::$pdo instanceof PDO;
 	}
-	
+
 	/**
 	 * Return PDO instance
 	 *
@@ -350,6 +350,24 @@ final class DB {
 				Assert::true($pdo->query($create));
 			}
 		}
+	}
+
+	/**
+	 * Return missing tables
+	 *
+	 * @return string[]
+	 */
+	public static function checkMissingTables() {
+		$missing = array();
+		$pdo = DB::getPDO();
+		foreach (DB::$tables as $table => $create) {
+			try {
+				$pdo->query("DESC $table");
+			} catch (PDOException $e) {
+				$missing[] = $table;
+			}
+		}
+		return $missing;
 	}
 
 	public static function initializeSystemAccount() {
