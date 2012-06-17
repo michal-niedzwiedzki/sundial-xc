@@ -110,7 +110,7 @@ class cMember {
 		}
 		$sql = "
 			SELECT NULL FROM $tableName
-			WHERE status = 'L' and member_id =  :id
+			WHERE status = 'L' and member_id = :id
 		";
 		$row = PDOHelper::fetchRow($sql, array("id" => $user));
 		empty($row)

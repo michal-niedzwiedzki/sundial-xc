@@ -15,6 +15,7 @@ if (Config::getInstance()->site->maintenance) {
 $d = Dispatcher::getInstance();
 LIVE or $d->addFilter(new DebugViewDispatchFilter()); // outputs logged events to the screen
 LIVE or $d->addFilter(new RequestDebugDispatchFilter()); // debugs POST requests
+$d->addFilter(new CSRFDispatchFilter()); // checks CSRF token for POST requests
 $d->addFilter(new PathInfoDispatchFilter()); // picks up route info from $_SERVER['PATH_INFO']
 $d->addFilter(new PageNotFoundDispatchFilter()); // produces 404 error when page not found
 $d->addFilter(new PublicPageDispatchFilter()); // produces 403 error if not logged in while accessing non-public page
@@ -28,9 +29,7 @@ LIVE or Debug::log("Dispatch and execution", Debug::DEBUG);
 try {
 	$d->dispatch();
 } catch (Exception $e) {
-	if (!Config::getInstance()->live) {
-		Debug::log($e->getMessage() . PHP_EOL . $e->getTraceAsString(), Debug::ERROR);
-	}
+	Debug::log($e->getMessage() . PHP_EOL . $e->getTraceAsString(), Debug::ERROR);
 	PageView::getInstance()->displayError("Action could not be completed due to software problem.");
 }
 LIVE or Debug::log("Postfiltering", Debug::DEBUG);

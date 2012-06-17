@@ -6,21 +6,23 @@ final class LoginController extends Controller {
 	 * @Public
 	 */
 	public function index() {
-		$user = cMember::getCurrent();
-		$action = HTTPHelper::post("action");
-		$action or $action = HTTPHelper::get("action");
-		$action === "logout" and $user->Logout();
-		if ($action == "login") {
-			$redir_url = HTTPHelper::post("location");
-			$user = trim(HTTPHelper::post("user"));
-			$pass = trim(HTTPHelper::post("pass"));
-			if (!$user) {
-				cError::getInstance()->Error("Inserta un nombre de usuario para entrar.");
-			} elseif (!$pass) {
-				cError::getInstance()->Error("No puede entrar sin contraseña. Si ha olvidado su contraseña puede pedir de nosotros una contraseña nueva.");
-			} else {
-				cMember::getCurrent()->Login($user, $pass);
-			}
+		// logout logic
+		if (HTTPHelper::rq("action") === "logout") {
+			cMember::getCurrent()->Logout();
+			return;
+		}
+
+		// authenticate and log in
+		$redir_url = HTTPHelper::post("location");
+		$redir_url or $redir_url = "member_profile.php";
+		$user = trim(HTTPHelper::post("user"));
+		$pass = trim(HTTPHelper::post("pass"));
+		if (!$user) {
+			cError::getInstance()->Error("Inserta un nombre de usuario para entrar.");
+		} elseif (!$pass) {
+			cError::getInstance()->Error("No puede entrar sin contraseña. Si ha olvidado su contraseña puede pedir de nosotros una contrase�nu�a eva");
+		} else {
+			cMember::getCurrent()->Login($user, $pass);
 		}
 		include "redirect.php";
 	}

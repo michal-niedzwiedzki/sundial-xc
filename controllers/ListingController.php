@@ -27,7 +27,7 @@ final class ListingController extends Controller {
 		}
 		$form->freeze();
 		$form->process();
-		$values = $form->getValues();
+		$values = $form->exportValues();
 
 		if ($adminMode) {
 			$user->MustBeLevel(1);
@@ -46,7 +46,7 @@ final class ListingController extends Controller {
 			$expire_date = $date['Y'] . '/' . $date['F'] . '/' . $date['d'];
 			$parms['expire_date'] = $expire_date;
 		}
-	
+
 		$parms['title'] = htmlspecialchars($values['title']);
 		$parms['description'] = htmlspecialchars($values['description']);
 		$parms['category'] = $values['category'];
