@@ -1,7 +1,5 @@
 <?php
 
-require_once "../bootstrap.php";
-
 $config = Config::getInstance();
 $user = cMember::getCurrent();
 $user->MustBeLoggedOn();

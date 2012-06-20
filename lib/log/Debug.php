@@ -13,6 +13,8 @@ final class Debug {
 	private $startTime = 0;
 	private $writers = array();
 
+	private static $problems = 0;
+
 	private function __construct(stdClass $writers) {
 		$this->startTime = microtime(TRUE);
 		foreach ($writers as $className => $options) {
@@ -31,6 +33,11 @@ final class Debug {
 		foreach ($debug->writers as $writer) {
 			$writer->log($time, $message, $severity);
 		}
+		$severity > self::INFO and ++self::$problems;
+	}
+
+	public static function hasProblems() {
+		return self::$problems;
 	}
 
 	public static function dump(array $a) {

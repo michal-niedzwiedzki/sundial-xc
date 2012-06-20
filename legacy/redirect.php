@@ -12,6 +12,11 @@ if (!isset($redir_url)) {
 	isset($_GET['item']) and $redir_item = $_GET['item'];
 }
 
+if (Debug::hasProblems()) {
+	Debug::log("Problems exist that prevent redirect", Debug::INFO);
+ 	return;
+}
+
 if (isset($redir_url)) {
 	// a specific URL was requested.  Go there regardless of other variables.
 	header("Location:".$redir_url);
