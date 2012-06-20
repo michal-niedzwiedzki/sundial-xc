@@ -48,7 +48,7 @@ class cListingGroup {
 		return true;
 	}
 
-	public function LoadListingGroup($title = NULL, $category = NULL, $memberId = NULL, $since = null, $includeExpired = TRUE) {
+	public function LoadListingGroup($title = NULL, $category = NULL, $memberId = NULL, $since = NULL, $includeExpired = TRUE) {
 		$this->title = $title ? $title : "%";
 		$category or $category = "%";
 		$memberId or $memberId = "%";
