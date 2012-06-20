@@ -27,7 +27,7 @@ final class MemberController extends Controller {
 		if (!$form->validate()) {
 			return;
 		}
-		
+
 		$form->freeze();
 		$form->process();
 		$values = $form->exportValues();
@@ -129,10 +129,10 @@ final class MemberController extends Controller {
 		$this->page->searchId = HTTPHelper::rq("uID");
 		$this->page->searchName = HTTPHelper::rq("uName");
 		$this->page->searchOrder = HTTPHelper::rq("orderBy");
-		
+
 		$member_list = new cMemberGroup();
 		//$member_list->LoadMemberGroup();
-		
+
 		// How should results be ordered?
 		switch(HTTPHelper::rq("orderBy")) {
 			case "fm":
@@ -150,16 +150,16 @@ final class MemberController extends Controller {
 			default:
 				$orderBy = 'ORDER BY m.member_id';
 		}
-		
+
 		// SQL condition string
 		$condition = "TRUE";
 		$params = array();
-		
+
 		if (HTTPHelper::rq("uID")) { // We're searching for a specific member ID in the SQL
 			$condition .= " AND m.member_id = :id";
 			$params["id"] = trim(HTTPHelper::rq("uID"));
 		}
-		
+
 		if (HTTPHelper::rq("uName")) { // We're searching for a specific username in the SQL
 			$uName = trim(HTTPHelper::rq("uName"));
 			// Does it look like we've been provided with a first AND last name?
@@ -175,7 +175,7 @@ final class MemberController extends Controller {
 			}
 			$condition .= " AND ($nameSrch)";
 		}
-		
+
 		if (HTTPHelper::rq("uLoc")) { // We're searching for a specific Location in the SQL
 			$condition .= " AND (p.address_post_code LIKE :postCode OR p.address_street2 LIKE :street2 OR p.address_city LIKE :city OR p.address_country LIKE :country";
 			$params["postCode"] = "%" . trim(HTTPHelper::rq("uLoc")) . "%";
@@ -183,7 +183,7 @@ final class MemberController extends Controller {
 			$params["city"] = "%" . trim(HTTPHelper::rq("uLoc")) . "%";
 			$params["country"] = "%" . trim(HTTPHelper::rq("uLoc")) . "%";
 		}
-		
+
 		// Do search in SQL
 		$membersTableName = DB::MEMBERS;
 		$personsTableName = DB::PERSONS;
@@ -196,7 +196,7 @@ final class MemberController extends Controller {
 			$member_list->members[$i] = new cMember();
 			$member_list->members[$i]->LoadMember($row["member_id"]);
 		}
-		
+
 		$rows = array();
 		$showInactive = Config::getInstance()->legacy->SHOW_INACTIVE_MEMBERS;
 		if (!empty($member_list->members)) {
@@ -213,11 +213,11 @@ final class MemberController extends Controller {
 				} // end loop to force display of inactive members off
 			}
 		}
-		
+
 		$table = new View("tables/members.phtml");
 		$table->rows = $rows;
 		$table->displayBalance = Config::getInstance()->legacy->MEM_LIST_DISPLAY_BALANCE or $user->member_role >= 1;
-		
+
 		$this->page->table = $table;
 	}
 
@@ -236,6 +236,7 @@ final class MemberController extends Controller {
 		$this->page->title = $config->site->title;
 		$this->page->isLoggedOn = $user->IsLoggedOn();
 		$this->page->isRestricted = $user->AccountIsRestricted();
+		$this->page->csrf = CSRF;
 	}
 
 	/**

@@ -7,7 +7,8 @@
 
 <form method="POST">
 
-	<input type="hidden" name="process" value="actionOnMember">
+	<input type="hidden" name="process" value="actionOnMember"/>
+	<input type="hidden" name="csrf" value="<?= $csrf ?>"/>
 
 	<p>
 		Socios sin restricciones
@@ -18,7 +19,7 @@
 			</option>
 		<?php endforeach ?>
 		</select>
-		<input name="doRestrict" type="submit" value="Añadir restricción">
+		<input name="doRestrict" type="submit" value="Añadir restricción"/>
 	</p>
 
 	<p>
@@ -30,7 +31,7 @@
 			</option>
 		<?php endforeach ?>
 		</select>
-		<input name="liftRestrict" type="submit" value="Levantar restricción">
+		<input name="liftRestrict" type="submit" value="Levantar restricción"/>
 	</p>
 
 </form>

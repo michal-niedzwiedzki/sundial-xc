@@ -30,6 +30,7 @@ final class ManageController extends Controller {
 		}
 		$this->page->restrictedM = $restrictedM;
 		$this->page->okM = $okM;
+		$this->page->csrf = CSRF;
 
 		// leave early if not posted
 		if (!HTTPHelper::rq("process")) {
