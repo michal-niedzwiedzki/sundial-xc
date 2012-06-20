@@ -271,9 +271,9 @@ final class MemberController extends Controller {
 		$member->LoadMember(HTTPHelper::rq("member_id"));
 
 		$offeredListings = new cListingGroup(OFFER_LISTING);
-		$offeredListings->LoadListingGroup(null, null, HTTPHelper::rq("member_id"));
+		$offeredListings->LoadListingGroup(NULL, NULL, HTTPHelper::rq("member_id"));
 		$wantedListings = new cListingGroup(WANT_LISTING);
-		$wantedListings->LoadListingGroup(null, null, HTTPHelper::rq("member_id"));
+		$wantedListings->LoadListingGroup(NULL, NULL, HTTPHelper::rq("member_id"));
 
 		$this->page->contactDetails = $member->DisplayMember();
 		$this->page->offered = $offeredListings->DisplayListingGroup();
