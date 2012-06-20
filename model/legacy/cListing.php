@@ -61,7 +61,6 @@ class cListing {
 	}
 
 	public function SaveListing($updatePostingDate = TRUE) {
-Assert::true(FALSE); // schema incompatible: missing column listing_id
 		$updatePostingDate and $this->posting_date = date('Y-m-d H:i:s');
 		return PDOHelper::update(DB::LISTINGS, array(
 			"title" => $this->title,
@@ -109,18 +108,20 @@ Assert::true(FALSE); // schema incompatible: missing column listing_id
 		$this->DeactivateReactivate();
 	}
 
-	function DeactivateReactivate() {
-		if($this->reactivate_date) {
-			$reactivate_date = new cDateTime($this->reactivate_date);
-			if ($this->status == INACTIVE and $reactivate_date->Timestamp() <= strtotime("now")) {
+	public function DeactivateReactivate() {
+		if ($this->reactivate_date) {
+			$date = new cDateTime($this->reactivate_date);
+			$unix = $date->Timestamp();
+			if ($this->status == INACTIVE and $unix and $unix <= time()) {
 				$this->status = ACTIVE;
 				$this->reactivate_date = null;
 				$this->SaveListing();
 			}
 		}
-		if($this->expire_date) {
-			$expire_date = new cDateTime($this->expire_date);
-			if ($this->status <> EXPIRED and $expire_date->Timestamp() <= strtotime("now")) {
+		if ($this->expire_date) {
+			$date = new cDateTime($this->expire_date);
+			$unix = $date->Timestamp();
+			if ($this->status <> EXPIRED and $unix and $unix <= time()) {
 				$this->status = EXPIRED;
 				$this->SaveListing();
 			}
