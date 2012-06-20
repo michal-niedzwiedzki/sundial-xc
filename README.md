@@ -13,21 +13,18 @@ version 3.0 or later.
 
 To install Sundial XC you need a web server with PHP 5.3+ and MySQL 5.1+.
 
-* Set up a MySQL database and user
 * Set up your web server to serve directory _public/www/_
-* Create file _env.txt_ with environment name in single line
-* Copy _config/example.json_ to _config/environment_name.json_
-* Amend config to suit your needs, specifically providing database connection information
-* Create file _log/environment_name.log_ with 666 permissions
-* Open _create_db.php_ file in your browser
-* Once installed delete _create_db.php_ from server
+* In your browser go to _http://example.com/install.php_
+* Follow the instructions on screen
 
 ## Credits and history
 
-Sundial XC is based on [Local-Exchange-UK](https://github.com/cdmweb/Local-Exchange-UK) v1.01 translated into Spanish by
+Sundial XC is a fork followed by rewrite of:
+
+* [Local-Exchange](http://sourceforge.net/projects/local-exchange/)
+* [Local-Exchange-UK](https://github.com/cdmweb/Local-Exchange-UK) v1.01 translated into Spanish by
 [Graeme Herbert](http://www.linkedin.com/pub/graeme-herbert/9/503/794) for local time bank
-[A2Manos](http://www.bancodetiempomalasana.com) in Madrid, Spain. This in turn is a fork of
-[Local-Exchange](http://sourceforge.net/projects/local-exchange/).
+[A2Manos](http://www.bancodetiempomalasana.com) in Madrid, Spain
 
 Sundial XC was massively refactored and largely reimplemented from scratch by Michał Rudnicki.
 The URL structure, config entries, and UI flows remain the same as in original work,
@@ -50,10 +47,10 @@ is to migrate from using global $cDB object to PDOHelper. Another challenge is t
 
 ## Future versions
 
-* **Installer.** Separate from the rest of the application. Several pages to guide user through installation process.
+* **Internationalization with gettext.** Yeah, currently it's in Spanish.
+* **Proper cron mechanism.** Existing _events_ need to run asynchronously.
+* **Database normalization.** You will see the need for this one as soon as you look into existing database.
 * **Migration script from Local-Excahnge-UK.**
 * **Restful API version 0.0**. API for existing model classes shielded by authorization layer. Covered in 100% with tests.
 * **Android client.** Nice to have to explore correctness and completeness of API v 0.0.
-* **Database normalization.** You will see the need for this one as soon as you look into existing database.
-* **Interoperability between instances of Sundial XC.** Very important to connect not only members of communities, but also communities with each other.
-* **Internationalization with gettext.** Yeah, currently it's in Spanish.
+* **Interoperability between instances of Sundial XC.** Very important to connect members not only within community but also across communities.
