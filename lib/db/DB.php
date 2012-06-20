@@ -503,7 +503,7 @@ final class DB {
 	public static function drop() {
 		$pdo = DB::getPDO();
 		foreach (DB::$tables as $table => $create) {
-			Assert::true($db->query("DROP TABLE IF EXISTS $table CASCADE"));
+			Assert::true($pdo->query("DROP TABLE IF EXISTS $table CASCADE"));
 		}
 	}
 
@@ -515,7 +515,7 @@ final class DB {
 	public static function truncate() {
 		$pdo = DB::getPDO();
 		foreach (DB::$tables as $table => $create) {
-			Assert::true($db->query("TRUNCATE TABLE $table"));
+			Assert::true($pdo->query("TRUNCATE TABLE $table"));
 		}
 	}
 
