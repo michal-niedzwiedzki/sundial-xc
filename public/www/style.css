@@ -31,20 +31,20 @@
 
 body {
 	font-family: 'Roboto', sans-serif;
-	font-size: 14pt;
-	color: #404040;
+	font-size: 12pt;
+	color: #606060;
 	background: #f8f8f8;
 	margin: 0;
 	padding: 0;
 }
 
 .standard-page {
-	width: 1000px;
+	width: 990px;
 	margin: 0 auto;
 }
 
 #main {
-	width: 1000px;
+	width: 990px;
 	margin: 0 auto;
 	padding: 0 1em;
 	box-shadow: 0 0 1em #d0d0d0;
@@ -73,7 +73,7 @@ body {
 
 #content {
 	float: right;
-	width: 800px;
+	width: 790px;
 	padding: 1em 0;
 	min-height: 500px;
 }
@@ -109,9 +109,9 @@ h1:first-child { margin-top: 0 }
 h2:first-child { margin-top: 0 }
 h3:first-child { margin-top: 0 }
 
-h1 { font-size: 200%; -webkit-mask-image: -webkit-gradient(linear, left top, left bottom, from(rgba(255, 255, 255, .7)), to(rgba(255, 255, 255, 1))); }
-h2 { font-size: 130%; color: #b0b0b0; font-weight: normal; text-shadow: 0 1px 0 #404040 }
-h3 { font-size: 120% }
+h1 { font-size: 26pt; -webkit-mask-image: -webkit-gradient(linear, left top, left bottom, from(rgba(255, 255, 255, .7)), to(rgba(255, 255, 255, 1))); }
+h2 { font-size: 18pt; color: #b0b0b0; font-weight: normal; text-shadow: 0 1px 0 #404040 }
+h3 { font-size: 16pt; color: #404040 }
 
 h1, h2, h3 { font-weight: normal; line-height: normal }
 
@@ -123,7 +123,7 @@ h1, h2, h3 { font-weight: normal; line-height: normal }
 }
 
 #sidebar a, #sidebar a:link, #sidebar a:visited {
- 	color: #606060;
+ 	color: #707070;
 }
 
 #sidebar a:hover, #sidebar a:active {
