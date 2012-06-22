@@ -67,13 +67,13 @@ body {
 	width: 170px;
 	font-size: 11pt;
 	padding: 1em 0;
-	margin: 0 20px 0 0;
+	margin: 0;
 	border-right: #c0c0c0 1px solid;
 }
 
 #content {
 	float: right;
-	width: 790px;
+	width: 800px;
 	padding: 1em 0;
 	min-height: 500px;
 }
