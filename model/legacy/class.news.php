@@ -54,7 +54,7 @@ class cNews {
 			return true;
 		} else {
 			cError::getInstance()->Error("There was an error accessing the news table.  Please try again later.");
-			include("redirect.php");
+			return FALSE;
 		}
 		
 	}

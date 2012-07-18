@@ -128,7 +128,7 @@ class cListingGroup {
 			);
 		}
 
-		$table = new View("listing.phtml");
+		$table = new View("listing");
 		$table->data = $rows;
 		$table->categories = array_keys($categories);
 		return $table;

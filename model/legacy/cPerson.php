@@ -70,7 +70,6 @@ class cPerson {
 		$out = PDOHelper::fetchCell("c", $sql, array("id" => $this->member_id, "firstName" => $this->first_name, "lastName" => $this->last_name, "midName" => $this->mid_name, "dob" => $this->dob));
 		if ($out) {
 			cError::getInstance()->Error("No ha sido posible guardar datos para esta persona. Ya existe en la base de datos un registro con los mismos datos.");
-			include "redirect.php";
 			return FALSE;
 		}
 		return PDOHelper::insert(DB::PERSONS, array(
@@ -137,7 +136,6 @@ class cPerson {
 		$row = PDOHelper::fetchRow($sql, array("id" => $who));
 		if (empty($row)) {
 			cError::getInstance()->Error("Ha ocurrido un error accediendo a los datos de ({$who}).  Intentalo otra vez mas tarde.");
-			include("redirect.php");
 			return FALSE;
 		}
 		foreach ($row as $column => $value) {

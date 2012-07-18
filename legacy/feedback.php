@@ -66,7 +66,7 @@ function process_data ($values) {
 		$context = SELLER;
 	} else {
 		cError::getInstance()->Error("Members do not match the trade selected."); // Theoretically, must be a hacker
-		include("redirect.php");
+		return;
 	}
 	
 	$feedback = new cFeedback($member->member_id, $member_about->member_id, $context, $trade->category->id, htmlspecialchars($_REQUEST["trade_id"]), $values["rating"], htmlspecialchars($values["comments"]));

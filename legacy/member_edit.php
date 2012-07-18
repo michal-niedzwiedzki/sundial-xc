@@ -3,7 +3,7 @@
 $user = cMember::getCurrent();
 $master = PageView::getInstance();
 $form = FormHelper::standard();
-$page = new View("pages/member/edit.phtml");
+$page = new View("pages/member/edit");
 $page->form = $form;
 //
 // First, we define the form

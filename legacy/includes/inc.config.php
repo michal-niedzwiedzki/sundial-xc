@@ -209,6 +209,3 @@ define ("STATE_TEXT", "Ciudad");
 define ("ZIP_TEXT", "Codigo Postal");
 
 define("LOAD_FROM_SESSION",-1);  // Not currently in use
-
-// URL to PHP page which handles redirects and such.
-define ("REDIRECT_URL",SERVER_PATH_URL."/redirect.php");

@@ -38,7 +38,7 @@ class cTitleList {
 		$sql = "SELECT title FROM $tableName WHERE member_id = :id AND type = :type ORDER BY title";
 		$out = PDOHelper::fetchAll($sql, array("id" => $member->member_id, "type" => $this->type_code));
 
-		$list = new View("tables/listings-edit.phtml");
+		$list = new View("tables/listings-edit");
 		$list->rows = $out;
 		$list->memberId = $member->member_id;
 		$list->type = $this->type;

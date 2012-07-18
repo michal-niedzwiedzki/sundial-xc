@@ -83,7 +83,7 @@ class cTradeGroup {
 			);
 			++$i;
 		}
-		$page = new View("tables/trades.phtml");
+		$page = new View("tables/trades");
 		$page->rows = $rows;
 		return $page;
 	}

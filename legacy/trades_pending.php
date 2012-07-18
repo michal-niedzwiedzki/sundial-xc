@@ -17,7 +17,7 @@ $action = HTTPHelper::rq("action");
 
 $pending = new cTradesPending($_SESSION["user_login"]);
 
-$table = new View("tables/trades-pending.phtml");
+$table = new View("tables/trades-pending");
 
 $page->membersCanInvoice = $config->legacy->MEMBERS_CAN_INVOICE;
 $page->numToConfirm = $pending->numToConfirm;

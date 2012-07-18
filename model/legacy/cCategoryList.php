@@ -7,7 +7,7 @@ class cCategoryList {
 	 */
 	public $category = array();
 
-	public function LoadCategoryList($activeOnly = FALSE, $type = "%", $redirect = FALSE) {
+	public function LoadCategoryList($activeOnly = FALSE, $type = "%") {
 		$categoriesTable = DB::CATEGORIES;
 		$listingsTable = DB::LISTINGS;
 		if ($activeOnly) {
@@ -32,9 +32,6 @@ class cCategoryList {
 
 		if (empty($rows)) {
 			cError::getInstance()->Error("No ha sido posible encontrar el registro de una categoría.  Intentalo otra vez mas tarde.");
-			if ($redirect) {
-				include "redirect.php";
-			}
 			return FALSE;
 		}
 		return TRUE;

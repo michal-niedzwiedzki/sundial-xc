@@ -29,7 +29,6 @@ class cCategory {
 			$row = PDOHelper::fetchRow($sql, array("id" => $id));
 		} catch (Exception $e) {
 			cError::getInstance()->Error("No ha sido posible encontrar el código para la categoría '".$id."'.  Intentalo otra vez mas tarde.");
-			include "redirect.php";
 			return FALSE;
 		}
 		$this->id = $id;
@@ -42,7 +41,6 @@ class cCategory {
 		$out = PDOHelper::delete(DB::CATEGORIES, "category_id = :id", array("id" => $id));
 		if (!$out) {
 			cError::getInstance()->Error("Ha ocurrido un error borrando el código de la categoría '".$id."'.  Intentalo otra vez mas tarde.");
-			include "redirect.php";
 			return FALSE;
 		}
 		unset($this);

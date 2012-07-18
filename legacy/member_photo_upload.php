@@ -5,7 +5,7 @@ if (ALLOW_IMAGES!=true)
 	
 if(!extension_loaded('gd')) {
 	cError::getInstance()->Error("The GD extension is required for photo uploads!");
-	include("redirect.php");
+	return;
 }
 
 $p->site_section = EVENTS;

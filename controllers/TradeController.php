@@ -68,7 +68,6 @@ final class TradeController extends Controller {
 		}
 		if (!($values['units'] > 0)) {
 			PageView::getInstance()->displayError("Número de horas no ha sido especificado");
-			include("redirect.php");
 			return;
 		}
 

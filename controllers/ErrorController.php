@@ -1,11 +1,11 @@
 <?php
 
 final class ErrorController extends Controller {
-	
+
 	/**
 	 * @Public
 	 * @Title "Forbidden"
-	 * @Page "../_error.phtml"
+	 * @Page "../_error"
 	 * @ResponseCode 403
 	 */
 	public function forbidden() {
@@ -16,7 +16,7 @@ final class ErrorController extends Controller {
 	/**
 	 * @Public
 	 * @Title "Not found"
-	 * @Page "../_error.phtml"
+	 * @Page "../_error"
 	 * @ResponseCode 404
 	 */
 	public function notFound() {
@@ -27,7 +27,7 @@ final class ErrorController extends Controller {
 	/**
 	 * @Public
 	 * @Title "Not acceptable"
-	 * @Page "../_error.phtml"
+	 * @Page "../_error"
 	 * @ResponseCode 406
 	 */
 	public function notAcceptable() {

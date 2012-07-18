@@ -15,17 +15,17 @@ final class PageTemplateDispatchFilter implements DispatchFilter {
 
 	public function before() {
 		$dispatcher = Dispatcher::getInstance();
-		
-		// discover page template based on @Page annotation or by obeying naming convention 
+
+		// discover page template based on @Page annotation or by obeying naming convention
 		$pageAnnotation = $dispatcher->getAnnotation("Page");
 		if ($pageAnnotation) {
 			$pageTemplate = "pages/{$pageAnnotation}";
 		} else {
-			$pageTemplate = "pages/" . $dispatcher->getControllerName() . "/" . $dispatcher->getActionName() . ".phtml";
+			$pageTemplate = "pages/" . $dispatcher->getControllerName() . "/" . $dispatcher->getActionName();
 		}
 
 		// check if template file exists
-		if (file_exists(ROOT_DIR . "/templates/" . $pageTemplate)) {
+		if (file_exists(ROOT_DIR . "/templates/" . $pageTemplate . View::getExtension())) {
 			Debug::log("Found page $pageTemplate", Debug::INFO);
 			$controller = $dispatcher->getController();
 			$controller->page = new View($pageTemplate);

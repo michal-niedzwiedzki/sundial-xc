@@ -1,6 +1,9 @@
 <?php
 
-require_once "../../bootstrap.php";
+require_once dirname(__FILE__) . "/../../bootstrap.php";
+
+ini_set('display_errors', "On");
+error_reporting(E_ALL | E_STRICT);
 
 $d = Dispatcher::getInstance();
 $d->addFilter(new ContentTypeDispatchFilter());

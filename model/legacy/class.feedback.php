@@ -42,7 +42,7 @@ class cFeedback {
 		} 
 		
 		cError::getInstance()->Error("Members do not match the trade selected.");
-		include("redirect.php");	
+		return FALSE;
 	} */
 	
 	function SaveFeedback () {
@@ -96,7 +96,7 @@ class cFeedback {
 			return true;
 		} else {
 			cError::getInstance()->Error("There was an error accessing the feedback table.  Please try again later.");
-			include("redirect.php");
+			return FALSE;
 		}		
 	}
 
@@ -276,7 +276,7 @@ class cFeedbackRebuttal {
 			return true;
 		} else {
 			cError::getInstance()->Error("There was an error accessing the rebuttal table.  Please try again later.");
-			include("redirect.php");
+			return FALSE;
 		}		
 	}
 }	

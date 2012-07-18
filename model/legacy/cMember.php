@@ -484,7 +484,7 @@ class cMember {
 
 	public function DisplayMember () {
 		$sexArr = array("" => NULL, NULL => NULL, 1 => NULL, "M" => "Hombre", "F" => "Mujer");
-		$view = new View("member.phtml");
+		$view = new View("member");
 
 		// personal details
 		$view->memberId = $this->member_id;

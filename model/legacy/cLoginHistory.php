@@ -40,7 +40,7 @@ class cLoginHistory {
 			return TRUE;
 		}
 		cError::getInstance()->Error("Could not save changes to login history '". $this->member_id ."'. Please try again later.");	
-		include("redirect.php");
+		return FALSE;
 	}
 
 	public function SaveNewLoginHistory() {

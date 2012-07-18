@@ -1,20 +1,21 @@
 <p>Para acceder a esta parte de la aplicación es necesario entrar con ID de soci@ y contraseña.</p>
 <p>Si ya tienes una cuenta, puedes entrar en esta página:</p>
 <form action="login.php" method="post">
-	<input type="hidden" name="action" value="login">
-	<input type="hidden" name="location" value="<?= $requestUri ?>">
-	<table class="NoBorder">
+	<input type="hidden" name="action" value="login"/>
+	<input type="hidden" name="location" value="<?= $redirUrl ?>"/>
+	<input type="hidden" name="csrf" value="<?= $csrf ?>"/>
+	<table>
 		<tr>
-			<td align="right">ID de soci@:</td>
-			<td align="left"><input type="text" size=12 name="user"></td>
+			<td>ID de soci@:</td>
+			<td align="left"><input type="text" name="user"/></td>
 		</tr>
 		<tr>
-			<td align="right">Contraseña:</td>
-			<td align="left"><input type="password" size=12 name="pass"></td>
+			<td>Contraseña:</td>
+			<td align="left"><input type="password" name="pass"/></td>
 		</tr>
 		<tr>
 			<td>&nbsp;</td>
-			<td><input type="submit" value='Entrar'></td>
+			<td><input type="submit" value="Entrar"/></td>
 		</tr>
 	</table>
 </form>

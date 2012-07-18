@@ -23,7 +23,7 @@ class cDateTime {
 				return FALSE;
 			}
 			cError::getInstance()->Error("Date format invalid in cDateTime.");
-			include "redirect.php";
+			return FALSE;
 		}
 		$this->year = date("Y", $timestamp);
 		$this->month = date("m", $timestamp);

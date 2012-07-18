@@ -1,11 +1,19 @@
 <?php
 
+/**
+ * Master HTML view
+ *
+ * @author Michał Rudnicki <michal.rudnicki@epsi.pl>
+ */
 final class PageView extends View {
 
 	private static $instance;
 
+	/**
+	 * Singleton constructor
+	 */
 	public function __construct() {
-		parent::__construct("master.phtml");
+		parent::__construct("master");
 		self::$instance = $this;
 
 		$config = Config::getInstance();
@@ -38,7 +46,7 @@ final class PageView extends View {
 			$sidebar[] = array("text" => "Administración", "link" => "admin_menu.php");
 		}
 		if (cMember::isLoggedOn()) {
-			$sidebar[] = array("text" => "Salir", "link" => "login.php?action=logout");
+			$sidebar[] = array("text" => "Salir", "link" => "login_logout.php");
 		} else {
 			$sidebar[] = array("text" => "Entrar", "link" => "member_login.php");
 		}
@@ -46,20 +54,40 @@ final class PageView extends View {
 		$this->showSidebar = TRUE;
 	}
 
+	/**
+	 * Display error message
+	 *
+	 * @param string $message
+	 */
 	public function displayError($message) {
 		$page = new View("error.phtml");
 		$page->message = $message;
 		return $this->displayPage($page);
 	}
 
+	/**
+	 * Set message to be shown above page content
+	 *
+	 * @param string $message
+	 */
 	public function setMessage($message) {
 		$this->message = $message;
 	}
 
+	/**
+	 * Set debugging log to be shown beneath entire page content
+	 *
+	 * @param array $log
+	 */
 	public function setDebug(array $log) {
 		$this->log = $log;
 	}
 
+	/**
+	 * Return singleton instance
+	 *
+	 * @return PageView
+	 */
 	public static function getInstance() {
 		self::$instance or new PageView();
 		return self::$instance;

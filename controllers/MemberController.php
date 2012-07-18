@@ -214,7 +214,7 @@ final class MemberController extends Controller {
 			}
 		}
 
-		$table = new View("tables/members.phtml");
+		$table = new View("tables/members");
 		$table->rows = $rows;
 		$table->displayBalance = Config::getInstance()->legacy->MEM_LIST_DISPLAY_BALANCE or $user->member_role >= 1;
 
@@ -289,10 +289,10 @@ final class MemberController extends Controller {
 	public function to_edit_photo() {
 		$ids = new cMemberGroup();
 		$ids->LoadMemberGroup(NULL, TRUE);
-		
+
 		$form = new MemberChooseForm(NULL, $ids->MakeIDArray());
 		$this->page->form = $form;
-		
+
 		if (!$form->validate()) {
 			return;
 		}
@@ -338,7 +338,7 @@ final class MemberController extends Controller {
 		$form->addElement("radio", "emailTyp", "", "Mostrar la contraseña nueva en pantalla","show_pword");
 
 		$this->page->form = $form;
-		
+
 		if (!$form->validate()) {
 			return;
 		}

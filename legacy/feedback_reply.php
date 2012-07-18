@@ -70,7 +70,7 @@ function process_data ($values) {
 	} elseif ($trade->member_to->member_id == $member->member_id and $trade->member_from->member_id == $member_about->member_id) {
 	} else {
 		cError::getInstance()->Error("Members do not match the trade selected."); // Theoretically, must be a hacker
-		include("redirect.php");
+		return;
 	}
 	
 	$rebuttal = new cFeedbackRebuttal($_REQUEST["feedback_id"], $member->member_id, $values["comments"]);

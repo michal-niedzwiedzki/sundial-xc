@@ -85,11 +85,11 @@ class cUpload {
 				return true;
 			} else {
 				cError::getInstance()->Error("File was deleted but could not delete row from database.  The row will have to removed manually.  Please contact your systems administrator.");
-				include("redirect.php");
+				return FALSE;
 			}			
 		} else {
 			cError::getInstance()->Error("Could not delete file - ". $this->filename .".  Please try again later.");
-			include("redirect.php");
+			return FALSE;
 		}
 	}
 
