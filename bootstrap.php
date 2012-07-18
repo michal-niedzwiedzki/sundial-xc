@@ -71,7 +71,7 @@ final class Bootstrap {
 		define("ENV", $readable ? trim(file_get_contents(ROOT_DIR . "/env.txt")) : "example");
 		define("LIVE", Config::getInstance()->site->live);
 		Debug::log("Bootstrap", Debug::DEBUG);
-		$readable or Debug::log("Cannot read file 'env.txt', assuming 'example' as environment", Debug::WARNING);
+		$readable or Debug::log("Cannot read file 'env.txt', assuming 'example' as environment", Debug::INFO);
 		register_shutdown_function("Bootstrap::shutdownHandler");
 		set_error_handler("Bootstrap::errorHandler");
 	}

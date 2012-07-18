@@ -15,9 +15,9 @@ final class Debug {
 
 	private static $problems = 0;
 
-	private function __construct(stdClass $writers) {
+	private function __construct(ConfigNode $writersConfig) {
 		$this->startTime = microtime(TRUE);
-		foreach ($writers as $className => $options) {
+		foreach ($writersConfig as $className => $options) {
 			$this->writers[] = new $className($this->startTime, $options);
 		}
 	}

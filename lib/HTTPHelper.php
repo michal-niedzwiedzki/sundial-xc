@@ -9,7 +9,7 @@ final class HTTPHelper {
 	public static function pathInfo() {
 		return isset($_SERVER["PATH_INFO"]) ? $_SERVER["PATH_INFO"] : "";
 	}
-	
+
 	public static function get($parameter, $default = NULL) {
 		return isset($_GET[$parameter]) ? $_GET[$parameter] : $default;
 	}
@@ -28,6 +28,16 @@ final class HTTPHelper {
 
 	public static function server($parameter, $default = NULL) {
 		return isset($_SERVER[$parameter]) ? $_SERVER[$parameter] : $default;
+	}
+
+	public static function redirect($to) {
+		if (Debug::hasProblems()) {
+			Debug::log("Problems exist that prevent redirect to {$to}", Debug::INFO);
+ 			return;
+		}
+		header("HTTP/1.1 303 See Other", TRUE, 303);
+		header("Location: $to");
+		exit();
 	}
 
 }

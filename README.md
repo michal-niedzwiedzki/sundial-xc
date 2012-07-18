@@ -11,14 +11,12 @@ version 3.0 or later.
 
 ## Credits and history
 
-Sundial XC is based on [Local-Exchange-UK](https://github.com/cdmweb/Local-Exchange-UK) v1.01 translated into Spanish by
-[Graeme Herbert](http://www.linkedin.com/pub/graeme-herbert/9/503/794) for local time bank
-[A2Manos](http://www.bancodetiempomalasana.com) in Madrid, Spain. This in turn is a fork of
-[Local-Exchange](http://sourceforge.net/projects/local-exchange/).
+Sundial XC is a fork followed by rewrite of:
 
-Sundial XC was massively refactored and largely reimplemented from scratch by Michał Rudnicki.
-The URL structure, config entries, and UI flows remain the same as in original work,
-but it's not guaranteed and may change in future.
+* [Local-Exchange](http://sourceforge.net/projects/local-exchange/)
+* [Local-Exchange-UK](https://github.com/cdmweb/Local-Exchange-UK) v1.01 translated into Spanish by
+[Graeme Herbert](http://www.linkedin.com/pub/graeme-herbert/9/503/794) for local time bank
+[A2Manos](http://www.bancodetiempomalasana.com) in Madrid, Spain
 
 ## Setup
 
@@ -27,15 +25,6 @@ To install Sundial XC you need a web server with PHP 5.3+ and MySQL 5.1+.
 * Set up your web server to serve directory _public/www/_
 * In your browser go to _http://example.com/install.php_
 * Follow the instructions on screen
-
-## Credits and history
-
-Sundial XC is a fork followed by rewrite of:
-
-* [Local-Exchange](http://sourceforge.net/projects/local-exchange/)
-* [Local-Exchange-UK](https://github.com/cdmweb/Local-Exchange-UK) v1.01 translated into Spanish by
-[Graeme Herbert](http://www.linkedin.com/pub/graeme-herbert/9/503/794) for local time bank
-[A2Manos](http://www.bancodetiempomalasana.com) in Madrid, Spain
 
 ## Refactoring old code
 
