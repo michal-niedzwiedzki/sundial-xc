@@ -13,17 +13,18 @@
 		"phone": "1234567890"
 	},
 	"database": {
-		"development": {
+		"production": {
 			"database": "sundialxc",
 			"server": "localhost",
 			"username": "sundialxc",
 			"password": "sundialxc"
 		},
-		"test": {
-		},
-		"production": {
-		},
-		"silo": "development"
+		"testing": {
+			"database": "sundialxc-test",
+			"server": "localhost",
+			"username": "sundialxc",
+			"password": "sundialxc"
+		}
 	},
 	"log": {
 		"LogWriterScreen": {

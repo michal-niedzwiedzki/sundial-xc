@@ -27,12 +27,6 @@ final class DB {
 	const PAGES = "cdm_pages";
 	const TRADES_PENDING = "trades_pending";
 
-	/**
-	 * Database silo (development, test, production)
-	 * @var string
-	 */
-	private static $silo = NULL;
-
 	private static $tables = array(
 		DB::MEMBERS => "
 			CREATE TABLE member (
@@ -296,16 +290,10 @@ final class DB {
 	private static $pdo;
 
 	/**
-	 * Request use of specific database silo
-	 *
-	 * @param $silo string
+	 * Database silo
+	 * @var string
 	 */
-	public static function useSilo($silo) {
-		if (self::$silo) {
-			throw new Exception("Silo already set, cannot change");
-		}
-		self::$silo = $silo;
-	}
+	private static $silo;
 
 	/**
 	 * Indicate if PDO instance is created
@@ -314,6 +302,15 @@ final class DB {
 	 */
 	public static function hasPDO() {
 		return self::$pdo instanceof PDO;
+	}
+
+	/**
+	 * Mandate use of specific database silo
+	 *
+	 * @param string $silo can be "production" or "testing"
+	 */
+	public static function useSilo($silo) {
+		self::$silo = $silo;
 	}
 
 	/**
@@ -327,20 +324,20 @@ final class DB {
 			return self::$pdo;
 		}
 
-		// check silo config
+		// check silo
+		$silo = self::$silo
+			? self::$silo
+			: (class_exists("PHPUnit_Framework_TestCase") ? "testing" : "production");
 		$config = Config::getInstance();
-		Assert::hasProperty("silo", $config->database);
-		$silo = $config->database->silo;
-		self::$silo or self::$silo = $silo;
 		Assert::isObject($config->database);
-		Assert::hasProperty($silo, $config->database);
+		Assert::isObject($config->database->$silo);
 
 		// check connection details
 		$connection = $config->database->$silo;
-		Assert::hasProperty("database", $connection);
-		Assert::hasProperty("server", $connection);
-		Assert::hasProperty("username", $connection);
-		Assert::hasProperty("password", $connection);
+#		Assert::hasProperty("database", $connection);
+#		Assert::hasProperty("server", $connection);
+#		Assert::hasProperty("username", $connection);
+#		Assert::hasProperty("password", $connection);
 
 		// connect to database
 		$dsn = "mysql:dbname={$connection->database};host={$connection->server}";
