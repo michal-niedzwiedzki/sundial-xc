@@ -2,8 +2,16 @@
 
 abstract class CronJobExecutor {
 
-	public function __construct() { }
+	protected $settings;
+
+	public function __construct(array $settings) {
+		$this->settings = $settings;
+	}
 
 	abstract public function execute();
+
+	public static function get($className, array $settings) {
+		return new $className($settings);
+	}
 
 }

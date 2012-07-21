@@ -17,12 +17,6 @@ final class CronJob {
 	private $id;
 
 	/**
-	 * Enviroment to run on
-	 * @var string
-	 */
-	private $env;
-
-	/**
 	 * Executor
 	 * @var CronJobExecutor
 	 */
@@ -55,14 +49,12 @@ final class CronJob {
 	/**
 	 * Constructor
 	 *
-	 * @param string $env environment identifier
 	 * @param CronJobExecutor $executor
 	 * @param CronJobPolicy $policy
 	 * @author Michał Rudnicki <michal.rudnicki@epsi.pl>
 	 */
-	public function __construct($env, CronJobExecutor $executor, CronJobPolicy $policy) {
+	public function __construct(CronJobExecutor $executor, CronJobPolicy $policy) {
 		$this->id = NULL;
-		$this->env = $env;
 		$this->executor = $executor;
 		$this->policy = $policy;
 		$this->isEnabled = TRUE;
@@ -70,10 +62,9 @@ final class CronJob {
 		$this->lastRun = NULL;
 	}
 
-	public static function import($id, $env, CronJobExecutor $executor, CronJobPolicy $policy, $isEnabled, $isRunning, $lastRun = NULL) {
+	public static function import($id, CronJobExecutor $executor, CronJobPolicy $policy, $isEnabled, $isRunning, $lastRun = NULL) {
 		$job = new CronJob();
 		$job->id = $id;
-		$job->env = $env;
 		$job->policy = $policy;
 		$job->isEnabled = $isEnabled;
 		$job->isRunning = $isRunning;
@@ -100,15 +91,13 @@ final class CronJob {
 		return $this->policy->isDue($by);
 	}
 
+	/**
+	 * Run job executor and update database
+	 */
 	public function run() {
-		// TODO: set is_running flag
-		// TODO: set last_run date
+		PDOHelper::update("cron", array("is_running" => 1, "last_run" => "now()", "id = :id", array("id" => $this->id)));
 		$this->executor->execute();
-		// TODO: clear is_running_flag
-	}
-
-	public function save() {
-		// TODO
+		PDOHelper::update("cron", array("is_running" => 0, "id = :id", array("id" => $this->id)));
 	}
 
 }

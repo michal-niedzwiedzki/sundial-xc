@@ -8,10 +8,10 @@
 final class Cron {
 
 	/**
-	 * Pool of Cron instances
-	 * @var Cron[]
+	 * Singleton instance
+	 * @var Cron
 	 */
-	private static $instances = array();
+	private static $instance;
 
 	/**
 	 * List of jobs
@@ -24,16 +24,15 @@ final class Cron {
 	 *
 	 * Loads jobs for given environment from database.
 	 *
-	 * @param string $env environment identifier
 	 * @author Michał Rudnicki <michal.rudnicki@epsi.pl>
 	 */
-	private function __construct($env) {
-		$sql = "SELECT * FROM cron WHERE env = :env ORDER BY coalesce(last_run, 0), id";
+	private function __construct() {
+		$sql = "SELECT * FROM cron ORDER BY coalesce(last_run, 0), id";
 		$rows = PDOHelper::fetchAll($sql, array("env" => $env));
 		foreach ($rows as $row) {
 			$this->jobs[] = CronJob::import(
 				$row["id"],
-				$row["env"],
+				CronJobExecutor::get($row["executor"], json_encode($row["executor_settings"])),
 				CronJobPolicy::get($row["policy"], json_decode($row["policy_settings"])),
 				(boolean)$row["is_enabled"],
 				(boolean)$row["is_running"],
@@ -43,15 +42,14 @@ final class Cron {
 	}
 
 	/**
-	 * Return Cron instance for given environment
+	 * Return singleton instance
 	 *
-	 * @param string $env environment identifier
 	 * @return Cron
 	 * @author Michał Rudnicki <michal.rudnicki@epsi.pl>
 	 */
-	public static function get($env) {
-		isset(self::$instances[$env]) or self::$instances[$env] = new Cron($env);
-		return self::$instances[$env];
+	public static function get() {
+		self::$instance or self::$instance = new Cron();
+		return self::$instance;
 	}
 
 	/**

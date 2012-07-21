@@ -121,6 +121,17 @@ class EmailMessage {
 	}
 
 	/**
+	 * Add user as recipient in To: field
+	 *
+	 * @param cMember $user
+	 * @return EmailMessage
+	 */
+	public function to(cMember $user) {
+		$this->addRecipient(self::FIELD_TO, 0, "", $member->person[0]->email);
+		return $this;
+	}
+
+	/**
 	 * Update delivery status for a recipient
 	 *
 	 * @param string $address
@@ -128,17 +139,6 @@ class EmailMessage {
 	 */
 	public function updateDeliveryStatus($address, $status) {
 		$this->recipients[$address]["status"] = $status;
-	}
-
-	/**
-	 * Add user as recipient in To: field
-	 *
-	 * @param cMember $user
-	 * @return EmailMessage
-	 */
-	public function to(cMember $user) {
-		// FIXME
-		return $this;
 	}
 
 	/**

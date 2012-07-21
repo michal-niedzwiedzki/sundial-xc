@@ -528,7 +528,7 @@ final class DB {
 		DB::useSilo($silo);
 		$pdo = DB::getPDO();
 		foreach ($files as $file) {
-			echo "Executing migration $file\n";
+			echo "... $file\n";
 			$pdo->query(file_get_contents($file));
 		}
 	}

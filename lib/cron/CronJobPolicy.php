@@ -10,4 +10,8 @@ abstract class CronJobPolicy {
 
 	abstract public function isDue($by);
 
+	public static function get($className, array $settings) {
+		return new $className($settings);
+	}
+
 }

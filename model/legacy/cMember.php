@@ -40,6 +40,10 @@ class cMember {
 		}
 	}
 
+	public function getId() {
+		return $this->member_id;
+	}
+
 	public static function getCurrent() {
 		if (!self::$current) {
 			self::$current = new cMember();

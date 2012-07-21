@@ -34,6 +34,10 @@ class cMemberGroup {
 		return $ids;
 	}
 
+	public function getMembers() {
+		return $this->members;
+	}
+
 	function MakeNameArray() {
 		$names["0"] = "";
 		if($this->members) {

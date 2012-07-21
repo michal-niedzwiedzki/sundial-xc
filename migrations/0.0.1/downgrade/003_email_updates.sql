@@ -1,0 +1,1 @@
+DELETE FROM cron WHERE executor = 'EmailListingUpdatesExecutor';

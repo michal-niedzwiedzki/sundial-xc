@@ -13,6 +13,10 @@ class cCategory {
 		}
 	}
 
+	public function getId() {
+		return $this->id;
+	}
+
 	public function SaveNewCategory() {
 		$this->id = PDOHelper::insert(DB::CATEGORIES, array("parent_id" => $this->parent, "description" => $this->description));
 		return (boolean)$this->id;
