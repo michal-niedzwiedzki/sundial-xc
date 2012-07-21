@@ -516,4 +516,21 @@ final class DB {
 		}
 	}
 
+	public static function migrate($upgrade, $silo, $version) {
+		$dir = $upgrade
+			? ROOT_DIR . "/migrations/$version/upgrade"
+			: ROOT_DIR . "/migrations/$version/downgrade";
+		$files = array();
+		foreach (new DirectoryIterator($dir) as $finfo) {
+			$finfo->isDir() or $files[] = $finfo->getPathname();
+		}
+		$upgrade ? sort($files) : rsort($files);
+		DB::useSilo($silo);
+		$pdo = DB::getPDO();
+		foreach ($files as $file) {
+			echo "Executing migration $file\n";
+			$pdo->query(file_get_contents($file));
+		}
+	}
+
 }

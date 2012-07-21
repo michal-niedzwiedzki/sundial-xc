@@ -87,11 +87,11 @@ final class PDOHelper {
 	}
 
 	/**
-	 * Insert into database and return primary key
+	 * Insert into database and return primary key or FALSE
 	 *
 	 * @param string $tableName
 	 * @param array $params
-	 * @return scalar primary key of last inserted row
+	 * @return mixed|FALSE
 	 * @author Michał Rudnicki <michal.rudnicki@epsi.pl>
 	 */
 	public static function insert($tableName, array $params) {
@@ -99,11 +99,12 @@ final class PDOHelper {
 		$columns = array_keys($params);
 		$placeholders = array();
 		foreach ($params as $column => $value) {
+			$cols[] = "`$column`";
 			$placeholders[] = ":$column";
 		}
 
 		// prepare stamement
-		$c = implode(", ", $columns);
+		$c = implode(", ", $cols);
 		$p = implode(", ", $placeholders);
 		$sql = "INSERT INTO $tableName ($c) VALUES ($p)";
 		$pdo = DB::getPDO();
@@ -116,25 +117,24 @@ final class PDOHelper {
 
 		// insert and return primary key (if exist) or TRUE
 		self::$lastQuery = $sql;
-		Assert::true($stmt->execute()); 
-		$id = $pdo->lastInsertId();
-		return $id ? $id : TRUE;
+		return $stmt->execute() ? $pdo->lastInsertId() : FALSE;
 	}
 
 	/**
-	 * Update database table and return affected rows count
+	 * Update database table and return affected rows count or FALSE
 	 *
 	 * @param string $tableName
 	 * @param array $params
 	 * @param string $where
 	 * @param array $whereParams
+	 * @return int|FALSE
 	 * @author Michał Rudnicki <michal.rudnicki@epsi.pl>
 	 */
 	public static function update($tableName, array $params, $where, array $whereParams = array()) {
 		// prepare updates
 		$updates = array();
 		foreach ($params as $column => $value) {
-			$updates[] = "$column = :$column";
+			$updates[] = "`$column` = :$column";
 		}
 		$updatesList = implode(", ", $updates);
 
@@ -152,16 +152,16 @@ final class PDOHelper {
 
 		// update and return affected rows count
 		self::$lastQuery = $sql;
-		Assert::true($stmt->execute());
-		return $stmt->rowCount();
+		return $stmt->execute() ? $stmt->rowCount() : FALSE;
 	}
 
 	/**
-	 * Delete from database table and return affected rows count
+	 * Delete from database table and return affected rows count or FALSE
 	 *
 	 * @param string $tableName
 	 * @param string $where
 	 * @param array $whereParams
+	 * @return int|FALSE
 	 * @author Michał Rudnicki <michal.rudnicki@epsi.pl>
 	 */
 	public static function delete($tableName, $where, array $whereParams = array()) {
@@ -176,8 +176,19 @@ final class PDOHelper {
 
 		// delete and return affected rows count
 		self::$lastQuery = $sql;
-		Assert::true($stmt->execute());
-		return $stmt->rowCount();
+		return $stmt->execute() ? $stmt->rowCount() : FALSE;
+	}
+
+	public static function begin() {
+		DB::getPDO()->beginTransaction();
+	}
+
+	public static function commit() {
+		DB::getPDO()->commit();
+	}
+
+	public static function rollBack() {
+		DB::getPDO()->rollBack();
 	}
 
 	/**
