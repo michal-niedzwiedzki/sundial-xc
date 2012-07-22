@@ -16,7 +16,7 @@ final class CronJobTest extends PHPUnit_Framework_TestCase {
 		$policy = $this->getMockForAbstractClass("CronJobPolicy");
 		$policy->expects($this->once())->method("isDue");
 
-		$job = new CronJob("DUMMY", $executor, $policy);
+		$job = new CronJob($executor, $policy);
 		$job->isDue();
 	}
 
@@ -28,7 +28,7 @@ final class CronJobTest extends PHPUnit_Framework_TestCase {
 		$executor->expects($this->once())->method("execute");
 		$policy = $this->getMockForAbstractClass("CronJobPolicy");
 
-		$job = new CronJob("DUMMY", $executor, $policy);
+		$job = new CronJob($executor, $policy);
 		$job->run();
 	}
 

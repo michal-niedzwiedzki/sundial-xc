@@ -47,7 +47,7 @@ final class Cron {
 	 * @return Cron
 	 * @author Michał Rudnicki <michal.rudnicki@epsi.pl>
 	 */
-	public static function get() {
+	public static function getInstance() {
 		self::$instance or self::$instance = new Cron();
 		return self::$instance;
 	}
@@ -61,6 +61,10 @@ final class Cron {
 	public function addJob(CronJob $job) {
 		$this->jobs[] = $job;
 		return $this;
+	}
+
+	public function purgeAllJobs() {
+		$this->jobs = array();
 	}
 
 	/**

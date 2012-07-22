@@ -73,7 +73,16 @@ final class CronJob {
 	}
 
 	/**
-	 * Return whether the job is flagged as running
+	 * Return whether job is enabled
+	 *
+	 * @return boolean
+	 */
+	public function isEnabled() {
+		return $this->isEnabled;
+	}
+
+	/**
+	 * Return whether job is flagged as running
 	 *
 	 * @return boolean
 	 */
@@ -84,10 +93,16 @@ final class CronJob {
 	/**
 	 * Return whether policy allows the job to be run
 	 *
+	 * Also checks if the minimum required interval has passed since last run.
+	 *
+	 * @param int $by unix time
 	 * @return boolean
 	 */
 	public function isDue($by = NULL) {
 		$by or $by = NOW;
+		if ($this->lastRun and strtotime($this->lastRun) > $by - $this->policy->getMinimumInterval()) {
+			return FALSE;
+		}
 		return $this->policy->isDue($by);
 	}
 
@@ -95,9 +110,9 @@ final class CronJob {
 	 * Run job executor and update database
 	 */
 	public function run() {
-		PDOHelper::update("cron", array("is_running" => 1, "last_run" => "now()", "id = :id", array("id" => $this->id)));
+		PDOHelper::update("cron", array("is_running" => 1, "last_run" => date("Y-m-d H:i:s")), "id = :id", array("id" => $this->id));
 		$this->executor->execute();
-		PDOHelper::update("cron", array("is_running" => 0, "id = :id", array("id" => $this->id)));
+		PDOHelper::update("cron", array("is_running" => 0), "id = :id", array("id" => $this->id));
 	}
 
 }

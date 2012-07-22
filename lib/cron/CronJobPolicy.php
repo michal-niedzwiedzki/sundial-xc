@@ -8,10 +8,12 @@ abstract class CronJobPolicy {
 		$this->settings = $settings;
 	}
 
-	abstract public function isDue($by);
-
 	public static function get($className, array $settings) {
 		return new $className($settings);
 	}
+
+	abstract public function isDue($by);
+
+	abstract public function getMinimumInterval();
 
 }
