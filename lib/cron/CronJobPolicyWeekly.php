@@ -1,16 +1,18 @@
 <?php
 
 /**
- * Policy to activate cron job daily at given hour
+ * Policy to activate cron job weekly at given hour
  *
  * Parameters in settings array:
- * "hour" - hour of activation in 24h format, default 3am
+ * "offset" - day of the week (0 is Sunday), default 0
+ * "hour" - hour of activation in 24h format, default 4am
  * "minute" - minute of activation, default 0
  *
  * @author Michał Rudnicki <michal.rudnicki@epsi.pl>
  */
-final class CronJobPolicyDaily extends CronJobPolicy {
+final class CronJobPolicyWeekly extends CronJobPolicy {
 
+	private $offset;
 	private $hour;
 	private $minute;
 
@@ -22,7 +24,8 @@ final class CronJobPolicyDaily extends CronJobPolicy {
 	 */
 	public function __construct(array $settings) {
 		parent::__construct($settings);
-		$this->hour = isset($settings["hour"]) ? $settings["hour"] : 3;
+		$this->offset = isset($settings["offset"]) ? $settings["offset"] : 0;
+		$this->hour = isset($settings["hour"]) ? $settings["hour"] : 4;
 		$this->minute = isset($settings["minute"]) ? $settings["minute"] : 0;
 	}
 
@@ -34,6 +37,9 @@ final class CronJobPolicyDaily extends CronJobPolicy {
 	 * @author Michał Rudnicki <michal.rudnicki@epsi.pl>
 	 */
 	public function isDue($by) {
+		if (date("w", $by) != $this->offset) {
+			return FALSE;
+		}
 		list($year, $month, $day, $hour, $minute) = explode(" ", date("Y m d H i", $by));
 		$beginning = mktime($this->hour, $this->minute, 0, $month, $day, $year);
 		$end = $beginning + 60; // one minute later
@@ -41,7 +47,7 @@ final class CronJobPolicyDaily extends CronJobPolicy {
 	}
 
 	public function getMinimumInterval() {
-		return 86400; // 1 day
+		return 604800; // 1 week
 	}
 
 }

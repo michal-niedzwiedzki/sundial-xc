@@ -93,14 +93,15 @@ final class CronJob {
 	/**
 	 * Return whether policy allows the job to be run
 	 *
-	 * Also checks if the minimum required interval has passed since last run.
+	 * Also checks if the minimum required interval has passed since last run
+	 * (safety margin of 60 seconds is allowed).
 	 *
 	 * @param int $by unix time
 	 * @return boolean
 	 */
 	public function isDue($by = NULL) {
 		$by or $by = NOW;
-		if ($this->lastRun and strtotime($this->lastRun) > $by - $this->policy->getMinimumInterval()) {
+		if ($this->lastRun and strtotime($this->lastRun) > $by - $this->policy->getMinimumInterval() + 60) {
 			return FALSE;
 		}
 		return $this->policy->isDue($by);
