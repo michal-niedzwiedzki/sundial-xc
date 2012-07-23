@@ -8,6 +8,7 @@
 final class PDOHelper {
 
 	protected static $lastQuery = "";
+	protected static $lastParams = array();
 
 	/**
 	 * Constrcutor
@@ -16,8 +17,17 @@ final class PDOHelper {
 	 */
 	private function __construct() { }
 
-	public static function getLastExecutedQuery() {
-		return self::$lastQuery;
+	public static function getLastExecutedQuery($withParams = FALSE) {
+		if (!$withParams) {
+			return self::$lastQuery;
+		}
+		$columns = array();
+		$values = array();
+		foreach (self::$lastParams as $column => $value) {
+			$columns[] = ":{$column}";
+			$values[] = is_numeric($value) ? $value : "'{$value}'";
+		}
+		return str_replace($columns, $values, self::$lastQuery);
 	}
 
 	/**
@@ -38,6 +48,7 @@ final class PDOHelper {
 
 		// make call and extract cell
 		self::$lastQuery = $sql;
+		self::$lastParams = $params;
 		Assert::true($stmt->execute());
 		$out = $stmt->fetch();
 		Assert::hasKey($column, $out);
@@ -61,6 +72,7 @@ final class PDOHelper {
 
 		// make call and fetch fow
 		self::$lastQuery = $sql;
+		self::$lastParams = $params;
 		Assert::true($stmt->execute());
 		return $stmt->fetch();
 	}
@@ -82,6 +94,7 @@ final class PDOHelper {
 
 		// make call and fetch fow
 		self::$lastQuery = $sql;
+		self::$lastParams = $params;
 		Assert::true($stmt->execute());
 		return $stmt->fetchAll();
 	}
@@ -117,6 +130,7 @@ final class PDOHelper {
 
 		// insert and return primary key (if exist) or TRUE
 		self::$lastQuery = $sql;
+		self::$lastParams = $params;
 		return $stmt->execute() ? $pdo->lastInsertId() : FALSE;
 	}
 
@@ -152,6 +166,7 @@ final class PDOHelper {
 
 		// update and return affected rows count
 		self::$lastQuery = $sql;
+		self::$lastParams = array_merge($params, $whereParams);
 		return $stmt->execute() ? $stmt->rowCount() : FALSE;
 	}
 
@@ -176,6 +191,7 @@ final class PDOHelper {
 
 		// delete and return affected rows count
 		self::$lastQuery = $sql;
+		self::$lastParams = array_merge($params, $whereParams);
 		return $stmt->execute() ? $stmt->rowCount() : FALSE;
 	}
 

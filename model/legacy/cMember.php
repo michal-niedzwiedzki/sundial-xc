@@ -536,12 +536,10 @@ class cMember {
 		$tableName = DB::TRADES;
 		$sql = "SELECT max(trade_date) AS trade_date FROM $tableName WHERE member_id_to = :to OR member_id_from = :from";
 		$tradeDate = PDOHelper::fetchCell("trade_date", $sql, array("to" => $this->member_id, "from" => $this->member_id));
-		if ($tradeDate) {
-			$last_trade = new cDateTime($tradeDate);
-		} else {
-			$last_trade = $this->join_date;
-		}
-		return $last_trade->DaysAgo();
+		$tradeDate
+			? $lastTrade = new cDateTime($tradeDate)
+			: $lastTrade = new cDateTime($this->join_date);
+		return $lastTrade->DaysAgo();
 	}
 
 	public function DaysSinceUpdatedListing() {

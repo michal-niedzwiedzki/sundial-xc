@@ -52,7 +52,7 @@ class cListingGroup {
 		$this->title = $title ? $title : "%";
 		$category or $category = "%";
 		$memberId or $memberId = "%";
-		$since or $since = "19990101000000";
+		$since or $since = "19790101000000";
 		$expired = $includeExpired ? "TRUE" : "expire_date IS NULL";
 
 		// select all the member_ids for this $title

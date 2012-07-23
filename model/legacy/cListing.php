@@ -62,17 +62,21 @@ class cListing {
 
 	public function SaveListing($updatePostingDate = TRUE) {
 		$updatePostingDate and $this->posting_date = date('Y-m-d H:i:s');
-		return PDOHelper::update(DB::LISTINGS, array(
-			"title" => $this->title,
+		$row = array(
 			"description" => $this->description,
-			"category_code" => $this->category->id,
 			"member_id" => $this->member->member_id,
 			"rate" => $this->rate,
 			"status" => $this->status,
 			"expire_date" => $this->expire_date,
 			"reactivate_date" => $this->reactivate_date,
 			"type" => $this->TypeCode(),
-		), "WHERE listing_id = :id", array("id" => $this->listing_id));
+		);
+		$where = array(
+			"title" => $this->title,
+			"categoryId" => $this->category->id,
+			"memberId" => $this->member->getId(),
+		);
+		return PDOHelper::update(DB::LISTINGS, $row, "title = :title AND category_code = :categoryId AND member_id = :memberId", $where);
 	}
 
 	public function DeleteListing($title, $memberId, $typeCode) {

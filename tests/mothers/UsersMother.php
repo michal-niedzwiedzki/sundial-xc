@@ -18,7 +18,7 @@ final class UsersMother {
 		return self::createUserAccount($username, $password, array("account_type" => "S"));
 	}
 
-	private static function createUserAccount($username, $password, array $details = array()) {
+	public static function createUserAccount($username, $password, array $details = array()) {
 		$row = array(
 			"member_id" => $username,
 			"password" => sha1($password),

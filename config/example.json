@@ -64,7 +64,10 @@
 		"USE_RATES": true,
 		"LEECH_EMAIL_URLOCKED": "Your account is now locked",
 		"LEECH_EMAIL_URUNLOCKED": "Your account is now unlocked",
-		"SHOW_GLOBAL_FEES": true
+		"SHOW_GLOBAL_FEES": true,
+		"MAX_DAYS_INACTIVE": 180,
+		"EXPIRATION_WINDOW": 15,
+		"DELETE_EXPIRED_AFTER": 90
 	},
 	"mime": {
 		"text/html": "",
