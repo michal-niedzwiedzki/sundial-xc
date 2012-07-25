@@ -7,14 +7,19 @@ final class ContentTypeDispatchFilter implements DispatchFilter {
 		$accept = HTTPHelper::get("content_type");
 		$accept or $accept = HTTPHelper::server("HTTP_ACCEPT");
 		$accept = preg_replace("/,.*/", "", $accept);
+		Debug::log("Detected content type: " . $accept, Debug::DEBUG);
 
-		if (!isset($config->contentTypes->$accept) or $config->contentTypes->$accept === NULL) {
-			Dispatcher::getInstance()->configure("error", "notAcceptable");
-			return;
-		}
-		$ext = $config->contentTypes->$accept;
-		View::setExtension("{$ext}.phtml");
-		Debug::log("Detected content type: " . $config->contentTypes->$accept, Debug::DEBUG);
+#		if (!isset($config->mime->$accept) or $config->mime->$accept === NULL) {
+#			Dispatcher::getInstance()->configure("error", "notAcceptable");
+#			return;
+#		}
+#		$ext = $config->mime->$accept;
+#		Debug::log("Using template extension $ext", Debug::DEBUG);
+#		View::setExtension("{$ext}.phtml");
+
+		$controller = Dispatcher::getInstance()->getController();
+		$controller->page = new JSONView();
+		header("Content-Type: application/json");
 	}
 
 	public function after() {

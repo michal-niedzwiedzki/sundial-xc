@@ -83,14 +83,12 @@ class cListing {
 		return PDOHelper::delete(DB::LISTINGS, "title = :title AND member_id = :id AND type = :type", array("title" => $title, "id" => $memberId, "type" => $typeCode));
 	}
 
-	public function LoadListing($title, $memberId, $typeCode) {
+	public function LoadListing($title, $memberId, $type) {
+		$typeCode = strtoupper(substr($type, 0, 1));
 		$tableName = DB::LISTINGS;
 		$sql = "SELECT * FROM $tableName WHERE title = :title AND member_id = :id AND type = :type";
 		$row = PDOHelper::fetchRow($sql, array("title" => $title, "id" => $memberId, "type" => $typeCode));
-
 		if (empty($row)) {
-			cError::getInstance()->Error("There was an error accessing the ".$cDB->EscTxt($title)." listing for ".$member_id.".  Please try again later.");
-			include "redirect.php";
 			return;
 		}
 

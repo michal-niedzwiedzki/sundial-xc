@@ -3,7 +3,7 @@
 final class HTTPHelper {
 
 	public static function method() {
-		return $_SERVER["REQUEST_METHOD"];
+		return isset($_SERVER["REQUEST_METHOD"]) ? strtoupper($_SERVER["REQUEST_METHOD"]) : "";
 	}
 
 	public static function pathInfo() {

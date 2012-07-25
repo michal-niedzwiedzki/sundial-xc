@@ -31,15 +31,3 @@
 	RewriteRule ^(.*)$ index.php/$1 [L]
 
 </IfModule>
-
-<IfModule mod_headers.c>
-
-	Header unset Last-Modified
-	<FilesMatch "\.(ico|pdf|flv|jpg|jpeg|png|gif|js|css|gz|swf)$">
-		Header set Cache-Control "max-age=432000"
-		Header set ExpiresDefault "access plus 14 days"
-		Header unset ETag
-	</FilesMatch>
-	FileETag None
-
-</IfModule>

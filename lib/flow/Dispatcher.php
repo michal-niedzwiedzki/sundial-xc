@@ -7,8 +7,10 @@
  */
 class Dispatcher {
 
+	protected $controllerDir = "controllers";
 	protected $controllerName;
 	protected $actionName;
+	protected $args;
 
 	protected $controllers = array();
 	protected $filters = array();
@@ -81,20 +83,33 @@ class Dispatcher {
 		if (!method_exists($c, $a)) {
 			throw new Exception("Action '$a' not found on controller '{$this->controllerName}'");
 		}
-		$c->$a();
+		call_user_func_array(array($c, $a), $this->args);
 	}
 
+	/**
+	 * Set directory for loading controllers
+	 *
+	 * @param string $controllerDir
+	 * @return Dispatcher
+	 */
+	public function setControllerDir($controllerDir) {
+		$this->controllerDir = $controllerDir;
+		return $this;
+	}
+	
 	/**
 	 * Configure controller and action name for dispatch
 	 *
 	 * @param string $controllerName
 	 * @param string $actionName
-	 * @return $this
+	 * @param array $args
+	 * @return Dispatcher
 	 * @author Michał Rudnicki <michal.rudnicki@epsi.pl>
 	 */
-	public function configure($controllerName, $actionName) {
+	public function configure($controllerName, $actionName, $args = array()) {
 		$this->controllerName = $controllerName;
 		$this->actionName = $actionName;
+		$this->args = $args;
 		return $this;
 	}
 
@@ -124,7 +139,7 @@ class Dispatcher {
 	 * Return pathname to controller
 	 */
 	public function getPathname() {
-		return ROOT_DIR . "/controllers/" . ucfirst($this->controllerName) . "Controller.php";
+		return ROOT_DIR . "/" . $this->controllerDir . "/" . ucfirst($this->controllerName) . "Controller.php";
 	}
 
 	public function getControllerClass() {

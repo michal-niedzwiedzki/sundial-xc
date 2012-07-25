@@ -179,7 +179,7 @@ class cMember {
 	}
 
 	public static function GeneratePassword() {
-		return Text_Password::create(6) . chr(rand(50,57));
+		return substr(md5(time()), 0, 7);
 	}
 
 	public function DoLoginStuff($user, $pass) {

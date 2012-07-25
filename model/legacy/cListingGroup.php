@@ -16,6 +16,10 @@ class cListingGroup {
 			$this->type_code = WANT_LISTING_CODE;
 	}
 
+	public function getListings() {
+		return (array)$this->listing;
+	}
+	
 	function InactivateAll($reactivate_date) {
 		if (!isset($this->listing))
 			return true;
@@ -54,6 +58,7 @@ class cListingGroup {
 		$memberId or $memberId = "%";
 		$since or $since = "19790101000000";
 		$expired = $includeExpired ? "TRUE" : "expire_date IS NULL";
+		$type = $this->type_code ? strtoupper(substr($this->type_code, 0, 1)) : "%";
 
 		// select all the member_ids for this $title
 		$listingsTableName = DB::LISTINGS;
@@ -61,10 +66,10 @@ class cListingGroup {
 		$sql = "
 			SELECT title, member_id FROM $listingsTableName AS l, $categoriesTableName AS c
 			WHERE title LIKE :title AND l.category_code = c.category_id AND c.category_id LIKE :category
-				AND type = :type AND member_id LIKE :id AND posting_date >= :since AND $expired
+				AND type LIKE :type AND member_id LIKE :id AND posting_date >= :since AND $expired
 			ORDER BY c.description, title, member_id
 		";
-		$out = PDOHelper::fetchAll($sql, array("title" => $this->title, "category" => $category, "type" => $this->type_code, "id" => $memberId, "since" => $since));
+		$out = PDOHelper::fetchAll($sql, array("title" => $this->title, "category" => $category, "type" => $type, "id" => $memberId, "since" => $since));
 
 		// instantiate new cOffer objects and load them
 		$this->num_listings = 0;
