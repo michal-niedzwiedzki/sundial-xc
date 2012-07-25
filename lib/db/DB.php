@@ -7,7 +7,10 @@
  */
 final class DB {
 
-	const DEFAULT_CONNECTION = 'DEFAULT';
+	const DEFAULT_CONNECTION = "DEFAULT";
+
+	const SILO_PRODUCTION = "production";
+	const SILO_TESTING = "testing";
 
 	const MEMBERS = "member";
 	const USERS = "member";
@@ -26,262 +29,6 @@ final class DB {
 	const INCOME_TIES = "income_ties";
 	const PAGES = "cdm_pages";
 	const TRADES_PENDING = "trades_pending";
-
-	private static $tables = array(
-		DB::MEMBERS => "
-			CREATE TABLE member (
-				member_id VARCHAR(15) NOT NULL DEFAULT '',
-				password VARCHAR(50) NOT NULL DEFAULT '',
-				member_role CHAR(1) NOT NULL DEFAULT '',
-				security_q VARCHAR(25) DEFAULT NULL,
-				security_a VARCHAR(15) DEFAULT NULL,
-				status CHAR(1) NOT NULL DEFAULT '',
-				member_note VARCHAR(100) DEFAULT NULL,
-				admin_note TEXT DEFAULT '',
-				join_date DATE NOT NULL DEFAULT '0000-00-00',
-				expire_date DATE DEFAULT NULL,
-				away_date DATE DEFAULT NULL,
-				account_type CHAR(1) NOT NULL DEFAULT '',
-				email_updates INT(3) UNSIGNED NOT NULL DEFAULT 0,
-				balance DECIMAL(8,2) NOT NULL DEFAULT 0.00,
-				confirm_payments INT(1) DEFAULT 0,
-				restriction INT(1),
-				PRIMARY KEY (member_id)
-			)
-			ENGINE InnoDB
-			DEFAULT CHARACTER SET utf8
-		",
-		DB::PERSONS => "
-			CREATE TABLE person (
-				person_id MEDIUMINT(6) UNSIGNED NOT NULL AUTO_INCREMENT,
-				member_id VARCHAR(15) NOT NULL DEFAULT '',
-				primary_member CHAR(1) NOT NULL DEFAULT '',
-				directory_list CHAR(1) NOT NULL DEFAULT '',
-				first_name VARCHAR(20) NOT NULL DEFAULT '',
-				last_name VARCHAR(30) NOT NULL DEFAULT '',
-				mid_name VARCHAR(20) DEFAULT NULL,
-				dob DATE DEFAULT NULL,
-				mother_mn VARCHAR(30) DEFAULT NULL,
-				email VARCHAR(40) DEFAULT NULL,
-				phone1_area CHAR(5) DEFAULT NULL,
-				phone1_number VARCHAR(30) DEFAULT NULL,
-				phone1_ext VARCHAR(4) DEFAULT NULL,
-				phone2_area CHAR(5) DEFAULT NULL,
-				phone2_number VARCHAR(30) DEFAULT NULL,
-				phone2_ext VARCHAR(4) DEFAULT NULL,
-				fax_area CHAR(3) DEFAULT NULL,
-				fax_number VARCHAR(30) DEFAULT NULL,
-				fax_ext VARCHAR(4) DEFAULT NULL,
-				address_street1 VARCHAR(50) DEFAULT NULL,
-				address_street2 VARCHAR(50) DEFAULT NULL,
-				address_city VARCHAR(50) NOT NULL DEFAULT '',
-				address_state_code CHAR(50) NOT NULL DEFAULT '',
-				address_post_code VARCHAR(20) NOT NULL DEFAULT '',
-				address_country VARCHAR(50) NOT NULL DEFAULT '',
-				about_me TEXT NOT NULL DEFAULT '',
-				age VARCHAR(20) DEFAULT NULL,
-				sex VARCHAR(1) DEFAULT NULL,
-				PRIMARY KEY (person_id)
-			)
-			ENGINE MyISAM
-			DEFAULT CHARACTER SET utf8
-		",
-		DB::LISTINGS => "
-			CREATE TABLE listings (
-				title VARCHAR(60) NOT NULL DEFAULT '',
-				description TEXT,
-				category_code SMALLINT(4) UNSIGNED NOT NULL DEFAULT 0,
-				member_id VARCHAR(15) NOT NULL DEFAULT '',
-				rate VARCHAR(30) DEFAULT NULL,
-				status CHAR(1) NOT NULL DEFAULT '',
-				posting_date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-				expire_date DATE DEFAULT NULL,
-				reactivate_date DATE DEFAULT NULL,
-				type CHAR(1) NOT NULL DEFAULT '',
-				PRIMARY KEY (title, category_code, member_id,type)
-			)
-			ENGINE MyISAM
-			DEFAULT CHARACTER SET utf8
-		",
-		DB::CATEGORIES => "
-			CREATE TABLE categories (
-				category_id SMALLINT(4) UNSIGNED NOT NULL AUTO_INCREMENT,
-				parent_id SMALLINT(4) UNSIGNED DEFAULT NULL,
-				description VARCHAR(40) NOT NULL DEFAULT '',
-				PRIMARY KEY (category_id)
-			)
-			ENGINE MyISAM
-			DEFAULT CHARACTER SET utf8
-		",
-		DB::TRADES => "
-			CREATE TABLE trades (
-				trade_id MEDIUMINT(8) UNSIGNED NOT NULL AUTO_INCREMENT,
-				trade_date TIMESTAMP NOT NULL,
-				status CHAR(1) DEFAULT NULL,
-				member_id_from VARCHAR(15) NOT NULL DEFAULT '',
-				member_id_to VARCHAR(15) NOT NULL DEFAULT '',
-				amount DECIMAL(8,2) NOT NULL DEFAULT 0.00,
-				category SMALLINT(4) UNSIGNED NOT NULL DEFAULT 0,
-				description VARCHAR(255) DEFAULT NULL,
-				type CHAR(1) NOT NULL DEFAULT '',
-				PRIMARY KEY (trade_id)
-			)
-			ENGINE InnoDB
-			DEFAULT CHARACTER SET utf8
-		",
-		DB::LOGGING => "
-			CREATE TABLE admin_activity (
-				log_id MEDIUMINT(8) UNSIGNED NOT NULL AUTO_INCREMENT,
-				log_date TIMESTAMP NOT NULL,
-				admin_id VARCHAR(15) NOT NULL DEFAULT '',
-				category CHAR(1) NOT NULL DEFAULT '',
-				action CHAR(1) NOT NULL DEFAULT '',
-				ref_id VARCHAR(15) NOT NULL DEFAULT '',
-				note VARCHAR(100) DEFAULT NULL,
-				PRIMARY KEY (log_id)
-			)
-			ENGINE InnoDB
-			DEFAULT CHARACTER SET utf8
-		",
-		DB::LOGINS => "
-			CREATE TABLE logins (
-				member_id VARCHAR(15) NOT NULL DEFAULT '',
-				total_failed MEDIUMINT(6) UNSIGNED NOT NULL DEFAULT 0,
-				consecutive_failures MEDIUMINT(3) UNSIGNED NOT NULL DEFAULT 0,
-				last_failed_date TIMESTAMP NOT NULL,
-				last_success_date TIMESTAMP NOT NULL DEFAULT '00000000000000',
-				PRIMARY KEY (member_id)
-			)
-			ENGINE InnoDB
-			DEFAULT CHARACTER SET utf8
-		",
-		DB::FEEDBACK => "
-			CREATE TABLE feedback (
-				feedback_id MEDIUMINT(8) UNSIGNED NOT NULL AUTO_INCREMENT,
-				feedback_date TIMESTAMP NOT NULL,
-				status CHAR(1) NOT NULL DEFAULT '',
-				member_id_author VARCHAR(15) NOT NULL DEFAULT '',
-				member_id_about VARCHAR(15) NOT NULL DEFAULT '',
-				trade_id MEDIUMINT(8) UNSIGNED NOT NULL DEFAULT 0,
-				rating CHAR(1) NOT NULL DEFAULT '',
-				comment TEXT,
-				PRIMARY KEY (feedback_id)
-			)
-			ENGINE InnoDB
-			DEFAULT CHARACTER SET utf8
-		",
-		DB::REBUTTAL => "
-			CREATE TABLE feedback_rebuttal (
-				rebuttal_id MEDIUMINT(6) UNSIGNED NOT NULL AUTO_INCREMENT,
-				rebuttal_date TIMESTAMP NOT NULL,
-				feedback_id MEDIUMINT(8) UNSIGNED DEFAULT NULL,
-				member_id VARCHAR(15) NOT NULL DEFAULT '',
-				comment VARCHAR(255) DEFAULT NULL,
-				PRIMARY KEY (rebuttal_id)
-			)
-			ENGINE InnoDB
-			DEFAULT CHARACTER SET utf8
-		",
-		DB::NEWS => "
-			CREATE TABLE news (
-				news_id MEDIUMINT(6) UNSIGNED NOT NULL AUTO_INCREMENT,
-				title VARCHAR(100) NOT NULL DEFAULT '',
-				description TEXT NOT NULL,
-				sequence DECIMAL(6,4) NOT NULL DEFAULT 0.0000,
-				expire_date DATE DEFAULT NULL,
-				PRIMARY KEY (news_id)
-			)
-			ENGINE InnoDB
-			DEFAULT CHARACTER SET utf8
-		",
-		DB::UPLOADS => "
-			CREATE TABLE uploads (
-				upload_id MEDIUMINT(6) UNSIGNED NOT NULL AUTO_INCREMENT,
-				upload_date TIMESTAMP NOT NULL,
-				title VARCHAR(100) NOT NULL DEFAULT '',
-				type CHAR(1) NOT NULL DEFAULT '',
-				filename VARCHAR(100) DEFAULT NULL,
-				note VARCHAR(100) DEFAULT NULL,
-				PRIMARY KEY (upload_id)
-			)
-			ENGINE InnoDB
-			DEFAULT CHARACTER SET utf8
-		",
-		DB::SESSION => "
-			CREATE TABLE session (
-				id CHAR(32) NOT NULL,
-				data TEXT,
-				ts TIMESTAMP,
-				PRIMARY KEY(id),
-				KEY(ts)
-			)
-			ENGINE MyISAM
-			DEFAULT CHARACTER SET utf8
-		",
-		DB::SETTINGS => "
-			CREATE TABLE settings (
-				id int(11) NOT NULL auto_increment,
-				name varchar(255) default NULL,
-				display_name varchar(255) default NULL,
-				typ varchar(10) default NULL,
-				current_value text,
-				options varchar(255) default NULL,
-				default_value text,
-				max_length varchar(5) default '99999',
-				descrip text,
-				section int(1) default NULL,
-				PRIMARY KEY  (id)
-			)
-			ENGINE MyISAM
-			AUTO_INCREMENT 35
-			DEFAULT CHARACTER SET utf8
-		",
-		DB::INCOME_TIES => "
-			CREATE TABLE income_ties (
- 				id INT(11) NOT NULL AUTO_INCREMENT,
-				member_id VARCHAR(15) DEFAULT NULL,
-				tie_id VARCHAR(15) DEFAULT NULL,
-				percent INT(3) DEFAULT NULL,
-				PRIMARY KEY  (id)
-			)
-			ENGINE MyISAM
-			AUTO_INCREMENT 12
-			DEFAULT CHARACTER SET utf8
-		",
-		DB::PAGES => "
-			CREATE TABLE cdm_pages (
-				id int(11) NOT NULL AUTO_INCREMENT,
-				date INT(30) DEFAULT NULL,
-				title VARCHAR(255) DEFAULT NULL,
-				body TEXT,
-				active INT(1) DEFAULT 1,
-				permission INT(2),
-				PRIMARY KEY (id)
-			)
-			ENGINE MyISAM
-			AUTO_INCREMENT 6
-			DEFAULT CHARACTER SET utf8
-		",
-		DB::TRADES_PENDING => "
-			CREATE TABLE trades_pending (
-				id mediumint(8) unsigned NOT NULL auto_increment,
-				trade_date timestamp NOT NULL default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP,
-				member_id_from varchar(15) NOT NULL default '',
-				member_id_to varchar(15) NOT NULL default '',
-				amount decimal(8,2) NOT NULL default 0.00,
-				category smallint(4) unsigned NOT NULL default 0,
-				description varchar(255) default NULL,
-				typ varchar(1) default NULL,
-				status varchar(1) default 'O',
-				member_to_decision varchar(2) default '1',
-				member_from_decision varchar(2) default '1',
-				PRIMARY KEY (id)
-			)
-			ENGINE MyISAM
-			AUTO_INCREMENT 17
-			DEFAULT CHARACTER SET utf8
-		",
-	);
 
 	/**
 	 * PDO instance
@@ -365,33 +112,10 @@ final class DB {
 	 * @author Michał Rudnicki <michal.rudnicki@epsi.pl>
 	 */
 	public static function create() {
-		$pdo = DB::getPDO();
-		foreach (DB::$tables as $table => $create) {
-			try {
-				Assert::true($pdo->query($create));
-			} catch (Exception $e) {
-				$pdo->query("DROP TABLE IF EXISTS $table");
-				Assert::true($pdo->query($create));
-			}
+		$silo = self::$silo ? self::$silo : DB::SILO_PRODUCTION;
+		foreach (DB::getMigrations() as $version) {
+			DB::migrate(TRUE, $silo, $version);
 		}
-	}
-
-	/**
-	 * Return missing tables
-	 *
-	 * @return string[]
-	 */
-	public static function checkMissingTables() {
-		$missing = array();
-		$pdo = DB::getPDO();
-		foreach (DB::$tables as $table => $create) {
-			try {
-				$pdo->query("DESC $table");
-			} catch (PDOException $e) {
-				$missing[] = $table;
-			}
-		}
-		return $missing;
 	}
 
 	public static function initializeSystemAccount() {
@@ -493,13 +217,30 @@ final class DB {
 	}
 
 	/**
+	 * Return all tables in database
+	 *
+	 * @return string[]
+	 * @author Michał Rudnicki <michal.rudnicki@epsi.pl>
+	 */
+	public static function getTables() {
+		$tables = array();
+		$pdo = DB::getPDO();
+		$stmt = $pdo->prepare("SHOW TABLES");
+		$stmt->execute();
+		foreach ($stmt->fetchAll() as $row) {
+			$tables[] = reset($row);
+		}
+		return $tables;
+	}
+
+	/**
 	 * Drop all tables used by system
 	 *
 	 * @author Michał Rudnicki <michal.rudnicki@epsi.pl>
 	 */
 	public static function drop() {
 		$pdo = DB::getPDO();
-		foreach (DB::$tables as $table => $create) {
+		foreach (DB::getTables() as $table) {
 			Assert::true($pdo->query("DROP TABLE IF EXISTS $table CASCADE"));
 		}
 	}
@@ -511,26 +252,83 @@ final class DB {
 	 */
 	public static function truncate() {
 		$pdo = DB::getPDO();
-		foreach (DB::$tables as $table => $create) {
+		foreach (DB::getTables() as $table) {
 			Assert::true($pdo->query("TRUNCATE TABLE $table"));
 		}
 	}
 
-	public static function migrate($upgrade, $silo, $version) {
+	public static function getMigrations() {
+		$versions = array();
+		foreach (new DirectoryIterator(ROOT_DIR . "/migrations") as $entry) {
+			if ($entry->isDir() and strpos($entry->getFilename(), ".") > 0) {
+				$versions[] = $entry->getFilename();
+			}
+		}
+		// FIXME ensure correct order
+		return $versions;
+	}
+
+	/**
+	 * Run database migration transactionally
+	 *
+	 * @param boolean $upgrade TRUE for upgrade, FALSE for downgrade
+	 * @param string $silo eiter "production" or "testing"
+	 * @param string $version migration identifier
+	 * @param resource $output where to write output messages, default NULL
+	 * @author Michał Rudnicki <michal.rudnicki@epsi.pl>
+	 */
+	public static function migrate($upgrade, $silo, $version, $output = NULL) {
+		// check if version file writable
+		$currentVersionFile = ROOT_DIR . "/var/migrations/version.txt";
+		if (!is_writable($currentVersionFile)) {
+			throw new Exception("File $currentVersionFile must we writable");
+		}
+
+		// get migration directory
 		$dir = $upgrade
 			? ROOT_DIR . "/migrations/$version/upgrade"
 			: ROOT_DIR . "/migrations/$version/downgrade";
+
+		// check if base version matches source version
+		$baseVersionFile = ROOT_DIR . "/migrations/$version/base.txt";
+		if (!is_readable($baseVersionFile)) {
+			throw new Exception("File $baseVersionFile must be readable");
+		}
+		$baseVersion = trim(file_get_contents($baseVersionFile)); // version to upgrade from, or downgrade to declared in migration
+		$sourceVersion = $upgrade ? $baseVersion : $version; // version before migration
+		$targetVersion = $upgrade ? $version : $baseVersion; // version after migration
+		$currentVersion = trim(file_get_contents($currentVersionFile)); // current version
+		if ($currentVersion != $sourceVersion) {
+			throw new Exception("Cannot migrate to '$targetVersion', as migration can only be started in '$sourceVersion', whereas current version is '$currentVersion'");
+		}
+
+		// fetch migration files
 		$files = array();
 		foreach (new DirectoryIterator($dir) as $finfo) {
 			$finfo->isDir() or $files[] = $finfo->getPathname();
 		}
 		$upgrade ? sort($files) : rsort($files);
+
+		// run migrations
 		DB::useSilo($silo);
 		$pdo = DB::getPDO();
-		foreach ($files as $file) {
-			echo "... $file\n";
-			$pdo->query(file_get_contents($file));
+		$pdo->beginTransaction();
+		try {
+			foreach ($files as $file) {
+				$output and fwrite($output, "... $file\n");
+				$pdo->query(file_get_contents($file));
+			}
+		} catch (Exception $e) {
+			$output and fwrite($output, "Rolling back\n");
+			$pdo->rollBack();
+			throw $e;
 		}
+		$output and fwrite($output, "Committing transaction\n");
+		$pdo->commit();
+
+		// update base version
+		$output and fwrite($output, "Updating current version to $targetVersion\n");
+		file_put_contents($currentVersionFile, $targetVersion);
 	}
 
 }

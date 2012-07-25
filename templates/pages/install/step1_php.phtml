@@ -12,8 +12,17 @@
 <?php if (!$log): ?>
 
 	<p>
-		Directory <code>log/</code> is not writable for server.<br/>
+		Directory <code>log/</code> is not writable by server.<br/>
 		This is not fatal, but you will not be able to store application logs.
+	</p>
+
+<?php endif ?>
+
+<?php if (!$migrations): ?>
+
+	<p>
+		File <code>var/migrations/version.txt</code> is not writable by server.
+		This is essential to create database.
 	</p>
 
 <?php endif ?>

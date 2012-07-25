@@ -1,0 +1,1 @@
+DROP TABLE IF EXISTS income_ties CASCADE;

@@ -72,7 +72,6 @@ Controllers are now heavily annotated. This is the meaning of some annotations:
 ## Future versions
 
 * **Internationalization with gettext.** Yeah, currently it's in Spanish.
-* **Proper cron mechanism.** Existing _events_ need to run asynchronously.
 * **Database normalization.** You will see the need for this one as soon as you look into existing database.
 * **Migration script from Local-Excahnge-UK.**
 * **Restful API version 0.0**. API for existing model classes shielded by authorization layer. Covered in 100% with tests.

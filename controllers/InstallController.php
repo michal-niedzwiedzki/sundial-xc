@@ -21,6 +21,7 @@ final class InstallController extends Controller {
 		$this->page->gd = function_exists("gd_info");
 		$this->page->pdo = class_exists("PDO");
 		$this->page->log = is_writable(ROOT_DIR . "/log");
+		$this->page->migrations = is_writable(ROOT . "/var/migrations/version.txt");
 	}
 
 	/**
@@ -52,7 +53,7 @@ final class InstallController extends Controller {
 			and $config->db->username === "sundialxc" and $config->db->password === "sundialxc";
 
 		// check if already installed
-		$alreadyInstalled = $connection and DB::checkMissingTables() === array();
+		$alreadyInstalled = $connection and !empty(DB::getTables());
 		$this->page->alreadyInstalled = $alreadyInstalled;
 
 		// install

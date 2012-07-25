@@ -27,8 +27,6 @@ class ExpireListingsExecutor extends CronJobExecutor {
 		$group->LoadMemberGroup();
 		foreach ($group->getMembers() as $member) {
 			// check if expired
-#echo "Days since last trade {$member->DaysSinceLastTrade()} < $maxDaysInactive\n";
-#echo "Days since updated listing {$member->DaysSinceUpdatedListing()} < $maxDaysInactive\n";
 			if ($member->DaysSinceLastTrade() < $maxDaysInactive or $member->DaysSinceUpdatedListing() < $maxDaysInactive) {
 				continue;
 			}

@@ -23,7 +23,7 @@ if ($silo !== "production" and $silo != "testing") {
 $version = $argv[3];
 
 try {
-	DB::migrate($operation === "upgrade", $silo, $version);
+	DB::migrate($operation === "upgrade", $silo, $version, STDOUT);
 } catch (DBMigrationException $e) {
 	fwrite(STDERR, "\nMigration failed: {$e->getMessage()}\n");
 	exit(1);

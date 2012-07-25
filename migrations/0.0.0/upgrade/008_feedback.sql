@@ -1,0 +1,11 @@
+CREATE TABLE feedback (
+	feedback_id MEDIUMINT(8) UNSIGNED NOT NULL AUTO_INCREMENT,
+	feedback_date TIMESTAMP NOT NULL,
+	status CHAR(1) NOT NULL DEFAULT '',
+	member_id_author VARCHAR(15) NOT NULL DEFAULT '',
+	member_id_about VARCHAR(15) NOT NULL DEFAULT '',
+	trade_id MEDIUMINT(8) UNSIGNED NOT NULL DEFAULT 0,
+	rating CHAR(1) NOT NULL DEFAULT '',
+	comment TEXT,
+	PRIMARY KEY (feedback_id)
+) ENGINE InnoDB DEFAULT CHARACTER SET utf8;
