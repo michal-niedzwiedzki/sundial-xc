@@ -53,17 +53,13 @@ final class InstallController extends Controller {
 			and $config->db->username === "sundialxc" and $config->db->password === "sundialxc";
 
 		// check if already installed
-		$alreadyInstalled = $connection and !empty(DB::getTables());
+		$alreadyInstalled = $connection and count(DB::getTables()) > 0;
 		$this->page->alreadyInstalled = $alreadyInstalled;
 
 		// install
 		$this->page->ok = FALSE;
 		if ($connection and !$alreadyInstalled) {
-			try {
-				DB::create();
-				$this->page->ok = TRUE;
-			} catch (Exception $e) {
-			}
+			$this->page->of = DB::create();
 		}
 	}
 
@@ -74,7 +70,7 @@ final class InstallController extends Controller {
 	public function step4_admin() {
 		$admin = new cMember();
 		$admin->LoadMember("admin");
-		$defaultPassword = $admin->password === sha1("password");
+		$defaultPassword = $admin->password === sha1(cMember::DEFAULT_PASSWORD);
 		$this->page->defaultPassword = $defaultPassword;
 		$this->page->passwordChanged = FALSE;
 		if ($defaultPassword and $password = HTTPHelper::post("password")) {

@@ -4,7 +4,7 @@
 	php_flag display_startup_errors off
 	php_flag display_errors on
 	php_flag html_errors on
-	php_value error_reporting 22527
+	php_value error_reporting 32767
 	php_value error_prepend_string "<pre>"
 	php_value error_append_string "</pre>"
 

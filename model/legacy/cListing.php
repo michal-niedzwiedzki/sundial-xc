@@ -47,7 +47,7 @@ class cListing {
 	}
 
 	public function SaveNewListing() {
-		return PDOHelper::insert(DB::LISTINGS, array(
+		PDOHelper::insert(DB::LISTINGS, array(
 			"title" => $this->title,
 			"description" => $this->description,
 			"category_code" => $this->category->id,
@@ -58,6 +58,9 @@ class cListing {
 			"reactivate_date" => $this->reactivate_date,
 			"type" => $this->TypeCode(),
 		));
+		$listing = new cListing();
+		$listing->LoadListing($this->title, $this->member->member_id, $this->TypeCode());
+		return $listing->title === $this->title;
 	}
 
 	public function SaveListing($updatePostingDate = TRUE) {

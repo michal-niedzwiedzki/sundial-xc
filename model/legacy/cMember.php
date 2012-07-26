@@ -2,6 +2,8 @@
 
 class cMember {
 
+	const DEFAULT_PASSWORD = "password";
+	
 	var $person;  // this will be an array of cPerson class objects
 	var $member_id;
 	var $password;
@@ -71,25 +73,18 @@ class cMember {
 		));
 	}
 
-	function RegisterWebUser()
-	{
-//		if (isset($_SESSION["user_login"]) and $_SESSION["user_login"] != LOGGED_OUT) {
+	public function RegisterWebUser() {
 		if (isset($_SESSION["user_login"])) {
 			$this->member_id = $_SESSION["user_login"];
 			$this->LoadMember($_SESSION["user_login"]);
-
-            // Session regeneration added to boost server-side security.
-            session_regenerate_id();
-		}
-        // Then next block has been inactivated due to security concerns.
-		else {
-			//$this->LoginFromCookie();
+			// Session regeneration added to boost server-side security.
+			session_regenerate_id();
 		}
 		self::$current = $this;
 	}
 
 	public function LoginFromCookie() {
-        return false;
+		return false;
 	}
 
 	public static function IsLoggedOn() {
@@ -105,6 +100,7 @@ class cMember {
 			LIMIT 1
 		";
 		$row = PDOHelper::fetchRow($sql, array("id" => $user, "password" => $pass));
+
 		if ($row) {
 			$loginHistory->RecordLoginSuccess($user);
 			$this->DoLoginStuff($user, $row["password"]);
@@ -183,8 +179,6 @@ class cMember {
 	}
 
 	public function DoLoginStuff($user, $pass) {
-		//setcookie("login",$user,time()+60*60*24*1,"/");
-		//setcookie("pass",$pass,time()+60*60*24*1,"/");
 		$this->LoadMember($user);
 		$_SESSION["user_login"] = $user;
 	}

@@ -18,6 +18,11 @@ final class HTTPHelper {
 		return isset($_POST[$parameter]) ? $_POST[$parameter] : $default;
 	}
 
+	public static function mockPost(array $params) {
+		$_POST = $params;
+		$_REQUEST = array_merge((array)$_REQUEST, $params);
+	}
+
 	public static function rq($parameter, $default = NULL) {
 		return isset($_REQUEST[$parameter]) ? $_REQUEST[$parameter] : $default;
 	}

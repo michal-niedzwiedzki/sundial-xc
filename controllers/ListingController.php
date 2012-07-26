@@ -25,7 +25,6 @@ final class ListingController extends Controller {
 		if (!$form->validate()) {
 			return;
 		}
-		$form->freeze();
 		$form->process();
 		$values = $form->exportValues();
 
@@ -37,28 +36,13 @@ final class ListingController extends Controller {
 			$member = $user;
 		}
 
-		$date = $values['expire_date'];
-		$params = array();
-
-		if ($date['F'] == '0' and $date['d'] == '0' and $date['Y'] == '0') {
-			$parms['expire_date'] = null;
-		} else {
-			$expire_date = $date['Y'] . '/' . $date['F'] . '/' . $date['d'];
-			$parms['expire_date'] = $expire_date;
-		}
-
-		$parms['title'] = htmlspecialchars($values['title']);
-		$parms['description'] = htmlspecialchars($values['description']);
-		$parms['category'] = $values['category'];
-		$parms['rate'] = isset($values["rate"]) ? htmlspecialchars($values["rate"]) : "";
-		$parms['type'] = $type;
-
-		$listing = new cListing($member, $parms);
-		$created = $listing->SaveNewListing();
-		if ($created) {
+		// save listing
+		$listing = new cListing($member, $values);
+		if ($listing->SaveNewListing()) {
+			$this->page->saved = TRUE;
 			PageView::getInstance()->setMessage("El nuevo servicio ha sido creado.");
 		} else {
-			cError::getInstance()->Error("Ha ocurrido un error en el momento de guardar los cambios. Intentalo otra vez mas tarde.");
+			PageView::getInstance()->displayError("Ha ocurrido un error en el momento de guardar los cambios. Intentalo otra vez mas tarde.");
 		}
 	}
 
@@ -66,10 +50,44 @@ final class ListingController extends Controller {
 	 * @Title "Editar servicio"
 	 */
 	public function edit() {
-		$form = FormHelper::standard();
-		$page = $this->page;
+		$user = cMember::getCurrent();
+
+		$title = HTTPHelper::rq("title");
+		$type = HTTPHelper::rq("type");
+		$adminMode = HTTPHelper::rq("mode") === "admin";
+		$memberId = $adminMode ? HTTPHelper::rq("member_id") : $user->member_id;
+
+		$this->page->isOffered = $type == "Offer";
+
+		if (LIVE and $user->member_id == "ADMIN") {
+			PageView::getInstance()->displayError("Lo siento, no se puede crear servicios nuevos con la cuenta del administrador.\nEs una cuenta especial para la administración de la aplicación.");
+			return;
+		}
+
+		$listing = new cListing();
+		$listing->LoadListing($title, $memberId, $type);
+
+		$form = new ListingEditForm($listing, $adminMode);
 		$this->page->form = $form;
-		include ROOT_DIR . "/legacy/listing_edit.php";
+
+		if (!$form->validate()) {
+			return;
+		}
+		$form->freeze();
+		$form->process();
+		$values = $form->exportValues();
+
+		$category = new cCategory();
+		$category->LoadCategory($listing->category->id);
+
+		$listing->category = $category;
+		$listing->description = $values["description"];
+
+		if ($listing->SaveListing()) {
+			PageView::getInstance()->setMessage("El servicio ha sido guardado.");
+		} else {
+			PageView::getInstance()->displayError("Ha ocurrido un error en el momento de guardar los cambios. Intentalo otra vez mas tarde.");
+		}
 	}
 
 	public function delete() {

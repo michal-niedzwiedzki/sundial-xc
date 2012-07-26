@@ -274,7 +274,7 @@ class HTML_QuickForm extends HTML_Common {
                     }
                 }
             } else {
-                $this->_submitValues = 'get' == $method? $_GET: $_POST;
+            	$this->_submitValues = ('get' == $method) ? $_GET : $_POST;
                 $this->_submitFiles  = $_FILES;
             }
             $this->_flagSubmitted = count($this->_submitValues) > 0 || count($this->_submitFiles) > 0;

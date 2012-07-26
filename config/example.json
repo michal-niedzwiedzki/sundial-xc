@@ -38,8 +38,8 @@
 		}
 	},
 	"server": {
-		"host": "bdt",
-		"base": "http://bdt",
+		"host": "www.bdt",
+		"base": "http://www.bdt",
 		"relative": ""
 	},
 	"legacy": {

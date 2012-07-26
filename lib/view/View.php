@@ -50,7 +50,7 @@ class View {
 		} else {
 			$templateFile = htmlspecialchars($f, ENT_QUOTES, "UTF-8");
 			$templateVars = $this->templateVars;
-			include ROOT_DIR . "/templates/_missing.phtml";
+			include ROOT_DIR . "/templates/_missing";
 		}
 		$out = ob_get_contents();
 		ob_end_clean();

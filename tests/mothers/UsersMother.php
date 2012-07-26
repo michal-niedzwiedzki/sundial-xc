@@ -3,7 +3,7 @@
 final class UsersMother {
 
 	public static function create() {
-		return self::createUserAccount("user_" . time(), "1");
+		return self::createUserAccount(substr("u_" . (microtime(TRUE) - 1343345530), 0, 15), cMember::DEFAULT_PASSWORD);
 	}
 
 	public static function createRegularAccount($username, $password) {

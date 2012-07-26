@@ -80,7 +80,6 @@ final class Bootstrap {
 	 * Init user session
 	 */
 	public static function initSession() {
-		session_id("SundialXC");
 		session_start();
 		if (isset($_SERVER["REQUEST_METHOD"]) and $_SERVER["REQUEST_METHOD"] === "POST") {
 			define("CSRF", isset($_SESSION["csrf"]) ? $_SESSION["csrf"] : NULL);
@@ -126,6 +125,7 @@ final class Bootstrap {
 }
 
 // bootstrap
+error_reporting(E_ALL | E_STRICT);
 Bootstrap::initPaths();
 Bootstrap::initLocale();
 Bootstrap::initEnvironment();

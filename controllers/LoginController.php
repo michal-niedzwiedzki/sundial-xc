@@ -25,10 +25,10 @@ final class LoginController extends Controller {
 		} elseif (!$pass) {
 			cError::getInstance()->Error("No puede entrar sin contraseña. Si ha olvidado su contraseña puede pedir de nosotros una contrase�nu�a eva");
 		}
-		cMember::getCurrent()->Login($user, $pass);
 
-		// redirect
-		HTTPHelper::redirect($redirUrl);
+		if (cMember::getCurrent()->Login($user, $pass)) {
+			HTTPHelper::redirect($redirUrl);
+		}
 	}
 
 	/**

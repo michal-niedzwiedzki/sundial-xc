@@ -33,7 +33,7 @@ final class PageView extends View {
 			array("text" => "Inicio", "link" => "index.php"),
 			array("text" => "Quiero saber más", "link" => "info/more.php"),
 			array("text" => "Noticias", "link" => "news.php"),
-			array("text" => "Blog", "link" => "a2manos-dosdemayo.blogspot.com"),
+			array("text" => "Blog", "link" => "http://a2manos-dosdemayo.blogspot.com"),
 			array("text" => "Servicios ofrecidos", "link" => "listings.php?type=Offer"),
 			array("text" => "Servicios solicitados", "link" => "listings.php?type=Want"),
 			array("text" => "Actualizar servicios", "link" => "listings_menu.php"),
@@ -60,7 +60,7 @@ final class PageView extends View {
 	 * @param string $message
 	 */
 	public function displayError($message) {
-		$page = new View("error.phtml");
+		$page = new View("error");
 		$page->message = $message;
 		return $this->displayPage($page);
 	}

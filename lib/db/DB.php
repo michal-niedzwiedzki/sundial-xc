@@ -128,10 +128,14 @@ final class DB {
 	 * @author Michał Rudnicki <michal.rudnicki@epsi.pl>
 	 */
 	public static function create() {
-		$silo = self::$silo ? self::$silo : DB::SILO_PRODUCTION;
-		foreach (DB::getMigrations() as $version) {
-			DB::migrate(TRUE, $silo, $version);
+		try {
+			foreach (DB::getMigrations() as $version) {
+				DB::migrate(TRUE, self::getSilo(), $version);
+			}
+		} catch (Exception $e) {
+			return false;
 		}
+		return true;
 	}
 
 	/**
@@ -193,6 +197,7 @@ final class DB {
 	 * @param string $silo eiter "production" or "testing"
 	 * @param string $version migration identifier
 	 * @param resource $output where to write output messages, default NULL
+	 * @throws Exception
 	 * @author Michał Rudnicki <michal.rudnicki@epsi.pl>
 	 */
 	public static function migrate($upgrade, $silo, $version, $output = NULL) {
