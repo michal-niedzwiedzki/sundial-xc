@@ -1,9 +1,9 @@
 <?php
 
 include_once("includes/inc.global.php");
-	
+
 include("classes/class.feedback.php");
-	
+
 cMember::getCurrent()->MustBeLoggedOn();
 	
 if($_REQUEST["mode"] == "other") 
@@ -28,6 +28,4 @@ if (isset($feedbackgrp->feedback)) {
 		$output = "This member does not have any feedback yet.";
 }
 
-$p->DisplayPage($output);
-	
-?>	
+echo $p;

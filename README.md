@@ -47,6 +47,9 @@ other are used as wrappers for such files. Controllers can be annotated to allow
 HTTP response codes, etc.
 * Model code was extracted to separate files. UI related code removed or replaced with views and templates.
 * Leftovers from legacy code were moved to _legacy_ directory.
+* Fully asynchronous Cron mechanism was added. Email messages are now being recorded and dispatched by cron job.
+* Database migration system was developed with schema versioning and full upgrade/downgrade track.
+* REST API endpoint was created.
 
 Code refactor is progressing in many fronts simultaneously:
 

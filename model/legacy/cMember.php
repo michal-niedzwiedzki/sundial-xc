@@ -3,7 +3,7 @@
 class cMember {
 
 	const DEFAULT_PASSWORD = "password";
-	
+
 	var $person;  // this will be an array of cPerson class objects
 	var $member_id;
 	var $password;
@@ -208,6 +208,7 @@ class cMember {
 	}
 
 	public function Logout() {
+		self::$current = NULL;
 		setcookie(session_name(), session_id(), time() - 42000, '/');
 		$_SESSION = array();
 		session_destroy();
