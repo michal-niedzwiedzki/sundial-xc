@@ -92,8 +92,9 @@ final class MemberController extends Controller {
 		$values['join_date'] = $date['Y'] . '/' . $date['F'] . '/' . $date['d'];
 		$date = $values['dob'];
 		$values['dob'] = $date['Y'] . '/' . $date['F'] . '/' . $date['d'];
-		if($values['dob'] == date("Y/m/d"))
+		if ($values['dob'] == date("Y/m/d")) {
 			$values['dob'] = ""; // if birthdate was left as default, set to null
+		}
 		$values['phone1_number'] = $values['phone1'];
 		$values['phone2_number'] = $values['phone2'];
 
