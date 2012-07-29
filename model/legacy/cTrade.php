@@ -54,7 +54,7 @@ class cTrade {
 			return FALSE;
 		}
 		$this->trade_id = $id;
-		$this->trade_date = $row["trade_date"];	
+		$this->trade_date = $row["trade_date"];
 		return TRUE;
 	}
 

@@ -5,7 +5,7 @@
  *
  * @author Michał Rudnicki <michal.rudnicki@epsi.pl>
  */
-class ConfigNode {
+class ConfigNode implements IteratorAggregate {
 
 	/**
 	 * Configuration nodes
@@ -42,6 +42,15 @@ class ConfigNode {
 				: $out[$property] = $value;
 		}
 		return $out;
+	}
+
+	/**
+	 * Return iterator
+	 *
+	 * @return Iterator
+	 */
+	public function getIterator() {
+		return new ArrayIterator(new ArrayObject($this->properties));
 	}
 
 	/**

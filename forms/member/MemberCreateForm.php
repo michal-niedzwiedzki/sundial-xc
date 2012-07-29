@@ -41,22 +41,22 @@ final class MemberCreateForm extends Form {
 		$this->addRule('mid_name', 'Insertar al menos un apellido', 'required');
 		$this->addRule('fax_number', 'Insertar identificación', 'required');
 
-		$this->registerRule("verify_unique_member_id", "function", array("memberCreateForm", "verify_unique_member_id"));
+		$this->registerRule("verify_unique_member_id", "function", "verify_unique_member_id", $this);
 		$this->addRule('member_id', 'Este ID de soci@ ya existe', 'verify_unique_member_id');
-		$this->registerRule("verify_good_member_id", "function", array("memberCreateForm", "verify_good_member_id"));
+		$this->registerRule("verify_good_member_id", "function", "verify_good_member_id", $this);
 		//$this->addRule('member_id', 'Special characters are not allowed', 'verify_good_member_id');
-		$this->registerRule("verify_good_password", "function", array("memberCreateForm", "verify_good_password"));
+		$this->registerRule("verify_good_password", "function", "verify_good_password", $this);
 		$this->addRule('password', 'La contraseña debe tener al menos un numero', 'verify_good_password');
-		$this->registerRule("verify_no_apostraphes_or_backslashes", "function", array("memberCreateForm", "verify_no_apostraphes_or_backslashes"));
+		$this->registerRule("verify_no_apostraphes_or_backslashes", "function", "verify_no_apostraphes_or_backslashes", $this);
 		$this->addRule("password", "La contraseña no puede tener los caracteres ' o \\", "verify_no_apostraphes_or_backslashes");
-		$this->registerRule("verify_role_allowed", "function", array("memberCreateForm", "verify_role_allowed"));
+		$this->registerRule("verify_role_allowed", "function", "verify_role_allowed", $this);
 		$this->addRule('member_role', 'No tiene permiso para asignar nivel de acceso tan alto', 'verify_role_allowed');
-		$this->registerRule("verify_not_future_date", "function", array("memberCreateForm", "verify_not_future_date"));
+		$this->registerRule("verify_not_future_date", "function", "verify_not_future_date", $this);
 		$this->addRule('join_date', 'La fecha de inscripción no puede ser una del futuro', 'verify_not_future_date');
 		$this->addRule('dob', '¡La fecha no puede ser del futuro!', 'verify_not_future_date');
-		$this->registerRule("verify_reasonable_dob", "function", array("memberCreateForm", "verify_reasonable_dob"));
+		$this->registerRule("verify_reasonable_dob", "function", "verify_reasonable_dob", $this);
 		$this->addRule('dob', 'Un poco joven, ¿no crees?', 'verify_reasonable_dob');
-		$this->registerRule("verify_valid_email", "function", array("memberCreateForm", "verify_valid_email"));
+		$this->registerRule("verify_valid_email", "function", "verify_valid_email", $this);
 		$this->addRule('email', 'Dirección de correo inválida', 'verify_valid_email');
 		//$this->registerRule(array("memberCreateForm", "verify_phone_format"),"function",'verify_phone_format');
 		//$this->addRule('phone1', 'Formato invalido para número de teléfono', 'verify_phone_format');
@@ -77,12 +77,12 @@ final class MemberCreateForm extends Form {
 		$this->setDefaults($defaults);
 	}
 
-	public static function verify_unique_member_id($name, $value) {
+	public function verify_unique_member_id($value) {
 		$member = new cMember();
 		return !($member->LoadMember($value, false));
 	}
 
-	public static function verify_good_member_id($name, $value) {
+	public function verify_good_member_id($value) {
 		if (ctype_alnum($value)) {
 			return true;
 		}
@@ -94,26 +94,20 @@ final class MemberCreateForm extends Form {
 		}
 	}
 
-	public static function verify_role_allowed($name, $value) {
+	public function verify_role_allowed($value) {
 		$user = cMember::getCurrent();
 		return $value <= $user->member_role;
 	}
 
-	public static function verify_reasonable_dob($name, $value) {
-		global $today;
-		$date = $value;
-		$date_str = $date['Y'] . '/' . $date['F'] . '/' . $date['d'];
-
-		if ($date_str == $today['year']."/".$today['mon']."/".$today['mday']) {
-			return true;
-		} elseif ($today['year'] - $date['Y'] < 3) { // A little young to be trading, presumably a mistake
-			return false;
-		} else {
-			return true;
+	public function verify_reasonable_dob($value) {
+		$dob = strtotime($value['Y'] . '/' . $value['F'] . '/' . $value['d']);
+		if ($dob > time() - 3600 * 24 * 365 * 3) { // 3 years
+			return FALSE;
 		}
+		return TRUE;
 	}
 
-	public static function verify_good_password($name, $value) {
+	public function verify_good_password($value) {
 		$i = 0;
 		$length = strlen($value);
 		while($i < $length) {
@@ -125,17 +119,17 @@ final class MemberCreateForm extends Form {
 		return false;
 	}
 
-	public static function verify_no_apostraphes_or_backslashes($name, $value) {
+	public function verify_no_apostraphes_or_backslashes($value) {
 		return (FALSE === strstr($value, "'") and FALSE === strstr($value,"\\"));
 	}
 
-	public static function verify_not_future_date($name, $value) {
+	public function verify_not_future_date($value) {
 		$date = $value;
 		$date_str = $date['Y'] . '/' . $date['F'] . '/' . $date['d'];
 		return strtotime($date_str) <= strtotime("now");
 	}
 
-	public static function verify_valid_email($name, $value) {
+	public function verify_valid_email($value) {
 		if ($value == "")
 			return true;
 		if (strstr($value,"@") and strstr($value,"."))
@@ -144,7 +138,7 @@ final class MemberCreateForm extends Form {
 			return false;
 	}
 
-	public static function verify_phone_format($name, $value) {
+	public function verify_phone_format($value) {
 		$phone = new cPhone_uk($value);
 		return (boolean)$phone->prefix;
 	}

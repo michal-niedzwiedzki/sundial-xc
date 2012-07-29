@@ -77,6 +77,7 @@ final class MemberController extends Controller {
 		$form->process();
 
 		// Following are default values for which this form doesn't allow input
+		$values = $form->exportValues();
 		$values['security_q'] = "";
 		$values['security_a'] = "";
 		$values['status'] = "A";
@@ -91,7 +92,7 @@ final class MemberController extends Controller {
 		$values['join_date'] = $date['Y'] . '/' . $date['F'] . '/' . $date['d'];
 		$date = $values['dob'];
 		$values['dob'] = $date['Y'] . '/' . $date['F'] . '/' . $date['d'];
-		if($values['dob'] == $today['year']."/".$today['mon']."/".$today['mday'])
+		if($values['dob'] == date("Y/m/d"))
 			$values['dob'] = ""; // if birthdate was left as default, set to null
 		$values['phone1_number'] = $values['phone1'];
 		$values['phone2_number'] = $values['phone2'];
@@ -99,25 +100,21 @@ final class MemberController extends Controller {
 		$new_member = new cMember($values);
 		$new_person = new cPerson($values);
 
-		if($created = $new_person->SaveNewPerson()) 
-			$created = $new_member->SaveNewMember();
+		$created = $new_person->SaveNewPerson() and $new_member->SaveNewMember();
+		$this->page->created = $created;
 
-		if($created) {
-			$list .= "Nuevo soci@ creado. Pulse <A HREF=member_create.php>aqui</A> para crear otra cuenta.";
-			if($values['email'] == "") {
-				$list .= "Este soci@ no tiene correo electronico, habra que informarle de su ID ('". $values["member_id"]. "') y contraseña ('". $values["password"] ."').";	
-			} else {
-			  //$mailed = mail($values['email'], NEW_MEMBER_SUBJECT, NEW_MEMBER_MESSAGE . "\n\nID de soci@: ". $values['member_id'] ."\n". "Contraseña: ". $values['password'], EMAIL_FROM);
-			  $mailed = $new_member->esmail($values['email'], NEW_MEMBER_SUBJECT, NEW_MEMBER_MESSAGE . "\n\nID de soci@: ". $values['member_id'] ."\n". "Contraseña: ". $values['password']);
-				if($mailed)
-					$list .= "Un correo ha sido enviado a '". $values["email"] ."' con el id de usuario y la contraseña.";
-				else
-					$list .= " No ha sido posible enviar un correo al soci@ nuevo, posiblemente debido a un problema tecnico. Sería necesario avisar al soci@ de su ID ('". $values["member_id"]. "') y contraseña ('". $values["password"] ."').</I>";	 
-			}
+		if ($created) {
+			$user = new cMember();
+			$user->LoadMember($values["member_id"]);
+			$config = Config::getInstance();
+			$from = 
+			PageView::getInstance()->setMessage("Nuevo soci@ creado. Su ID es {$values["member_id"]} y contraseña es {$values["password"]}.");	
+			$message = new EmailMessage(EMAIL_ADMIN, NEW_MEMBER_SUBJECT, NEW_MEMBER_MESSAGE . "\n\nID de soci@: ". $values['member_id'] ."\n". "Contraseña: ". $values['password']);
+			$message->to($user);
+			$message->save();
 		} else {
 			cError::getInstance()->Error("Un error ha ocurrido en el momento de guardar los datos. Intentalo otra vez mas tarde");
 		}
-		PageView::getInstance()->displayPage($list);
 	}
 
 	/**

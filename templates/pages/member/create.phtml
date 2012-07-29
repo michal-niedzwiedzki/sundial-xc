@@ -1,3 +1,7 @@
 <h2>Crear socio nuevo</h2>
 
-<?= $form->toHTML() ?>
+<?php if ($created): ?>
+	<p>Nuevo socio creado.</p>
+<?php else: ?>
+	<?= $form->toHTML() ?>
+<?php endif ?>

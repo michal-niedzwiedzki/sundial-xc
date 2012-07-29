@@ -2,8 +2,26 @@
 
 final class FeedbackController extends Controller {
 
+	/**
+	 * @Title "Feedback"
+	 */
 	public function all() {
-		include ROOT_DIR . "/legacy/feedback_all.php";
+		$mode = HTTPHelper::rq("mode");
+		$memberId = $mode == "other"
+			? HTTPHelper::rq("member_id")
+			: cMember::getCurrent()->getId();
+
+		$member = new cMember;
+		$member->LoadMember($memberId);
+		
+		$feedbackgrp = new cFeedbackGroup;
+		$feedbackgrp->LoadFeedbackGroup($memberId);
+		
+		if (isset($feedbackgrp->feedback)) {
+			$this->page->table = $feedbackgrp->DisplayFeedbackTable($user->member_id);
+		}
+		$this->page->other = $mode == "other";
+		$this->page->user = $member;
 	}
 
 	public function choose_inbox() {
