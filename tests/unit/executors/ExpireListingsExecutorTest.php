@@ -14,6 +14,7 @@ final class ExpireListingsExecutorTest extends PHPUnit_Framework_TestCase {
 		$expirationWindow = $config->legacy->EXPIRATION_WINDOW;
 		$deleteExpiredAfter = $config->legacy->DELETE_EXPIRED_AFTER;
 
+		// create listings
 		$user = UsersMother::createUserAccount("user_" . time(), "1", array("join_date" => "1980-01-01 00:00:00"));
 		$category = CategoriesMother::create("Fun");
 		$offered = ListingsMother::offered("Walking the dog", "", $category->getId(), $user->getId(), array("posting_date" => "1980-01-01 00:00:00"));
@@ -30,8 +31,9 @@ final class ExpireListingsExecutorTest extends PHPUnit_Framework_TestCase {
 		$wanted->LoadListing("Lawn mowing", $user->getId(), cListing::CODE_WANTED);
 
 		// test expiry date set by executor
-		$this->assertTrue(strtotime($offered->expire_date) > NOW);
-		$this->assertTrue(strtotime($wanted->expire_date) > NOW);
+		$now = time();
+		$this->assertTrue(strtotime($offered->expire_date) > $now);
+		$this->assertTrue(strtotime($wanted->expire_date) > $now);
 
 		// test messages created by executor
 		$this->assertTrue($executor->getMessage() instanceof EmailMessage);

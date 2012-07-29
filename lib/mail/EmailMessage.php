@@ -127,7 +127,7 @@ class EmailMessage {
 	 * @return EmailMessage
 	 */
 	public function to(cMember $user) {
-		$this->addRecipient(self::FIELD_TO, 0, "", $member->person[0]->email);
+		$this->addRecipient(self::FIELD_TO, 0, "", $user->person[0]->email);
 		return $this;
 	}
 
@@ -154,7 +154,7 @@ class EmailMessage {
 			"from" => $this->from,
 			"subject" => $this->subject,
 			"body" => (string)$this->body,
-			"is_processed" => (int)$this->is_processed
+			"is_processed" => (int)$this->isProcessed
 		);
 
 		// save row into database

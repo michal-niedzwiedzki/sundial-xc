@@ -100,7 +100,7 @@ final class CronJob {
 	 * @return boolean
 	 */
 	public function isDue($by = NULL) {
-		$by or $by = NOW;
+		$by or $by = time();
 		if ($this->lastRun and strtotime($this->lastRun) > $by - $this->policy->getMinimumInterval() + 60) {
 			return FALSE;
 		}
