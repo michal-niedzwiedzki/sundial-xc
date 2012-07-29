@@ -2,7 +2,7 @@
 
 interface LogWriter {
 
-	public function __construct($startTime, stdClass $options);
+	public function __construct($startTime, ConfigNode $config);
 
 	public function log($time, $message, $severity);
 

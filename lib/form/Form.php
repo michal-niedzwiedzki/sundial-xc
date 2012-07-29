@@ -15,10 +15,7 @@ abstract class Form extends HTML_QuickForm {
 	}
 
 	public function validate() {
-echo CSRF;
-print_r($this->exportValues());
-		if (CSRF !== $this->getElementValue("csrf")) {
-echo "CSRF fuckup\n";
+		if (CSRF != $this->getElementValue("csrf")) {
 			return FALSE;
 		}
 		return parent::validate();

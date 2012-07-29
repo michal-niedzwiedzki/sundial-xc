@@ -38,25 +38,25 @@ final class LogWriterFile implements LogWriter {
 	 * Enables writing to a file upon successful initialization.
 	 *
 	 * @param int $startTime
-	 * @param stdClass $options
+	 * @param ConfigNode $config
 	 * @author Michał Rudnicki <michal.rudnicki@epsi.pl>
 	 */
-	public function __construct($startTime, stdClass $options) {
+	public function __construct($startTime, ConfigNode $config) {
 		$this->startTime = $startTime;
-		if (!isset($options->enabled) or !$options->enabled) {
+		if (!$config->enabled) {
 			return;
 		}
-		if (!isset($options->file) or !$options->file) {
+		if (!$config->file) {
 			throw new Exception("Missing mandatory config param 'file'");
 		}
-		$this->file = ROOT_DIR . "/" . $options->file;
+		$this->file = ROOT_DIR . "/" . $config->file;
 		if (!file_exists($this->file) and !is_writable(dirname($this->file))) {
 			throw new Exception("Cannot create file '{$this->$file}' - directory not wriable");
 		} elseif (!is_writable($this->file)) {
 			throw new Exception("File '{$this->file}' not writable");
 		}
-		isset($options->level) and $this->level = $options->level;
-		isset($options->format) and $this->format = $options->format;
+		$config->level and $this->level = $config->level;
+		$config->format and $this->format = $config->format;
 		$this->enabled = TRUE;
 	}
 

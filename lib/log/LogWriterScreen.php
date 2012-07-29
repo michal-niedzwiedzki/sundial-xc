@@ -12,12 +12,12 @@ final class LogWriterScreen implements LogWriter {
 	private $level = Debug::DEBUG;
 	private static $log = array();
 
-	public function __construct($startTime, stdClass $options) {
+	public function __construct($startTime, ConfigNode $config) {
 		$this->startTime = $startTime;
-		if (!isset($options->enabled) or !$options->enabled) {
+		if (!$config->enabled) {
 			return;
 		}
-		isset($options->level) and $this->level = $options->level;
+		$config->level and $this->level = $config->level;
 		$this->enabled = TRUE;
 	}
 
