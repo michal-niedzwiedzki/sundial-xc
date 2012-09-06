@@ -1,7 +1,7 @@
 <?php
 
 final class MemberCreateForm extends Form {
-	
+
 	public function __construct() {
 		$config = Config::getInstance();
 

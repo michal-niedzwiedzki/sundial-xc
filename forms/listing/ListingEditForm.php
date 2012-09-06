@@ -3,11 +3,11 @@
 final class ListingEditForm extends Form {
 
 	protected $memberId;
-	
+
 	public function __construct(cListing $listing, $adminMode = FALSE) {
 		parent::__construct();
 		$this->memberId = $listing->member->getId();
-		
+
 		if ($adminMode) {
 			$this->addElement("hidden", "mode", "admin");
 			if ($memberId) {
@@ -33,7 +33,7 @@ final class ListingEditForm extends Form {
 #		$this->registerRule("verifyCategory", "function", "verifyCategory", $this);
 #		$this->addRule("category", "Seleccione una categoría", "verifyCategory");
 		$this->addElement("submit", "btnSubmit", "Guardar");
-		
+
 		$this->setDefaults(array(
 			"title" => $listing->title,
 			"category" => $listing->category->getId(),

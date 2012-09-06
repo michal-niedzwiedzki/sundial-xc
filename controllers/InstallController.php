@@ -74,7 +74,10 @@ final class InstallController extends Controller {
 		$this->page->defaultPassword = $defaultPassword;
 		$this->page->passwordChanged = FALSE;
 		if ($defaultPassword and $password = HTTPHelper::post("password")) {
-			PDOHelper::update(DB::MEMBERS, array("password" => sha1($password)), "id = :id", array("id" => "admin"));
+			PDOHelper::update(
+				"member",
+				array("password" => sha1($password)), "id = :id", array("id" => "admin")
+			);
 			$this->passwordChanged = TRUE;
 		}
 	}

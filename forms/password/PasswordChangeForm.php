@@ -30,7 +30,7 @@ final class PasswordChangeForm extends Form {
 		$length = strlen($value);
 		while ($i < $length) {
 			if (ctype_digit($value{$i}))
-				return TRUE;	
+				return TRUE;
 			$i+=1;
 		}
 		return FALSE;

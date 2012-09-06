@@ -1,7 +1,7 @@
 <?php
 
 class UsersListForm extends Form {
-	
+
 	public function __construct(array $usersList = array()) {
 		parent::__construct();
 		if (empty($usersList)) {

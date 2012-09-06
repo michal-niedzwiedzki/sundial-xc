@@ -1,7 +1,7 @@
 <?php
 
 final class MemberChooseForm extends Form {
-	
+
 	public function __construct($action, array $ids) {
 		parent::__construct();
 		$this->addElement("hidden", "action", $action);

@@ -29,4 +29,8 @@ abstract class Form extends HTML_QuickForm {
 		return parent::process(array("Form", "nop"), TRUE);
 	}
 
+	public function __toString() {
+		return $this->toHTML();
+	}
+
 }

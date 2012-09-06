@@ -1,7 +1,7 @@
 <?php
 
 final class TradeReverseForm extends Form {
-	
+
 	public function __construct(array $trades) {
 		parent::__construct();
 		$this->addElement("select", "trade_id", "Elegir el intercambio que quieres deshacer", $trades);

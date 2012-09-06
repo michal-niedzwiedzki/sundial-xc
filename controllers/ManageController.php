@@ -12,10 +12,8 @@ final class ManageController extends Controller {
 		$user = cMember::getCurrent();
 		$user->MustBeLevel(1);
 
-		$membersTableName = DB::MEMBERS;
-		$personsTableName = DB::PERSONS;
 		$sql = "
-			SELECT * FROM $membersTableName AS m, $personsTableName AS p
+			SELECT * FROM member AS m, person AS p
 			WHERE m.member_id = p.member_id AND primary_member = 'Y'
 			ORDER BY first_name, last_name
 		";
@@ -45,7 +43,7 @@ final class ManageController extends Controller {
 			}
 			$member = new cMember;
 			$member->LoadMember($id);
-			$out = PDOHelper::update(DB::MEMBERS, array("restriction" => 1), "member_id = :id", array("id" => $id));
+			$out = PDOHelper::update("member", array("restriction" => 1), "member_id = :id", array("id" => $id));
 			if (!$out) {
 				PageView::setMessage("Imposible poner restricciónes sobre esta cuenta.");
 				return;
@@ -61,7 +59,7 @@ final class ManageController extends Controller {
 			}
 			$member = new cMember;
 			$member->LoadMember($id);
-			$out = PDOHelper::update(DB::MEMBERS, array("restriction" => 0), "member_id = :id", array("id" => $id));
+			$out = PDOHelper::update("member", array("restriction" => 0), "member_id = :id", array("id" => $id));
 			if (!$out) {
 				PageView::setMessage("El sistema no ha podido levantar la restricción.");
 				return;

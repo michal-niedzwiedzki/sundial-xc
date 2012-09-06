@@ -183,10 +183,8 @@ final class MemberController extends Controller {
 		}
 
 		// Do search in SQL
-		$membersTableName = DB::MEMBERS;
-		$personsTableName = DB::PERSONS;
 		$sql = "
-			SELECT m.member_id FROM $membersTableName AS m, $personsTableName AS p
+			SELECT m.member_id FROM member AS m, person AS p
 			WHERE m.member_id = p.member_id AND primary_member = 'Y' AND $condition $orderBy
 		";
 		$out = PDOHelper::fetchAll($sql, $params);

@@ -1,7 +1,7 @@
 <?php
 
 final class CategoryEditForm extends Form {
-	
+
 	public function __construct($id = NULL) {
 		parent::__construct();
 		$form->addElement("hidden", "category_id", $id);

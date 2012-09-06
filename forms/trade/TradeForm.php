@@ -3,7 +3,7 @@
 final class TradeForm extends Form {
 
 	protected static $member;
-	
+
 	public function __construct(cMember $member, $mode, array $namesList, array $categoriesList) {
 		parent::__construct();
 		self::$member = $member;

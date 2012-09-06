@@ -1,7 +1,7 @@
 <?php
 
 final class ListingDeleteChecklist extends Checklist {
-	
+
 	public function __construct(array $items, $type, $mode, $memberId) {
 		parent::__construct($items);
 		$this->addElement('hidden', 'type', $type);

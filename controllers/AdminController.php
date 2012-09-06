@@ -11,8 +11,7 @@ final class AdminController extends Controller {
 
 		$config = Config::getInstance();
 
-		$tableName = DB::MEMBERS;
-		$sql = "SELECT sum(balance) AS balance FROM $tableName";
+		$sql = "SELECT sum(balance) AS balance FROM member";
 		$balance = PDOHelper::fetchCell("balance", $sql, array());
 
 		$this->page->cUser = $user;

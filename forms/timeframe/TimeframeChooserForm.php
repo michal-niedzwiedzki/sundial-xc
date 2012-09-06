@@ -1,7 +1,7 @@
 <?php
 
 final class TimeframeChooserForm extends Form {
-	
+
 	public function __construct($action, $today = NULL) {
 		parent::__construct();
 

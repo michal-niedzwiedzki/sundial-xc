@@ -3,11 +3,11 @@
 final class ListingCreateForm extends Form {
 
 	protected $memberId;
-	
+
 	public function __construct($type, $memberId, $adminMode = FALSE) {
 		parent::__construct();
 		$this->memberId = $memberId;
-		
+
 		if ($adminMode) {
 			$this->addElement("hidden", "mode", "admin");
 			if ($memberId) {
@@ -31,7 +31,7 @@ final class ListingCreateForm extends Form {
 #			: $this->addElement("hidden", "rate");
 		$this->addElement("textarea", "description", "Descripción", array("cols" => 45, "rows" => 5, "wrap" => "soft"));
 		$this->addElement("submit", "btnSubmit", "Insertar");
-		
+
 		// add rules
 		$this->addRule("title", "Insertar un nombre", "required");
 		$this->registerRule("verify_not_duplicate", "function", "verifyNotDuplicate", $this);
