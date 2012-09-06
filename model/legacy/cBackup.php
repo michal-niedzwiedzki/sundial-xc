@@ -32,7 +32,7 @@ class cBackup {
 		$this->workbook->setTempDir('/tmp');
 
 		// TODO: The following should be dynamically generated
-		$this->allTables = array(DB::LISTINGS, DB::PERSONS, DB::MEMBERS, DB::TRADES, DB::LOGINS, DB::LOGGING, DB::CATEGORIES, DB::FEEDBACK, DB::REBUTTAL, DB::NEWS);
+		$this->allTables = array(DB::LISTINGS, DB::PERSONS, "member", DB::TRADES, DB::LOGINS, DB::LOGGING, DB::CATEGORIES, DB::FEEDBACK, DB::REBUTTAL, DB::NEWS);
 		$this->workbook->send('export_'. $user->member_id .'.xls');
 	}
 

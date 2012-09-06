@@ -82,8 +82,7 @@ class cLoginHistory {
 			}
 			return $this->SaveLoginHistory();
 		} else {
-			$tableName = DB::MEMBERS;
-			$sql = "SELECT count(*) AS c FROM $tableName WHERE member_id = :id";
+			$sql = "SELECT count(*) AS c FROM member WHERE member_id = :id";
 			$c = PDOHelper::fetchCell("c", $sql, array("id" => $member_id));
 			if ($c != 1) {
 				// Userid must have been misspelled or didn't exist.

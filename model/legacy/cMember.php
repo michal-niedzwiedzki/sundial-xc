@@ -55,7 +55,7 @@ class cMember {
 	}
 
 	public function SaveNewMember() {
-		return PDOHelper::insert(DB::MEMBERS, array(
+		return PDOHelper::insert("member", array(
 			"member_id" => $this->member_id,
 			"password" => sha1($this->password),
 			"member_role" => $this->member_role,
@@ -166,7 +166,7 @@ class cMember {
 	}
 
 	public function ChangePassword($pass) { // TODO: Should use SaveMember and should reset $this->password
-		$out = PDOHelper::update(DB::MEMBERS, array("password" => sha1($pass)), "member_id = :id", array("id" => $this->member_id));
+		$out = PDOHelper::update("member", array("password" => sha1($pass)), "member_id = :id", array("id" => $this->member_id));
 		if ($out) {
 			return true;
 		}
@@ -238,12 +238,11 @@ class cMember {
 	 */
 	public function LoadMember($id, $redirect = TRUE) {
 		// fetch user data from database and populate object
-		$tableName = DB::MEMBERS;
 		$sql = "
 			SELECT
 				member_id, password, member_role, security_q, security_a, status, member_note, admin_note,
 				join_date, expire_date, away_date, account_type, email_updates, balance, confirm_payments, restriction
-			FROM $tableName
+			FROM member
 			WHERE member_id = :id
 			LIMIT 1
 		";
@@ -327,7 +326,7 @@ class cMember {
 			"confirm_payments" => $this->confirm_payments,
 			"balance" => $this->balance
 		);
-		$out = PDOHelper::update(DB::MEMBERS, $row, "member_id = :id", array("id" => $this->member_id));
+		$out = PDOHelper::update("member", $row, "member_id = :id", array("id" => $this->member_id));
 		if (!$out) {
 			cError::getInstance()->Error("No ha sido posible guardar los cambios para el usuario '". $this->member_id ."'. Intentalo otra vez mas tarde.");
 		}
@@ -431,8 +430,8 @@ class cMember {
 	 * @author Michał Rudnicki <michal.rudnicki@epsi.pl>
 	 */
 	public function VerifyMemberExists($id) {
-		$sql = "SELECT count(*) AS exists FROM :tableName WHERE member_id = :id";
-		return (boolean)PDOHelper::fetchCell("exists", $sql, array("tableName" => DB::MEMBERS, "id" => $id));
+		$sql = "SELECT count(*) AS exists FROM member WHERE member_id = :id";
+		return (boolean)PDOHelper::fetchCell("exists", $sql, array("id" => $id));
 	}
 
 	//function to send mails with special characters

@@ -9,10 +9,8 @@ class cMemberGroup {
 		if (!$non_members) {
 			$exclusions .= " AND member_role != '9'";
 		}
-		$membersTableName = DB::MEMBERS;
-		$personsTableName = DB::PERSONS;
 		$sql = "
-			SELECT m.member_id FROM $membersTableName AS m, $personsTableName AS p
+			SELECT m.member_id FROM member AS m, person AS p
 			WHERE m.member_id = p.member_id AND $exclusions
 			ORDER BY p.first_name, p.last_name
 		";

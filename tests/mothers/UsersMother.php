@@ -35,7 +35,7 @@ final class UsersMother {
 			"email_updates" => 7,
 			"balance" => 0.00
 		);
-		PDOHelper::insert(DB::MEMBERS, $row);
+		PDOHelper::insert("member", $row);
 		$row = array(
 			"member_id" => $username,
 			"primary_member" => "Y",

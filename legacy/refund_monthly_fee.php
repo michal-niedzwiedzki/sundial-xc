@@ -150,7 +150,7 @@ function transfer_fee($tid, $trade_time)
     global $cDB, $monthly_fee_exempt_list;
     $monthly_fee = MONTHLY_FEE;
     $system_account_id = SYSTEM_ACCOUNT_ID;
-    $member_table = DB::MEMBERS;
+    $member_table = "member";
     $trade_table = DB::TRADES;
     $trade_type_monthly = TRADE_MONTHLY_FEE;
     $trade_type = TRADE_MONTHLY_FEE_REVERSAL;

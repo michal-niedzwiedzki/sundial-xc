@@ -103,7 +103,7 @@ function transfer_fee($tid)
     	$description = 'Service Charge'; // A sensible default if admin hasn't bothered specifying a description
     
     $system_account_id = SYSTEM_ACCOUNT_ID;
-    $member_table = DB::MEMBERS;
+    $member_table = "member";
     $trade_table = DB::TRADES;
     $trade_type = 'S';
     
