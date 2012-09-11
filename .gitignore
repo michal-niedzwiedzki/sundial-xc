@@ -5,3 +5,4 @@ env.txt
 .buildpath
 .settings/
 var/migrations/*
+env.txt-

@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Email message with list of recipients
+ * Email message and a list of recipients
  *
  * @author Michał Rudnicki <michal.rudnicki@epsi.pl>
  */
@@ -42,6 +42,7 @@ class EmailMessage {
 	 *
 	 * @param int $id
 	 * @return EmailMessage
+	 * @author Michał Rudnicki <michal.rudnicki@epsi.pl>
 	 */
 	public static function getById($id) {
 		$row = PDOHelper::fetchRow("SELECT * FROM " . self::TABLE_EMAILS . " WHERE id = :id", array("id" => $id));
@@ -107,6 +108,7 @@ class EmailMessage {
 	 * @param int $id primary key of recipient for this particular message, default NULL
 	 * @param int $status message delivery status, default self::STATUS_PENDING
 	 * @return EmailMessage
+	 * @author Michał Rudnicki <michal.rudnicki@epsi.pl>
 	 */
 	public function addRecipient($field, $userId, $userName, $address, $id = NULL, $status = self::STATUS_PENDING) {
 		$this->recipients[$address] = array(
@@ -125,9 +127,24 @@ class EmailMessage {
 	 *
 	 * @param cMember $user
 	 * @return EmailMessage
+	 * @author Michał Rudnicki <michal.rudnicki@epsi.pl>
 	 */
 	public function to(cMember $user) {
-		$this->addRecipient(self::FIELD_TO, 0, "", $user->person[0]->email);
+		$this->addRecipient(self::FIELD_TO, 0, "", $user->getEmail());
+		return $this;
+	}
+
+	/**
+	 * Add users group as recipients in To: field
+	 *
+	 * @param EmailGroup $group
+	 * @return EmailMessage
+	 * @author Michał Rudnicki <michal.rudnicki@epsi.pl>
+	 */
+	public function toGroup(EmailGroup $group) {
+		foreach ($group as $user) {
+			$this->addRecipient($user->getEmail());
+		}
 		return $this;
 	}
 

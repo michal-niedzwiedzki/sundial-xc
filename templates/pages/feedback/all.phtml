@@ -1,0 +1,11 @@
+<h2>Feedback</h2>
+
+<?php if (isset($table)): ?>
+	<?= $table->__toString() ?>
+<?php else: ?>
+	<?php if ($other): ?>
+		<p>This member does not have any feedback yet.</p>
+	<?php else: ?>
+		<p>You don't have any feedback yet.</p>
+	<?php endif ?>
+<?php endif ?>

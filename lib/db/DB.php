@@ -190,6 +190,10 @@ final class DB {
 		return $versions;
 	}
 
+	public static function getCurrentVersion($silo) {
+		return trim(file_get_contents(ROOT_DIR . "/var/migrations/version.{$silo}.txt"));
+	}
+
 	/**
 	 * Run database migration transactionally
 	 *

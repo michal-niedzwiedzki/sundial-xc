@@ -54,6 +54,10 @@ class cMember {
 		return self::$current;
 	}
 
+	public function getEmail() {
+		return isset($this->person[0]) ? $this->person[0]->email : NULL;
+	}
+
 	public function SaveNewMember() {
 		return PDOHelper::insert("member", array(
 			"member_id" => $this->member_id,
