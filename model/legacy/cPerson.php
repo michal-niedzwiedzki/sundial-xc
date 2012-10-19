@@ -144,6 +144,16 @@ class cPerson {
 		return TRUE;
 	}
 
+	public static function getByEmail($email) {
+		$sql = "SELECT person_id FROM person WHERE email = :email";
+		$personId = PDOHelper::fetchCell("person_id", $sql, array("email" => $email));
+		if ($personId) {
+			$person = new cPerson();
+			$person->LoadPerson($personId);
+			return $person;
+		}
+	}
+
 	function DeletePerson() {
 		global $cDB;
 		

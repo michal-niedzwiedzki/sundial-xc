@@ -108,7 +108,7 @@ final class MemberController extends Controller {
 			$user = new cMember();
 			$user->LoadMember($values["member_id"]);
 			$config = Config::getInstance();
-			$from = 
+#			$from = 
 			PageView::getInstance()->setMessage("Nuevo soci@ creado. Su ID es {$values["member_id"]} y contraseña es {$values["password"]}.");	
 			$message = new EmailMessage(EMAIL_ADMIN, NEW_MEMBER_SUBJECT, NEW_MEMBER_MESSAGE . "\n\nID de soci@: ". $values['member_id'] ."\n". "Contraseña: ". $values['password']);
 			$message->to($user);
