@@ -2,8 +2,8 @@
 
 final class UsersMother {
 
-	public static function create() {
-		return self::createUserAccount(substr("u_" . (microtime(TRUE) - 1343345530), 0, 15), cMember::DEFAULT_PASSWORD);
+	public static function create(array $details = array()) {
+		return self::createUserAccount(substr("u_" . (microtime(TRUE) - 1343345530), 0, 15), cMember::DEFAULT_PASSWORD, $details);
 	}
 
 	public static function createRegularAccount($username, $password) {
@@ -45,16 +45,16 @@ final class UsersMother {
 			"mid_name" => NULL,
 			"dob" => NULL,
 			"mother_mn" => NULL,
-			"email" => NULL,
+			"email" => isset($details["email"]) ? $details["email"] : "{$username}@test.com",
 			"address_city" => "Gotham",
 			"address_state_code" => "",
 			"address_post_code" => "00000",
 			"address_country" => ""
 		);
 		PDOHelper::insert(DB::PERSONS, $row);
-		$user = new cMember();
-		$user->LoadMember($username);
-		return $user;
+		$member = new cMember();
+		$member->LoadMember($username);
+		return $member;
 	}
 
 }

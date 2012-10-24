@@ -25,6 +25,34 @@ final class PasswordController extends Controller {
 	/**
 	 * @Public
 	 */
+	public function forgot() {
+		$form = new PasswordForgottenForm();
+		if (!$form->validate()) {
+			$this->page->form = $form;
+			return;
+		}
+		$form->freeze();
+		$form->process();
+		$values = $form->exportValues();
+		$email = $values["email"];
+		$token = rand(10000, 99999) . rand(10000, 99999) . rand(10000, 99999);
+		$link = Link::to("login", "reset_password", array("email" => $email, "token" => $token));
+
+		$member = cMember::getByEmail($email);
+		$member->forgot_token = $token;
+		$member->forgot_expiry = date("Y-m-d h:I:s", NOW + 3600);
+		$member->SavePerson();
+
+		$message = new EmailMessage(EMAIL_ADMIN, "Password reset request", "You have requested resetting your password. Please click this link to continue: $link");
+		$message->to($member);
+		$message->save();
+
+		PageView::getInstance()->setMessage("Enviado correo con instrucciones para cambiar tu contrasenia");
+	}
+
+	/**
+	 * @Public
+	 */
 	public function reset() {
 		$email = HTTPHelper::rq("email");
 		$token = HTTPHelper::rq("token");

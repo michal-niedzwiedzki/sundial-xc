@@ -1,0 +1,7 @@
+#!/bin/sh
+
+CWD=$( pwd )
+chdir $( dirname $0 )
+chdir ..
+phpunit tests/unit tests/integration
+chdir $CWD

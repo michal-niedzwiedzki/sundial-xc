@@ -49,34 +49,4 @@ final class LoginController extends Controller {
 		$this->page->csrf = CSRF;
 	}
 
-	/**
-	 * @Public
-	 */
-	public function forgot_password() {
-		$form = new LoginForgotPasswordForm();
-		if (!$form->validate()) {
-			$this->page->form = $form;
-			return;
-		}
-		$form->freeze();
-		$form->process();
-		$values = $form->exportValues();
-		$email = $values["email"];
-		$token = rand(10000, 99999) . rand(10000, 99999) . rand(10000, 99999);
-		$link = Link::to("login", "reset_password", array("email" => $email, "token" => $token));
-
-		$person = cPerson::getByEmail($email);
-		$person->password_reset_token = $token;
-		$person->SavePerson();
-
-		$member = new cMember();
-		$member->LoadMember($person->member_id);
-
-		$message = new EmailMessage(EMAIL_ADMIN, "Password reset request", "You have requested resetting your password. Please click this link to continue: $link");
-		$message->to($member);
-		$message->save();
-
-		PageView::getInstance()->setMessage("Enviado correo con instrucciones para cambiar tu contrasenia");
-	}
-
 }
