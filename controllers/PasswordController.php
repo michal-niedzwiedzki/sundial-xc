@@ -22,8 +22,38 @@ final class PasswordController extends Controller {
 
 	}
 
+	/**
+	 * @Public
+	 */
 	public function reset() {
-		include ROOT_DIR . "/legacy/password_reset.php";
+		$email = HTTPHelper::rq("email");
+		$token = HTTPHelper::rq("token");
+
+		$person = cPerson::getByEmail($email);
+		$form = new PasswordChangeForm();
+
+		if (!$form->validate()) {
+			$this->page->form = $form;
+			return;
+		}
+
+		if (!$person->password_reset_token or $person->password_reset_token != $token) {
+			$this->page->form = $form;
+			PageView::getInstance()->setMessage("Token invalid");
+			return;
+		}
+
+		if ($person->password_reset_expiry < NOW) {
+			$this->page->form = $form;
+			PageView::getInstance()->setMessage("Expired");
+			return;
+		}
+
+		$values = $form->exportValues();
+		$member = new cMember();
+		$member->LoadMember($person->member_id);
+		$member->ChangePassword($values["password"]);
+		PageView::getInstance()->setMessage("Password changed successfuly");
 	}
 
 }
