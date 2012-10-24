@@ -27,6 +27,8 @@ class cMember {
 		if ($values) {
 			$this->member_id = $values['member_id'];
 			$this->password = $values['password'];
+			$this->forgot_token = $values['forgot_token'];
+			$this->forgot_expiry = $values['forgot_expity'];
 			$this->member_role = $values['member_role'];
 			$this->security_q = $values['security_q'];
 			$this->security_a = $values['security_a'];
@@ -40,6 +42,23 @@ class cMember {
 			$this->email_updates = $values['email_updates'];
 			$this->balance = $values['balance'];
 		}
+	}
+
+	public static function getByEmail($email) {
+		$sql = "
+			SELECT m.member_id AS member_id FROM member AS m
+			INNER JOIN person AS p USING (member_id)
+			WHERE p.email = :email
+		";
+		$memberId = PDOHelper::fetchCell("member_id", $sql, array("email" => $email));
+		if (!$memberId) {
+			cError::getInstance()->Error("Error cargando datos de soci@.");
+			include("redirect.php");
+			return false;
+		}
+        $member = new cMember();
+        $member->LoadMember($memberId);
+		return $member;
 	}
 
 	public function getId() {
@@ -62,6 +81,8 @@ class cMember {
 		return PDOHelper::insert("member", array(
 			"member_id" => $this->member_id,
 			"password" => sha1($this->password),
+			"forgot_token" => $this->forgot_token,
+			"forgot_expiry" => $this->forgot_expity,
 			"member_role" => $this->member_role,
 			"security_q" => $this->security_q,
 			"security_a" => $this->security_a,
@@ -316,6 +337,8 @@ class cMember {
 	public function SaveMember() {
 		$row = array(
 			"password" => $this->password,
+			"forgot_token" => $this->forgot_token,
+			"forgot_expiry" => $this->forgot_expity,
 			"member_role" => $this->member_role,
 			"security_q" => $this->security_q,
 			"security_a" => $this->security_a,

@@ -1,6 +1,6 @@
 <?php
 
-final class LoginForgotPasswordForm extends Form {
+final class PasswordForgottenForm extends Form {
 
 	public function __construct() {
 		parent::__construct();
