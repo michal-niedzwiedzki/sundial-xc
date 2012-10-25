@@ -1,0 +1,11 @@
+<h2>Cambiar contraseña </h2>
+<?php if (isset($form)): ?>
+	<p>
+		Para mayor seguridad la contraseña debe tener un minimo de 7 caracteres y al menos un numero.
+	</p>
+	<?= $form->toHtml() ?>
+<?php else: ?>
+	<p>
+		Password changed. Now you can log in <a href="<?= Link::to("member", "login") ?>">here</a>.
+	</p>
+<?php endif ?>

@@ -28,7 +28,7 @@ class cMember {
 			$this->member_id = $values['member_id'];
 			$this->password = $values['password'];
 			$this->forgot_token = $values['forgot_token'];
-			$this->forgot_expiry = $values['forgot_expity'];
+			$this->forgot_expiry = $values['forgot_expiry'];
 			$this->member_role = $values['member_role'];
 			$this->security_q = $values['security_q'];
 			$this->security_a = $values['security_a'];
@@ -50,14 +50,14 @@ class cMember {
 			INNER JOIN person AS p USING (member_id)
 			WHERE p.email = :email
 		";
-		$memberId = PDOHelper::fetchCell("member_id", $sql, array("email" => $email));
-		if (!$memberId) {
+		try {
+			$memberId = PDOHelper::fetchCell("member_id", $sql, array("email" => $email));
+		} catch (Exception $e) {
 			cError::getInstance()->Error("Error cargando datos de soci@.");
-			include("redirect.php");
-			return false;
+			return FALSE;
 		}
-        $member = new cMember();
-        $member->LoadMember($memberId);
+		$member = new cMember();
+		$member->LoadMember($memberId);
 		return $member;
 	}
 
@@ -82,7 +82,7 @@ class cMember {
 			"member_id" => $this->member_id,
 			"password" => sha1($this->password),
 			"forgot_token" => $this->forgot_token,
-			"forgot_expiry" => $this->forgot_expity,
+			"forgot_expiry" => $this->forgot_expiry,
 			"member_role" => $this->member_role,
 			"security_q" => $this->security_q,
 			"security_a" => $this->security_a,
@@ -191,12 +191,17 @@ class cMember {
 	}
 
 	public function ChangePassword($pass) { // TODO: Should use SaveMember and should reset $this->password
-		$out = PDOHelper::update("member", array("password" => sha1($pass)), "member_id = :id", array("id" => $this->member_id));
+		$updates = array(
+			"password" => sha1($pass),
+			"forgot_token" => NULL,
+			"forgot_expiry" => NULL,
+		);
+		$out = PDOHelper::update("member", $updates, "member_id = :id", array("id" => $this->member_id));
 		if ($out) {
-			return true;
+			return TRUE;
 		}
 		cError::getInstance()->Error("No se puede actualizar la contraseña ahora. Intentalo otra vez mas tarde");
-		include "redirect.php";
+		return FALSE;
 	}
 
 	public static function GeneratePassword() {
@@ -264,10 +269,7 @@ class cMember {
 	public function LoadMember($id, $redirect = TRUE) {
 		// fetch user data from database and populate object
 		$sql = "
-			SELECT
-				member_id, password, member_role, security_q, security_a, status, member_note, admin_note,
-				join_date, expire_date, away_date, account_type, email_updates, balance, confirm_payments, restriction
-			FROM member
+			SELECT * FROM member
 			WHERE member_id = :id
 			LIMIT 1
 		";
@@ -338,7 +340,7 @@ class cMember {
 		$row = array(
 			"password" => $this->password,
 			"forgot_token" => $this->forgot_token,
-			"forgot_expiry" => $this->forgot_expity,
+			"forgot_expiry" => $this->forgot_expiry,
 			"member_role" => $this->member_role,
 			"security_q" => $this->security_q,
 			"security_a" => $this->security_a,

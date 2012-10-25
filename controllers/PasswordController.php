@@ -36,12 +36,12 @@ final class PasswordController extends Controller {
 		$values = $form->exportValues();
 		$email = $values["email"];
 		$token = rand(10000, 99999) . rand(10000, 99999) . rand(10000, 99999);
-		$link = Link::to("login", "reset_password", array("email" => $email, "token" => $token));
+		$link = Link::to("password", "reset", array("email" => $email, "token" => $token));
 
 		$member = cMember::getByEmail($email);
 		$member->forgot_token = $token;
-		$member->forgot_expiry = date("Y-m-d h:I:s", NOW + 3600);
-		$member->SavePerson();
+		$member->forgot_expiry = date("Y-m-d H:i:s", time() + 3600);
+		$member->SaveMember();
 
 		$message = new EmailMessage(EMAIL_ADMIN, "Password reset request", "You have requested resetting your password. Please click this link to continue: $link");
 		$message->to($member);
@@ -57,30 +57,28 @@ final class PasswordController extends Controller {
 		$email = HTTPHelper::rq("email");
 		$token = HTTPHelper::rq("token");
 
-		$person = cPerson::getByEmail($email);
-		$form = new PasswordChangeForm();
+		$member = cMember::getByEmail($email);
+		$form = new PasswordResetForm($email, $token);
 
 		if (!$form->validate()) {
 			$this->page->form = $form;
 			return;
 		}
 
-		if (!$person->password_reset_token or $person->password_reset_token != $token) {
+		if (!$member->forgot_token or $member->forgot_token != $token) {
 			$this->page->form = $form;
 			PageView::getInstance()->setMessage("Token invalid");
 			return;
 		}
 
-		if ($person->password_reset_expiry < NOW) {
+		if (!$member->forgot_expiry or strtotime($member->forgot_expiry) < time()) {
 			$this->page->form = $form;
 			PageView::getInstance()->setMessage("Expired");
 			return;
 		}
 
 		$values = $form->exportValues();
-		$member = new cMember();
-		$member->LoadMember($person->member_id);
-		$member->ChangePassword($values["password"]);
+		$member->ChangePassword($values["new_passwd"]);
 		PageView::getInstance()->setMessage("Password changed successfuly");
 	}
 
