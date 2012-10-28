@@ -27,8 +27,8 @@ class cMember {
 		if ($values) {
 			$this->member_id = $values['member_id'];
 			$this->password = $values['password'];
-			$this->forgot_token = $values['forgot_token'];
-			$this->forgot_expiry = $values['forgot_expiry'];
+			$this->forgot_token = isset($values['forgot_token']) ? $values['forgot_token'] : NULL;
+			$this->forgot_expiry = isset($values['forgot_expiry']) ? $values['forgot_expiry'] : NULL;
 			$this->member_role = $values['member_role'];
 			$this->security_q = $values['security_q'];
 			$this->security_a = $values['security_a'];
@@ -261,51 +261,38 @@ class cMember {
 	 * Loads user data from database
 	 *
 	 * @param int $id
-	 * @param boolean $redirect on errors, default TRUE
 	 * @return boolean
 	 * @author unknown
 	 * @author Michał Rudnicki <michal.rudnicki@epsi.pl>
 	 */
-	public function LoadMember($id, $redirect = TRUE) {
+	public function LoadMember($id) {
 		// fetch user data from database and populate object
-		$sql = "
-			SELECT * FROM member
-			WHERE member_id = :id
-			LIMIT 1
-		";
+		$sql = "SELECT * FROM member WHERE member_id = :id";
 		$row = PDOHelper::fetchRow($sql, array("id" => $id));
 		if (empty($row)) {
-			if ($redirect) {
-				cError::getInstance()->Error("Erro cargando datos de soci@ (".$member.").  Intentalo otra vez mas tarde.");
-				include("redirect.php");
-			}
-			return false;
+			cError::getInstance()->Error("Erro cargando datos de soci@. Intentalo otra vez mas tarde.");
+			return FALSE;
 		}
 		foreach ($row as $column => $value) {
 			$this->$column = $value;
 		}
 
 		// fetch associated records into person array
-		$tableName = DB::PERSONS;
 		$sql = "
-			SELECT person_id FROM $tableName
-			WHERE member_id = :id
+			SELECT person_id FROM person WHERE member_id = :id
 			ORDER BY primary_member DESC, last_name, first_name
 		";
 		$out = PDOHelper::fetchAll($sql, array("id" => $id));
 		if (empty($out)) {
-			if ($redirect) {
-				cError::getInstance()->Error("Hay un error accediendo a los datos de (".$member.").  Intentalo otra vez mas tarde.");
-				include("redirect.php");
-			}
-			return false;
+			cError::getInstance()->Error("Hay un error accediendo a los datos. Intentalo otra vez mas tarde.");
+			return FALSE;
 		}
 		foreach ($out as $i => $row) {
 			$this->person[$i] = new cPerson; // recursilvely instantiate person
 			$this->person[$i]->LoadPerson($row["person_id"]);
 		}
 
-		return true;
+		return TRUE;
 	}
 
 	function ShowMember()

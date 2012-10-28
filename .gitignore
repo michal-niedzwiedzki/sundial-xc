@@ -4,5 +4,6 @@ env.txt
 .project
 .buildpath
 .settings/
+var/config/*
 var/migrations/*
 env.txt-

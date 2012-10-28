@@ -41,6 +41,14 @@ final class Bootstrap {
 	}
 
 	/**
+	 * Init configuration
+	 */
+	public static function initConfig() {
+		$config = Config::getInstance();
+		$config->addFilter(new ServerConfigFilter());
+	}
+
+	/**
 	 * Init locale settings and character encoding
 	 */
 	public static function initLocale() {
@@ -69,7 +77,9 @@ final class Bootstrap {
 	public static function initEnvironment() {
 		$readable = is_readable(ROOT_DIR . "/env.txt");
 		define("ENV", $readable ? trim(file_get_contents(ROOT_DIR . "/env.txt")) : "example");
-		define("LIVE", Config::getInstance()->site->live);
+		$config = Config::getInstance();
+		$config->load(Config::getDefaultConfigFile());
+		define("LIVE", $config->site->live);
 		Debug::log("Bootstrap", Debug::DEBUG);
 		$readable or Debug::log("Cannot read file 'env.txt', assuming 'example' as environment", Debug::INFO);
 		register_shutdown_function("Bootstrap::shutdownHandler");
@@ -127,6 +137,7 @@ final class Bootstrap {
 // bootstrap
 error_reporting(E_ALL | E_STRICT);
 Bootstrap::initPaths();
+Bootstrap::initConfig();
 Bootstrap::initLocale();
 Bootstrap::initEnvironment();
 Bootstrap::initSession();
