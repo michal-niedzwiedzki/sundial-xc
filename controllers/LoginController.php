@@ -13,7 +13,7 @@ final class LoginController extends Controller {
 
 		// check if already logged in
 		if (cMember::IsLoggedOn()) {
-			HTTPHelper::redirect($redirUrl);
+			HTTPHelper::redirectSeeOther($redirUrl);
 			return;
 		}
 
@@ -27,7 +27,7 @@ final class LoginController extends Controller {
 		}
 
 		if (cMember::getCurrent()->Login($user, $pass)) {
-			HTTPHelper::redirect($redirUrl);
+			HTTPHelper::redirectSeeOther($redirUrl);
 		}
 	}
 
@@ -37,7 +37,7 @@ final class LoginController extends Controller {
 	 */
 	public function logout() {
 		cMember::getCurrent()->Logout();
-		HTTPHelper::redirect("login.php");
+		HTTPHelper::redirectSeeOther(Link::to("login", "index"));
 	}
 
 	/**

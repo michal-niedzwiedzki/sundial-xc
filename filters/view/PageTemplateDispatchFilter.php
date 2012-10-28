@@ -27,9 +27,10 @@ final class PageTemplateDispatchFilter implements DispatchFilter {
 		// check if template file exists
 		if (file_exists(ROOT_DIR . "/templates/" . $pageTemplate . View::getExtension())) {
 			Debug::log("Found page $pageTemplate", Debug::INFO);
+			$view = new View($pageTemplate);
 			$controller = $dispatcher->getController();
-			$controller->page = new View($pageTemplate);
-			PageView::getInstance()->displayPage($controller->page);
+			$controller->setView($view);
+			PageView::getInstance()->displayPage($view);
 		} else {
 			Debug::log("Page $pageTemplate not present", Debug::WARNING);
 		}

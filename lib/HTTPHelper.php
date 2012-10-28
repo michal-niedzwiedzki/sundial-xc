@@ -35,14 +35,22 @@ final class HTTPHelper {
 		return isset($_SERVER[$parameter]) ? $_SERVER[$parameter] : $default;
 	}
 
-	public static function redirect($to) {
+	private static function redirect($httpResponseCode, $to) {
 		if (Debug::hasProblems()) {
 			Debug::log("Problems exist that prevent redirect to {$to}", Debug::INFO);
  			return;
 		}
-		header("HTTP/1.1 303 See Other", TRUE, 303);
+		PageView::getInstance()->disable();
+		http_response_code($httpResponseCode);
 		header("Location: $to");
-		exit();
+	}
+
+	public static function redirectMovedPermanently($to) {
+		return self::redirect(301, $to);
+	}
+
+	public static function redirectSeeOther($to) {
+		return self::redirect(303, $to);
 	}
 
 }

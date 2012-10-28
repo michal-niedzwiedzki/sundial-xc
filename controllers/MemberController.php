@@ -72,8 +72,6 @@ final class MemberController extends Controller {
 		if (!$form->validate()) {
 			return;
 		}
-
-		$form->freeze();
 		$form->process();
 
 		// Following are default values for which this form doesn't allow input
@@ -98,21 +96,18 @@ final class MemberController extends Controller {
 		$values['phone1_number'] = $values['phone1'];
 		$values['phone2_number'] = $values['phone2'];
 
-		$new_member = new cMember($values);
-		$new_person = new cPerson($values);
+		$member = new cMember($values);
+		$person = new cPerson($values);
 
-		$created = $new_person->SaveNewPerson() and $new_member->SaveNewMember();
-		$this->page->created = $created;
-
-		if ($created) {
+		if ($person->SaveNewPerson() and $member->SaveNewMember()) {
 			$user = new cMember();
 			$user->LoadMember($values["member_id"]);
 			$config = Config::getInstance();
-#			$from = 
-			PageView::getInstance()->setMessage("Nuevo soci@ creado. Su ID es {$values["member_id"]} y contraseña es {$values["password"]}.");	
+			PageView::getInstance()->setMessage("Nuevo soci@ creado. Su ID es {$user->member_id} y contraseña es {$values["password"]}.");
 			$message = new EmailMessage(EMAIL_ADMIN, NEW_MEMBER_SUBJECT, NEW_MEMBER_MESSAGE . "\n\nID de soci@: ". $values['member_id'] ."\n". "Contraseña: ". $values['password']);
 			$message->to($user);
 			$message->save();
+			HTTPHelper::redirectSeeOther(Link::to("member", "summary", array("member_id" => $user->member_id)));
 		} else {
 			cError::getInstance()->Error("Un error ha ocurrido en el momento de guardar los datos. Intentalo otra vez mas tarde");
 		}

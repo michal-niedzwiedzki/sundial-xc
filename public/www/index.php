@@ -36,4 +36,5 @@ try {
 LIVE or Debug::log("Postfiltering", Debug::DEBUG);
 $d->postFilter();
 
-echo PageView::getInstance()->__toString();
+$page = PageView::getInstance();
+$page->isEnabled() and print($page->__toString());
