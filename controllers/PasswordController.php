@@ -39,6 +39,10 @@ final class PasswordController extends Controller {
 		$link = Link::to("password", "reset", array("email" => $email, "token" => $token));
 
 		$member = cMember::getByEmail($email);
+		if (!$member) {
+			PageView::getInstance()->setMessage("Unknown email address");
+			return;
+		}
 		$member->forgot_token = $token;
 		$member->forgot_expiry = date("Y-m-d H:i:s", time() + 3600);
 		$member->SaveMember();

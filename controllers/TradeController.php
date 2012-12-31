@@ -44,7 +44,7 @@ final class TradeController extends Controller {
 		$user = cMember::getCurrent();
 		$mode = HTTPHelper::rq("mode");
 		$typ = HTTPHelper::rq("typ");
-		
+
 		$nameList = new cMemberGroup;
 		$nameList->LoadMemberGroup();
 		$nameArray = $nameList->MakeNameArray();
@@ -54,16 +54,16 @@ final class TradeController extends Controller {
 
 		$form = new TradeForm($user, $mode, $nameArray, $categoryArray);
 		$this->page->form = $form;
-		
+
 		if (!$form->validate()) {
 			return;
 		}
-		
+
 		$form->freeze();
 		$form->process();
 		$values = $form->exportValues();
-		
-		if ($values['minutes'] > 0) {
+
+		if (isset($values['minutes']) and $values['minutes'] > 0) {
 			$values['units'] = $values['units'] + ($values['minutes'] / 60);
 		}
 		if (!($values['units'] > 0)) {
@@ -84,7 +84,7 @@ final class TradeController extends Controller {
 			$type = TRADE_ENTRY;  // regular trade
 			$member = $user;
 		}
-		
+
 		if ($typ == 1 or $member_to->confirm_payments == 1) {
 
 			// Payment
@@ -100,19 +100,19 @@ final class TradeController extends Controller {
 					"amount" => $values["units"],
 					"category" => $values["category"],
 					"description" => $values["description"],
-					"typ" => "T",	
+					"typ" => "T",
 				);
 				$out = PDOHelper::insert(DB::TRADES_PENDING, $insert);
 				if (!$out) {
 					PageView::getInstance()->displayError("El intercambio no ha funcionado! Intentalo otra vez mas tarde.");
 					return;
 				}
-	
+
 				LIVE and $member->esmail($member_to->person[0]->email, "Pago recibido en " . SITE_LONG_TITLE . "", "Hola ".$member_to_id.",\n\nHas recibido un pago nuevo de ".$member->member_id."\n\nComo has elegido confirmar todos tus pagos, tienes que entrar en tu cuenta y aceptar o rechazar este pago utlizando el siguiente enlace...\n\nhttp://".SERVER_DOMAIN.SERVER_PATH_URL."/trades_pending.php?action=incoming");
 				PageView::getInstance()->setMessage($member_to_id." ha sido notificado que le quieres hacer una transferencia de ". $values['units'] ." ". strtolower(UNITS) .". Este soci@ tiene que confirmar la transacción.");
 				return;
 			}
-			
+
 			// Invoice
 			if ($typ == 1) {
 				if (!$config->legacy->MEMBERS_CAN_INVOICE) {
@@ -137,10 +137,10 @@ final class TradeController extends Controller {
 				LIVE and mail($member_to->person[0]->email, "Invoice Received on ".SITE_LONG_TITLE."", "Hi ".$member_to_id.",\n\nJust letting you know that you have received a new Invoice from ".$member->member_id."\n\nPlease log into your account now to pay or reject this invoice using the following URL...\n\nhttp://".SERVER_DOMAIN.SERVER_PATH_URL."/trades_pending.php?action=outgoing", EMAIL_FROM);
 				PageView::getInstance()->setMessage($member_to_id." has been sent an invoice for ". $values['units'] ." ". strtolower(UNITS) .".<p> You will be informed when the member pays this invoice and will be invited to leave Feedback for this member.");
 				return;
-			}					
+			}
 
 		} else { // Make the trade
-		
+
 			if ($member->restriction == 1) {
 				PageView::getInstance()->displayError(LEECH_NOTICE);
 				return;
@@ -153,7 +153,7 @@ final class TradeController extends Controller {
 			}
 			PageView::getInstance()->setMessage("Ha hecho una transferencia de ". $values['units'] ." ". strtolower(UNITS) ." a ". $member_to_id .".");
 
-			// Has the recipient got an income tie set-up? If so, we need to transfer a percentage of this elsewhere...		
+			// Has the recipient got an income tie set-up? If so, we need to transfer a percentage of this elsewhere...
 			$recipTie = cIncomeTies::getTie($member_to_id);
 			if ($recipTie && $config->legacy->ALLOW_INCOME_SHARES) {
 				$member_to = new cMember;
@@ -164,7 +164,7 @@ final class TradeController extends Controller {
 				$trade2 = new cTrade($member_to, $charity_to, $theAmount, 12, "Donation from ".$member_to_id, "T");
 				$status = $trade2->MakeTrade();
 			}
-			
+
 			return;
 		}
 	}
@@ -189,7 +189,7 @@ final class TradeController extends Controller {
 		$values = $form->exportValues();
 		$old_trade = new cTrade;
 		$old_trade->LoadTrade($values["trade_id"]);
-		$success = $old_trade->ReverseTrade($values["description"]);	
+		$success = $old_trade->ReverseTrade($values["description"]);
 		if ($success)
 			PageView::getInstance()->setMessage("El intercambio ha sido cancelado.");
 		else
