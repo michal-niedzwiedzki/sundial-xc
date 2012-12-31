@@ -1,5 +1,4 @@
 log/*
-config/*
 env.txt
 .project
 .buildpath
