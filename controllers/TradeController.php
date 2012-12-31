@@ -12,9 +12,9 @@ final class TradeController extends Controller {
 		$group = new cTradeGroup("%", $from->ShortDate(), $to->ShortDate());
 		$group->LoadTradeGroup();
 
-		$this->page->from = $from->ShortDate();
-		$this->page->to = $to->ShortDate();
-		$this->page->tradeGroup = $group->DisplayTradeGroup();
+		$this->view->from = $from->ShortDate();
+		$this->view->to = $to->ShortDate();
+		$this->view->tradeGroup = $group->DisplayTradeGroup();
 	}
 
 	/**
@@ -32,8 +32,8 @@ final class TradeController extends Controller {
 		$group = new cTradeGroup($member->member_id);
 		$group->LoadTradeGroup("individual");
 
-		$this->page->balance = $member->balance;
-		$this->page->table = $group->DisplayTradeGroup();
+		$this->view->balance = $member->balance;
+		$this->view->table = $group->DisplayTradeGroup();
 	}
 
 	/**
@@ -53,7 +53,7 @@ final class TradeController extends Controller {
 		$categoryArray = $categoryList->MakeCategoryArray();
 
 		$form = new TradeForm($user, $mode, $nameArray, $categoryArray);
-		$this->page->form = $form;
+		$this->view->form = $form;
 
 		if (!$form->validate()) {
 			return;
@@ -178,7 +178,7 @@ final class TradeController extends Controller {
 		$trades->LoadTradeGroup();
 
 		$form = new TradeReverseForm($trades->MakeTradeArray());
-		$this->page->form = $form;
+		$this->view->form = $form;
 
 		if (!$form->validate()) {
 			return;
@@ -212,9 +212,9 @@ final class TradeController extends Controller {
 		$group = new cTradeGroup($member->member_id);
 		$group->LoadTradeGroup("individual");
 
-		$this->page->tradeGroup = $group->DisplayTradeGroup();
-		$this->page->color = $color;
-		$this->page->balance = $member->balance;
+		$this->view->tradeGroup = $group->DisplayTradeGroup();
+		$this->view->color = $color;
+		$this->view->balance = $member->balance;
 	}
 
 }

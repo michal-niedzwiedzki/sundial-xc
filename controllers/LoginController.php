@@ -8,8 +8,8 @@ final class LoginController extends Controller {
 	public function index() {
 		$redirUrl = HTTPHelper::post("location");
 		$redirUrl or $redirUrl = "member_profile.php";
-		$this->page->redirUrl = $redirUrl;
-		$this->page->csrf = CSRF;
+		$this->view->redirUrl = $redirUrl;
+		$this->view->csrf = CSRF;
 
 		// check if already logged in
 		if (cMember::IsLoggedOn()) {
@@ -45,8 +45,8 @@ final class LoginController extends Controller {
 	 * @Page "login/index"
 	 */
 	public function redirect() {
-		$this->page->redirUrl = HTTPHelper::session("REQUEST_URI");
-		$this->page->csrf = CSRF;
+		$this->view->redirUrl = HTTPHelper::session("REQUEST_URI");
+		$this->view->csrf = CSRF;
 	}
 
 }

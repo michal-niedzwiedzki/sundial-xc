@@ -9,8 +9,8 @@ final class PasswordController extends Controller {
 		$user = cMember::getCurrent();
 		$form = new PasswordChangeForm();
 
-		$this->page->form = $form;
-		$this->page->fullName = $user->person[0]->first_name . " " . $user->person[0]->mid_name;
+		$this->view->form = $form;
+		$this->view->fullName = $user->person[0]->first_name . " " . $user->person[0]->mid_name;
 
 		if (!$form->validate()) {
 			return;
@@ -28,7 +28,7 @@ final class PasswordController extends Controller {
 	public function forgot() {
 		$form = new PasswordForgottenForm();
 		if (!$form->validate()) {
-			$this->page->form = $form;
+			$this->view->form = $form;
 			return;
 		}
 		$form->freeze();
@@ -65,18 +65,18 @@ final class PasswordController extends Controller {
 		$form = new PasswordResetForm($email, $token);
 
 		if (!$form->validate()) {
-			$this->page->form = $form;
+			$this->view->form = $form;
 			return;
 		}
 
 		if (!$member->forgot_token or $member->forgot_token != $token) {
-			$this->page->form = $form;
+			$this->view->form = $form;
 			PageView::getInstance()->setMessage("Token invalid");
 			return;
 		}
 
 		if (!$member->forgot_expiry or strtotime($member->forgot_expiry) < time()) {
-			$this->page->form = $form;
+			$this->view->form = $form;
 			PageView::getInstance()->setMessage("Expired");
 			return;
 		}

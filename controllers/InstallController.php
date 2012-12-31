@@ -17,11 +17,11 @@ final class InstallController extends Controller {
 	 * @Title "Sundial XC installation wizard - Step 1: PHP setup"
 	 */
 	public function step1_php() {
-		$this->page->gettext = function_exists("gettext");
-		$this->page->gd = function_exists("gd_info");
-		$this->page->pdo = class_exists("PDO");
-		$this->page->log = is_writable(ROOT_DIR . "/log");
-		$this->page->migrations = is_writable(ROOT . "/var/migrations/version.txt");
+		$this->view->gettext = function_exists("gettext");
+		$this->view->gd = function_exists("gd_info");
+		$this->view->pdo = class_exists("PDO");
+		$this->view->log = is_writable(ROOT_DIR . "/log");
+		$this->view->migrations = is_writable(ROOT . "/var/migrations/version.txt");
 	}
 
 	/**
@@ -29,8 +29,8 @@ final class InstallController extends Controller {
 	 * @Title "Sundial XC installation wizard - Step 2: Configuration setup"
 	 */
 	public function step2_config() {
-		$this->page->env = ENV;
-		$this->page->defaultConfig = ENV === "example";
+		$this->view->env = ENV;
+		$this->view->defaultConfig = ENV === "example";
 	}
 
 	/**
@@ -45,21 +45,21 @@ final class InstallController extends Controller {
 		} catch (PDOException $e) {
 			$connection = FALSE;
 		}
-		$this->page->connection = $connection;
+		$this->view->connection = $connection;
 
 		// check if default connection settings
 		$config = Config::getInstance();
-		$this->page->default = $config->db->database === "sundialxc" and $config->db->server === "localhost"
+		$this->view->default = $config->db->database === "sundialxc" and $config->db->server === "localhost"
 			and $config->db->username === "sundialxc" and $config->db->password === "sundialxc";
 
 		// check if already installed
 		$alreadyInstalled = $connection and count(DB::getTables()) > 0;
-		$this->page->alreadyInstalled = $alreadyInstalled;
+		$this->view->alreadyInstalled = $alreadyInstalled;
 
 		// install
-		$this->page->ok = FALSE;
+		$this->view->ok = FALSE;
 		if ($connection and !$alreadyInstalled) {
-			$this->page->of = DB::create();
+			$this->view->of = DB::create();
 		}
 	}
 
@@ -71,8 +71,8 @@ final class InstallController extends Controller {
 		$admin = new cMember();
 		$admin->LoadMember("admin");
 		$defaultPassword = $admin->password === sha1(cMember::DEFAULT_PASSWORD);
-		$this->page->defaultPassword = $defaultPassword;
-		$this->page->passwordChanged = FALSE;
+		$this->view->defaultPassword = $defaultPassword;
+		$this->view->passwordChanged = FALSE;
 		if ($defaultPassword and $password = HTTPHelper::post("password")) {
 			PDOHelper::update(
 				"member",

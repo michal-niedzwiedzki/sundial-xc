@@ -7,7 +7,7 @@ final class ExchangeController extends Controller {
 	 */
 	public function menu() {
 		$pending = new cTradesPending(HTTPHelper::session("user_login"));
-		$this->page->numIn = $pending->numIn;
+		$this->view->numIn = $pending->numIn;
 	}
 
 }

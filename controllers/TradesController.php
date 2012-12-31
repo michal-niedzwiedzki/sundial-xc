@@ -6,7 +6,7 @@ final class TradesController extends Controller {
 	 * @Title "Intercambios pendientes"
 	 */
 	public function pending() {
-		$page = $this->page;
+		$page = $this->view;
 		include ROOT_DIR . "/legacy/trades_pending.php";
 	}
 
@@ -15,7 +15,7 @@ final class TradesController extends Controller {
 	 */
 	public function to_view() {
 		$form = new UsersListForm();
-		$this->page->form = $form;
+		$this->view->form = $form;
 		if (!$form->validate()) {
 			return;
 		}

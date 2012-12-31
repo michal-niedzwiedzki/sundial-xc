@@ -11,7 +11,7 @@ final class ContactController extends Controller {
 		$form = new ContactForm();
 
 		$this->page->name = $config->site->title;
-		$this->page->form = $form;
+		$this->view->form = $form;
 
 		if (!$form->validate()) {
 			return;
@@ -35,8 +35,8 @@ final class ContactController extends Controller {
 	 */
 	public function all() {
 		$form = new ContactAllForm();
-		$this->page->form = $form;
-		$this->page->siteName = Config::getInstance()->site->title;
+		$this->view->form = $form;
+		$this->view->siteName = Config::getInstance()->site->title;
 
 		if (!$form->validate()) {
 			return;

@@ -19,9 +19,9 @@ final class HolidayController extends Controller {
 
 		// prepare form and view
 		$form = new HolidayForm($memberId, $adminMode);
-		$this->page->form = $form;
-		$this->page->adminMode = $adminMode;
-		
+		$this->view->form = $form;
+		$this->view->adminMode = $adminMode;
+
 		// validate form
 		if (!$form->validate()) {
 			return;
@@ -31,7 +31,7 @@ final class HolidayController extends Controller {
 		$values = $form->exportValues();
 		$date = $values["return_date"];
 		$returnDate = new cDateTime($date["Y"] . "/" . $date["F"] . "/" . $date["d"]);
-		
+
 		// deactivate offered listings
 		$listings = new cListingGroup(OFFER_LISTING);
 		$listings->LoadListingGroup(NULL, "%", $member->member_id);
@@ -41,7 +41,7 @@ final class HolidayController extends Controller {
 		$listings = new cListingGroup(WANT_LISTING);
 		$listings->LoadListingGroup(NULL, "%", $member->member_id);
 		$listings->InactivateAll($returnDate);
-		
+
 		PageView::getInstance()->setMessage("El listado ha sido desactivado con exito.");
 	}
 

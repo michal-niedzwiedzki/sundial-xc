@@ -10,10 +10,10 @@ final class ReportController extends Controller {
 		$table = new cTable;
 		$table->AddSimpleHeader(array("Socio", "Fecha de inscripción", "Número(s) de teléfono", "Correo electronico"));
 		// $table->SetFieldAlignRight(4);  // row 4 is numeric and should align to the right
-		
+
 		$allmembers = new cMemberGroup;
 		$allmembers->LoadMemberGroup();
-		
+
 		foreach ($allmembers->members as $member) {
 			if ($member->account_type == "F")  // Skip fund accounts
 				continue;
@@ -25,10 +25,10 @@ final class ReportController extends Controller {
 				$table->AddSimpleRow($data);
 			}
 		}
-		$this->page->table = $table;
+		$this->view->table = $table;
 
 		if (!$table->DisplayTable()) {
-			$this->page->message = "Todos los socios han entrado al menos una vez en la aplicación.";
+			$this->view->message = "Todos los socios han entrado al menos una vez en la aplicación.";
 		}
 	}
 

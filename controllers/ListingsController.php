@@ -31,7 +31,7 @@ final class ListingsController extends Controller {
 		$form->addElement("select", "timeframe", "Rango de Tiempo", $options);
 		Config::getInstance()->legacy->KEYWORD_SEARCH_DIR and $form->addElement("text","keyword","Palabra clave");
 		$form->addElement("submit", "btnSubmit", "Continuar");
-		
+
 		if ($form->validate()) { // Form is validated so processes the data
 			$form->freeze();
 			header("Location: " . HTTP_BASE . "/listings_found.php?type=". urlencode($type) ."&keyword=".$_REQUEST["keyword"]."&category=".$values["category"]."&timeframe=".$_REQUEST["timeframe"]);
@@ -40,8 +40,8 @@ final class ListingsController extends Controller {
 
 		// render
 		PageView::getInstance()->title = $title;
-		$this->page->title = $title;
-		$this->page->form = $form;
+		$this->view->title = $title;
+		$this->view->form = $form;
 	}
 
 	/**
@@ -63,7 +63,7 @@ final class ListingsController extends Controller {
 		$categoryId = HTTPHelper::rq("category");
 		$timeframe = HTTPHelper::rq("timeframe");
 		$keyword = strtolower(HTTPHelper::get("keyword"));
-		
+
 		$title = ($type == "Offer") ? "Servicios ofrecidos" : "Servicios solicitados";
 		$category = ($categoryId == "0") ? "%" : $categoryId;
 		$since = ($timeframe == "0") ? new cDateTime(LONG_LONG_AGO) : new cDateTime("-{$timeframe} dias");
@@ -111,8 +111,8 @@ final class ListingsController extends Controller {
 
 		// render
 		PageView::getInstance()->title = $title;
-		$this->page->title = $title;
-		$this->page->table = $listings->DisplayListingGroup($showIds);
+		$this->view->title = $title;
+		$this->view->table = $listings->DisplayListingGroup($showIds);
 	}
 
 }

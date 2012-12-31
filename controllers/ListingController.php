@@ -12,7 +12,7 @@ final class ListingController extends Controller {
 		$adminMode = HTTPHelper::rq("mode") === "admin";
 		$memberId = $adminMode ? HTTPHelper::rq("member_id") : $user->member_id;
 
-		$this->page->isOffered = $type == "Offer";
+		$this->view->isOffered = $type == "Offer";
 
 		if (LIVE and $user->member_id == "ADMIN") {
 			PageView::getInstance()->displayError("Lo siento, no se puede crear servicios nuevos con la cuenta del administrador.\nEs una cuenta especial para la administración de la aplicación.");
@@ -20,7 +20,7 @@ final class ListingController extends Controller {
 		}
 
 		$form = new ListingCreateForm($type, $memberId, $adminMode);
-		$this->page->form = $form;
+		$this->view->form = $form;
 
 		if (!$form->validate()) {
 			return;
@@ -39,7 +39,7 @@ final class ListingController extends Controller {
 		// save listing
 		$listing = new cListing($member, $values);
 		if ($listing->SaveNewListing()) {
-			$this->page->saved = TRUE;
+			$this->view->saved = TRUE;
 			PageView::getInstance()->setMessage("El nuevo servicio ha sido creado.");
 		} else {
 			PageView::getInstance()->displayError("Ha ocurrido un error en el momento de guardar los cambios. Intentalo otra vez mas tarde.");
@@ -57,7 +57,7 @@ final class ListingController extends Controller {
 		$adminMode = HTTPHelper::rq("mode") === "admin";
 		$memberId = $adminMode ? HTTPHelper::rq("member_id") : $user->member_id;
 
-		$this->page->isOffered = $type == "Offer";
+		$this->view->isOffered = $type == "Offer";
 
 		if (LIVE and $user->member_id == "ADMIN") {
 			PageView::getInstance()->displayError("Lo siento, no se puede crear servicios nuevos con la cuenta del administrador.\nEs una cuenta especial para la administración de la aplicación.");
@@ -68,7 +68,7 @@ final class ListingController extends Controller {
 		$listing->LoadListing($title, $memberId, $type);
 
 		$form = new ListingEditForm($listing, $adminMode);
-		$this->page->form = $form;
+		$this->view->form = $form;
 
 		if (!$form->validate()) {
 			return;
@@ -115,15 +115,15 @@ final class ListingController extends Controller {
 		$form = new ListingDeleteChecklist($items, $type, $mode, $memberId);
 		$isEmpty = 0 === $itemsList->getCount($member->member_id);
 
-		$this->page->title = $title;
-		$this->page->form = $form;
-		$this->page->isEmpty = $isEmpty;
+		$this->view->title = $title;
+		$this->view->form = $form;
+		$this->view->isEmpty = $isEmpty;
 		$master->title = $title;
 
 		if ($isEmpty) {
 			$mode == "self"
-				? $this->page->errorMsg = "No tiene listado de servicios"
-				: $this->page->errorMsg = $member->PrimaryName() . " no tiene listado de servicios.";
+				? $this->view->errorMsg = "No tiene listado de servicios"
+				: $this->view->errorMsg = $member->PrimaryName() . " no tiene listado de servicios.";
 		}
 
 		if (!$form->validate()) {
@@ -161,10 +161,10 @@ final class ListingController extends Controller {
 		$title = HTTPHelper::get("title");
 		$listing = new cListing();
 		$listing->LoadListing($title, HTTPHelper::get("member_id"), substr(HTTPHelper::get("type"), 0, 1));
-		$this->page->description = $listing->description;
-		$this->page->rate = $listing->rate;
-		$this->page->member = $listing->member;
-		$this->page->title = $title;
+		$this->view->description = $listing->description;
+		$this->view->rate = $listing->rate;
+		$this->view->member = $listing->member;
+		$this->view->title = $title;
 		$title and PageView::getInstance()->title = $title;
 	}
 
@@ -182,8 +182,8 @@ final class ListingController extends Controller {
 
 		$listings = new cTitleList(HTTPHelper::get("type"));
 
-		$this->page->count = $listings->getCount($member->member_id);
-		$this->page->listing = $listings->DisplayMemberListings($member);
+		$this->view->count = $listings->getCount($member->member_id);
+		$this->view->listing = $listings->DisplayMemberListings($member);
 	}
 
 }
