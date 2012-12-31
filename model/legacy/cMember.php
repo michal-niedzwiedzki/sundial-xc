@@ -497,7 +497,7 @@ class cMember {
 	}
 
 	public function DisplayMember () {
-		$sexArr = array("" => NULL, NULL => NULL, 1 => NULL, "M" => "Hombre", "F" => "Mujer");
+		$sexArr = array("" => NULL, NULL => NULL, 1 => NULL, 2 => NULL, "M" => "Hombre", "F" => "Mujer");
 		$view = new View("member");
 
 		// personal details

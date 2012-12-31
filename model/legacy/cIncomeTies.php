@@ -2,7 +2,7 @@
 
 class cIncomeTies extends cMember {
 
-	public function getTie($memberId) {
+	public static function getTie($memberId) {
 		$row = PDOHelper::fetchRow("SELECT * FROM income_ties WHERE member_id = :id", array("id" => $memberId));
 		return empty($row) ? FALSE : $row;
 	}
