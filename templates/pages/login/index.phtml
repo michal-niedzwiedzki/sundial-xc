@@ -1,23 +1,23 @@
-<p>Para acceder a esta parte de la aplicación es necesario entrar con ID de soci@ y contraseña.</p>
-<p>Si ya tienes una cuenta, puedes entrar en esta página:</p>
+<p><?= _("(label)To enter please log in with your user name and password.") ?></p>
+<p><?= _("(label)If you have an account please log in here") ?></p>
 <form action="login.php" method="post">
 	<input type="hidden" name="action" value="login"/>
 	<input type="hidden" name="location" value="<?= $redirUrl ?>"/>
 	<input type="hidden" name="csrf" value="<?= $csrf ?>"/>
 	<table>
 		<tr>
-			<td>ID de soci@:</td>
+			<td><?= _("(field)User name:") ?></td>
 			<td align="left"><input type="text" name="user"/></td>
 		</tr>
 		<tr>
-			<td>Contraseña:</td>
+			<td><?= _("(field)Password:") ?></td>
 			<td align="left"><input type="password" name="pass"/></td>
 		</tr>
 		<tr>
 			<td>&nbsp;</td>
-			<td><input type="submit" value="Entrar"/></td>
+			<td><input type="submit" value="<?= _("(button)Log in") ?>"/></td>
 		</tr>
 	</table>
 </form>
 <p>Si no tienes una cuenta ponte en contacto con nosotros <a href="contact.php">aqui</a>.</p>
-<p>Has olvidado tu contrase�a? <a href="password_forgot.php">Pulse aque</a>.</p>
+<p>Has olvidado tu contrase�a? <a href="password_forgot.php">Pulse aqui</a>.</p>

@@ -21,11 +21,12 @@ final class LoginController extends Controller {
 		$user = trim(HTTPHelper::post("user"));
 		$pass = trim(HTTPHelper::post("pass"));
 		if (!$user) {
-			cError::getInstance()->Error("Inserta un nombre de usuario para entrar.");
+			cError::getInstance()->Error(_("(error_message)Please provide user name."));
 		} elseif (!$pass) {
-			cError::getInstance()->Error("No puede entrar sin contraseña. Si ha olvidado su contraseña puede pedir de nosotros una contrase�nu�a eva");
+			cError::getInstance()->Error(_("(error_message)Please provide password."));
 		}
 
+		// redirect to target URL
 		if (cMember::getCurrent()->Login($user, $pass)) {
 			HTTPHelper::redirectSeeOther($redirUrl);
 		}

@@ -1,7 +1,7 @@
-<h2>Perfil de soci@</h2>
+<h2><?= _("(heading)Perfil de socio") ?></h2>
 <ul>
-	<li><a href="password_change.php">Cambiar mi contraseña</a></li>
-	<li><a href="member_edit.php?mode=self">Editar mi información personal</a></li>
-	<li><a href="member_summary.php?member_id=<?= $memberId ?>">Ver mi perfil como otros lo vean</a></li>
-	<li><a href="login_logout.php">Salir</a></li>
+	<li><a href="password_change.php"><?= _("(list_item)Change password") ?></a></li>
+	<li><a href="member_edit.php?mode=self"><?= _("(list_item)Edit profile") ?></a></li>
+	<li><a href="member_summary.php?member_id=<?= $memberId ?>"><?= _("(list_item)See my profile like others see it") ?></a></li>
+	<li><a href="login_logout.php"><?= _("(list_item)Log out") ?></a></li>
 </ul>
