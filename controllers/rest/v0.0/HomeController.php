@@ -6,14 +6,14 @@ final class HomeController extends Controller {
 	 * @Public
 	 */
 	public function index() {
-		$this->page->status = "ok";
+		$this->view->status = "ok";
 	}
 
 	/**
 	 * @Public
 	 */
 	public function get($id) {
-		$this->page->id = $id;
+		$this->view->id = $id;
 	}
 
 }

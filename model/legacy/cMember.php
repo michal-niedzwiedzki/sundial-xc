@@ -27,6 +27,8 @@ class cMember {
 		if ($values) {
 			$this->member_id = $values['member_id'];
 			$this->password = $values['password'];
+			$this->forgot_token = isset($values['forgot_token']) ? $values['forgot_token'] : NULL;
+			$this->forgot_expiry = isset($values['forgot_expiry']) ? $values['forgot_expiry'] : NULL;
 			$this->member_role = $values['member_role'];
 			$this->security_q = $values['security_q'];
 			$this->security_a = $values['security_a'];
@@ -40,6 +42,23 @@ class cMember {
 			$this->email_updates = $values['email_updates'];
 			$this->balance = $values['balance'];
 		}
+	}
+
+	public static function getByEmail($email) {
+		$sql = "
+			SELECT m.member_id AS member_id FROM member AS m
+			INNER JOIN person AS p USING (member_id)
+			WHERE p.email = :email
+		";
+		try {
+			$memberId = PDOHelper::fetchCell("member_id", $sql, array("email" => $email));
+		} catch (Exception $e) {
+			cError::getInstance()->Error("Error cargando datos de soci@.");
+			return FALSE;
+		}
+		$member = new cMember();
+		$member->LoadMember($memberId);
+		return $member;
 	}
 
 	public function getId() {
@@ -62,6 +81,8 @@ class cMember {
 		return PDOHelper::insert("member", array(
 			"member_id" => $this->member_id,
 			"password" => sha1($this->password),
+			"forgot_token" => $this->forgot_token,
+			"forgot_expiry" => $this->forgot_expiry,
 			"member_role" => $this->member_role,
 			"security_q" => $this->security_q,
 			"security_a" => $this->security_a,
@@ -170,12 +191,17 @@ class cMember {
 	}
 
 	public function ChangePassword($pass) { // TODO: Should use SaveMember and should reset $this->password
-		$out = PDOHelper::update("member", array("password" => sha1($pass)), "member_id = :id", array("id" => $this->member_id));
+		$updates = array(
+			"password" => sha1($pass),
+			"forgot_token" => NULL,
+			"forgot_expiry" => NULL,
+		);
+		$out = PDOHelper::update("member", $updates, "member_id = :id", array("id" => $this->member_id));
 		if ($out) {
-			return true;
+			return TRUE;
 		}
 		cError::getInstance()->Error("No se puede actualizar la contraseña ahora. Intentalo otra vez mas tarde");
-		include "redirect.php";
+		return FALSE;
 	}
 
 	public static function GeneratePassword() {
@@ -235,54 +261,38 @@ class cMember {
 	 * Loads user data from database
 	 *
 	 * @param int $id
-	 * @param boolean $redirect on errors, default TRUE
 	 * @return boolean
 	 * @author unknown
 	 * @author Michał Rudnicki <michal.rudnicki@epsi.pl>
 	 */
-	public function LoadMember($id, $redirect = TRUE) {
+	public function LoadMember($id) {
 		// fetch user data from database and populate object
-		$sql = "
-			SELECT
-				member_id, password, member_role, security_q, security_a, status, member_note, admin_note,
-				join_date, expire_date, away_date, account_type, email_updates, balance, confirm_payments, restriction
-			FROM member
-			WHERE member_id = :id
-			LIMIT 1
-		";
+		$sql = "SELECT * FROM member WHERE member_id = :id";
 		$row = PDOHelper::fetchRow($sql, array("id" => $id));
 		if (empty($row)) {
-			if ($redirect) {
-				cError::getInstance()->Error("Erro cargando datos de soci@ (".$member.").  Intentalo otra vez mas tarde.");
-				include("redirect.php");
-			}
-			return false;
+			cError::getInstance()->Error("Erro cargando datos de soci@. Intentalo otra vez mas tarde.");
+			return FALSE;
 		}
 		foreach ($row as $column => $value) {
 			$this->$column = $value;
 		}
 
 		// fetch associated records into person array
-		$tableName = DB::PERSONS;
 		$sql = "
-			SELECT person_id FROM $tableName
-			WHERE member_id = :id
+			SELECT person_id FROM person WHERE member_id = :id
 			ORDER BY primary_member DESC, last_name, first_name
 		";
 		$out = PDOHelper::fetchAll($sql, array("id" => $id));
 		if (empty($out)) {
-			if ($redirect) {
-				cError::getInstance()->Error("Hay un error accediendo a los datos de (".$member.").  Intentalo otra vez mas tarde.");
-				include("redirect.php");
-			}
-			return false;
+			cError::getInstance()->Error("Hay un error accediendo a los datos. Intentalo otra vez mas tarde.");
+			return FALSE;
 		}
 		foreach ($out as $i => $row) {
 			$this->person[$i] = new cPerson; // recursilvely instantiate person
 			$this->person[$i]->LoadPerson($row["person_id"]);
 		}
 
-		return true;
+		return TRUE;
 	}
 
 	function ShowMember()
@@ -316,6 +326,8 @@ class cMember {
 	public function SaveMember() {
 		$row = array(
 			"password" => $this->password,
+			"forgot_token" => $this->forgot_token,
+			"forgot_expiry" => $this->forgot_expiry,
 			"member_role" => $this->member_role,
 			"security_q" => $this->security_q,
 			"security_a" => $this->security_a,
@@ -485,7 +497,7 @@ class cMember {
 	}
 
 	public function DisplayMember () {
-		$sexArr = array("" => NULL, NULL => NULL, 1 => NULL, "M" => "Hombre", "F" => "Mujer");
+		$sexArr = array("" => NULL, NULL => NULL, 1 => NULL, 2 => NULL, "M" => "Hombre", "F" => "Mujer");
 		$view = new View("member");
 
 		// personal details

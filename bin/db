@@ -3,31 +3,43 @@
 
 require_once dirname(__FILE__) . "/../bootstrap.php";
 
-if (4 != $argc) {
-	fwrite(STDERR, "\nUsage: " . basename(__FILE__) . " <operation> <silo> <version>\nWhere: <operation> - 'upgrade' or 'downgrade'\n       <silo> - 'production' or 'testing'\n       <version> - migration identifier\n");
+$operations = array("upgrade", "downgrade", "info");
+$silos = array("production", "testing");
+
+function help($msg = NULL) {
+	global $operations;
+	$msg and fwrite(STDERR, "\n$msg\n");
+	fwrite(STDERR, "\nUsage: " . basename(__FILE__) . " operation silo [version]\n");
+	fwrite(STDERR, "Where: operation    can be one of the following: " . implode(", ", $operations) . "\n");
+	fwrite(STDERR, "       silo         can be either 'production' or 'testing'\n");
+	fwrite(STDERR, "       [version]    target migration identifier, not required for info\n");
 	exit(1);
 }
 
+isset($argv[1]) or help("Missing operation name");
 $operation = $argv[1];
-if ($operation != "upgrade" and $operation != "downgrade") {
-	frwite(STDERR, "\nOperation can only be 'upgrade' or 'downgrade'\n");
-	exit(1);
-}
+in_array($operation, $operations) or help("Invalid operation name");
 
+isset($argv[2]) or help("Missing silo name");
 $silo = $argv[2];
-if ($silo !== "production" and $silo != "testing") {
-	fwrite(STDERR, "\nSilo can only be 'production' or 'testing'\n");
-	exit(1);
-}
+in_array($silo, $silos) or help("Invalid silo name");
 
-$version = $argv[3];
+switch ($operation) {
 
-try {
-	DB::migrate($operation === "upgrade", $silo, $version, STDOUT);
-} catch (DBMigrationException $e) {
-	fwrite(STDERR, "\nMigration failed: {$e->getMessage()}\n");
-	exit(1);
-} catch (Exception $e) {
-	fwrite(STDERR, "\nException: {$e->getMessage()}\n");
-	exit(1);
+	case "upgrade":
+	case "downgrade":
+		isset($argv[3]) or help("Missing migration identifier");
+		$version = $argv[3];
+		try {
+			DB::migrate($operation === "upgrade", $silo, $version, STDOUT);
+		} catch (DBMigrationException $e) {
+			fwrite(STDERR, "\nMigration failed: {$e->getMessage()}\n");
+			exit(1);
+		}
+		break;
+
+	case "info":
+		fwrite(STDOUT, DB::getCurrentVersion($silo) . "\n");
+		break;
+
 }

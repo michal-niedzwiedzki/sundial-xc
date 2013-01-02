@@ -22,7 +22,7 @@ final class MemberController extends Controller {
 			$form->addElement("hidden", "get1val", $get1val);
 		}
 
-		$this->page->form = $form;
+		$this->view->form = $form;
 
 		if (!$form->validate()) {
 			return;
@@ -66,14 +66,12 @@ final class MemberController extends Controller {
 	 */
 	public function create() {
 		$form = new MemberCreateForm();
-		$this->page->form = $form;
+		$this->view->form = $form;
 
 		$config = Config::getInstance();
 		if (!$form->validate()) {
 			return;
 		}
-
-		$form->freeze();
 		$form->process();
 
 		// Following are default values for which this form doesn't allow input
@@ -98,21 +96,18 @@ final class MemberController extends Controller {
 		$values['phone1_number'] = $values['phone1'];
 		$values['phone2_number'] = $values['phone2'];
 
-		$new_member = new cMember($values);
-		$new_person = new cPerson($values);
+		$member = new cMember($values);
+		$person = new cPerson($values);
 
-		$created = $new_person->SaveNewPerson() and $new_member->SaveNewMember();
-		$this->page->created = $created;
-
-		if ($created) {
+		if ($person->SaveNewPerson() and $member->SaveNewMember()) {
 			$user = new cMember();
 			$user->LoadMember($values["member_id"]);
 			$config = Config::getInstance();
-			$from = 
-			PageView::getInstance()->setMessage("Nuevo soci@ creado. Su ID es {$values["member_id"]} y contraseña es {$values["password"]}.");	
+			PageView::getInstance()->setMessage("Nuevo soci@ creado. Su ID es {$user->member_id} y contraseña es {$values["password"]}.");
 			$message = new EmailMessage(EMAIL_ADMIN, NEW_MEMBER_SUBJECT, NEW_MEMBER_MESSAGE . "\n\nID de soci@: ". $values['member_id'] ."\n". "Contraseña: ". $values['password']);
 			$message->to($user);
 			$message->save();
+			HTTPHelper::redirectSeeOther(Link::to("member", "summary", array("member_id" => $user->member_id)));
 		} else {
 			cError::getInstance()->Error("Un error ha ocurrido en el momento de guardar los datos. Intentalo otra vez mas tarde");
 		}
@@ -124,9 +119,9 @@ final class MemberController extends Controller {
 	public function directory() {
 		$user = cMember::getCurrent();
 
-		$this->page->searchId = HTTPHelper::rq("uID");
-		$this->page->searchName = HTTPHelper::rq("uName");
-		$this->page->searchOrder = HTTPHelper::rq("orderBy");
+		$this->view->searchId = HTTPHelper::rq("uID");
+		$this->view->searchName = HTTPHelper::rq("uName");
+		$this->view->searchOrder = HTTPHelper::rq("orderBy");
 
 		$member_list = new cMemberGroup();
 		//$member_list->LoadMemberGroup();
@@ -214,7 +209,7 @@ final class MemberController extends Controller {
 		$table->rows = $rows;
 		$table->displayBalance = Config::getInstance()->legacy->MEM_LIST_DISPLAY_BALANCE or $user->member_role >= 1;
 
-		$this->page->table = $table;
+		$this->view->table = $table;
 	}
 
 	public function edit() {
@@ -229,10 +224,10 @@ final class MemberController extends Controller {
 		$config = Config::getInstance();
 		$user = cMember::getCurrent();
 
-		$this->page->title = $config->site->title;
-		$this->page->isLoggedOn = $user->IsLoggedOn();
-		$this->page->isRestricted = $user->AccountIsRestricted();
-		$this->page->csrf = CSRF;
+		$this->view->title = $config->site->title;
+		$this->view->isLoggedOn = $user->IsLoggedOn();
+		$this->view->isRestricted = $user->AccountIsRestricted();
+		$this->view->csrf = CSRF;
 	}
 
 	/**
@@ -255,7 +250,7 @@ final class MemberController extends Controller {
 	 * @Title "Perfil de socio"
 	 */
 	public function profile() {
-		$this->page->memberId = cMember::getCurrent()->member_id;
+		$this->view->memberId = cMember::getCurrent()->member_id;
 	}
 
 	public function status_change() {
@@ -271,9 +266,9 @@ final class MemberController extends Controller {
 		$wantedListings = new cListingGroup(WANT_LISTING);
 		$wantedListings->LoadListingGroup(NULL, NULL, HTTPHelper::rq("member_id"));
 
-		$this->page->contactDetails = $member->DisplayMember();
-		$this->page->offered = $offeredListings->DisplayListingGroup();
-		$this->page->wanted = $wantedListings->DisplayListingGroup();
+		$this->view->contactDetails = $member->DisplayMember();
+		$this->view->offered = $offeredListings->DisplayListingGroup();
+		$this->view->wanted = $wantedListings->DisplayListingGroup();
 
 		$master = PageView::getInstance()->title = "Perfil de " . $member->PrimaryName();
 	}
@@ -287,7 +282,7 @@ final class MemberController extends Controller {
 		$ids->LoadMemberGroup(NULL, TRUE);
 
 		$form = new MemberChooseForm(NULL, $ids->MakeIDArray());
-		$this->page->form = $form;
+		$this->view->form = $form;
 
 		if (!$form->validate()) {
 			return;
@@ -307,7 +302,7 @@ final class MemberController extends Controller {
 		$ids->LoadMemberGroup(null,true);
 
 		$form = new UsersListForm($ids->MakeIDArray());
-		$this->page->form = $form;
+		$this->view->form = $form;
 
 		if (!$form->validate()) {
 			return;
@@ -333,7 +328,7 @@ final class MemberController extends Controller {
 		$form->addElement("radio", "emailTyp", "", "Enviar correo con nueva contraseña","pword");
 		$form->addElement("radio", "emailTyp", "", "Mostrar la contraseña nueva en pantalla","show_pword");
 
-		$this->page->form = $form;
+		$this->view->form = $form;
 
 		if (!$form->validate()) {
 			return;

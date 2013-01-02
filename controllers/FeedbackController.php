@@ -13,15 +13,15 @@ final class FeedbackController extends Controller {
 
 		$member = new cMember;
 		$member->LoadMember($memberId);
-		
+
 		$feedbackgrp = new cFeedbackGroup;
 		$feedbackgrp->LoadFeedbackGroup($memberId);
-		
+
 		if (isset($feedbackgrp->feedback)) {
-			$this->page->table = $feedbackgrp->DisplayFeedbackTable($user->member_id);
+			$this->view->table = $feedbackgrp->DisplayFeedbackTable($user->member_id);
 		}
-		$this->page->other = $mode == "other";
-		$this->page->user = $member;
+		$this->view->other = $mode == "other";
+		$this->view->user = $member;
 	}
 
 	public function choose_inbox() {

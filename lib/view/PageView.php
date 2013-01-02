@@ -8,6 +8,7 @@
 final class PageView extends View {
 
 	private static $instance;
+	private $enabled = TRUE;
 
 	/**
 	 * Singleton constructor
@@ -60,9 +61,9 @@ final class PageView extends View {
 	 * @param string $message
 	 */
 	public function displayError($message) {
-		$page = new View("error");
-		$page->message = $message;
-		return $this->displayPage($page);
+		$view = new View("error");
+		$view->message = $message;
+		return $this->displayPage($view);
 	}
 
 	/**
@@ -81,6 +82,22 @@ final class PageView extends View {
 	 */
 	public function setDebug(array $log) {
 		$this->log = $log;
+	}
+
+	/**
+	 * Disable rendering page view
+	 */
+	public function disable() {
+		$this->enabled = FALSE;
+	}
+
+	/**
+	 * Return if rendering page view is enabled
+	 *
+	 * @return boolean
+	 */
+	public function isEnabled() {
+		return $this->enabled;
 	}
 
 	/**

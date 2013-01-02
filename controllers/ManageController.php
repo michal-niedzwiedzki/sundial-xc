@@ -26,9 +26,9 @@ final class ManageController extends Controller {
 				? $restrictedM[] = $m
 				: $okM[] = $m;
 		}
-		$this->page->restrictedM = $restrictedM;
-		$this->page->okM = $okM;
-		$this->page->csrf = CSRF;
+		$this->view->restrictedM = $restrictedM;
+		$this->view->okM = $okM;
+		$this->view->csrf = CSRF;
 
 		// leave early if not posted
 		if (!HTTPHelper::rq("process")) {

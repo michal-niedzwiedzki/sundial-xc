@@ -7,11 +7,19 @@
  */
 final class Config extends ConfigNode {
 
+	const CONFIG_DIR = "var/config";
+
 	/**
 	 * Singleton
 	 * @var Config
 	 */
 	private static $instance;
+
+	/**
+	 * Filters for processing raw config object
+	 * @var ConfigFilter[]
+	 */
+	private $filters = array();
 
 	/**
 	 * Constructor
@@ -31,11 +39,7 @@ final class Config extends ConfigNode {
 	 * @author Michał Rudnicki <michal.rudnicki@epsi.pl>
 	 */
 	public static function getInstance() {
-		if (!self::$instance) {
-			$file = self::getConfigFile();
-			self::$instance = new Config();
-			self::$instance->load($file);
-		}
+		self::$instance or self::$instance = new Config();
 		return self::$instance;
 	}
 
@@ -50,8 +54,26 @@ final class Config extends ConfigNode {
 		return self::$instance;
 	}
 
-	public static function getConfigFile() {
-		return ROOT_DIR . "/config/" . ENV . ".json";
+	/**
+	 * Return config file pathname
+	 *
+	 * @return string
+	 * @author Michał Rudnicki <michal.rudnicki@epsi.pl>
+	 */
+	public static function getDefaultConfigFile() {
+		return ROOT_DIR . DIRECTORY_SEPARATOR . self::CONFIG_DIR . DIRECTORY_SEPARATOR . ENV . ".json";
+	}
+
+	/**
+	 * Add config filter
+	 *
+	 * @param ConfigFilter $filter
+	 * @return Config
+	 * @author Michał Rudnicki <michal.rudnicki@epsi.pl>
+	 */
+	public function addFilter(ConfigFilter $filter) {
+		$this->filters[] = $filter;
+		return $this;
 	}
 
 	/**
@@ -67,6 +89,9 @@ final class Config extends ConfigNode {
 		$object = json_decode(trim(file_get_contents($file)));
 		if (!is_object($object)) {
 			throw new ConfigException("File '$file' does not contain valid JSON string");
+		}
+		foreach ($this->filters as $filter) {
+			$filter->process($object);
 		}
 		$this->import($object);
 	}

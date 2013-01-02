@@ -12,8 +12,8 @@ final class ListingController extends Controller {
 		foreach ($listings as $i => $listing) {
 			unset($listings[$i]->member);
 		}
-		$this->page->count = count($listings);
-		$this->page->listings = $listings;
+		$this->view->count = count($listings);
+		$this->view->listings = $listings;
 	}
 
 	/**
@@ -23,7 +23,7 @@ final class ListingController extends Controller {
 		$listing = new cListing();
 		$listing->LoadListing($title, $memberId, $type);
 		unset($listing->member);
-		$this->page->listing = $listing;
+		$this->view->listing = $listing;
 	}
 
 }

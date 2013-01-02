@@ -9,7 +9,7 @@ final class HTTPResponseCodeDispatchFilter implements DispatchFilter {
 
 	public function after() {
 		$code = Dispatcher::getInstance()->getAnnotation("ResponseCode");
-		$code and http_response_code($code);
+		$code and HTTPHelper::setResponseCode($code);
 	}
 
 }

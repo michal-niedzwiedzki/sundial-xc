@@ -9,8 +9,8 @@ final class ErrorController extends Controller {
 	 * @ResponseCode 403
 	 */
 	public function forbidden() {
-		$this->page->title = "403 Forbidden";
-		$this->page->message = "You have insufficient privileges to access this page.";
+		$this->view->title = "403 Forbidden";
+		$this->view->message = "You have insufficient privileges to access this page.";
 	}
 
 	/**
@@ -20,8 +20,8 @@ final class ErrorController extends Controller {
 	 * @ResponseCode 404
 	 */
 	public function notFound() {
-		$this->page->title = "404 Not found";
-		$this->page->message = "The page you are requesting does not exits.";
+		$this->view->title = "404 Not found";
+		$this->view->message = "The page you are requesting does not exits.";
 	}
 
 	/**
@@ -31,8 +31,8 @@ final class ErrorController extends Controller {
 	 * @ResponseCode 406
 	 */
 	public function notAcceptable() {
-		$this->page->title = "406 Not acceptable";
-		$this->page->message = "The content type you requested could not be served.";
+		$this->view->title = "406 Not acceptable";
+		$this->view->message = "The content type you requested could not be served.";
 	}
 
 }

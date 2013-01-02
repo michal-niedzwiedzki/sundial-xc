@@ -11,7 +11,7 @@ final class CategoryController extends Controller {
 		unset($categoryList[0]);
 
 		$form = new CategoryChooseForm($categoryList);
-		$this->page->form = $form;
+		$this->view->form = $form;
 
 		if (!$form->validate()) {
 			return;
@@ -41,9 +41,9 @@ final class CategoryController extends Controller {
 		$offered->LoadListingGroup(null, $values["category"]);
 		$wanted = new cListingGroup(WANT_LISTING);
 		$wanted->LoadListingGroup(null, $values["category"]);
-		$this->page->offeredListings = $offered;
-		$this->page->wantedListings = $wanted;
-		$this->page->cannotDelete = TRUE;
+		$this->view->offeredListings = $offered;
+		$this->view->wantedListings = $wanted;
+		$this->view->cannotDelete = TRUE;
 	}
 
 	/**
@@ -52,7 +52,7 @@ final class CategoryController extends Controller {
 	 */
 	public function create() {
 		$form = new CategoryEditForm()
-		$this->page->form = $form;
+		$this->view->form = $form;
 		if (!$form->validate()) {
 			return;
 		}
@@ -78,7 +78,7 @@ final class CategoryController extends Controller {
 
 		$form = new CategoryEditForm($id);
 		$form->setDefaults(array("category" => $category->description));
-		$this->page->form = $form;
+		$this->view->form = $form;
 		if (!$form->validate()) {
 			return;
 		}

@@ -8,7 +8,7 @@ final class TimeframeController extends Controller {
 	public function choose() {
 		$action = HTTPHelper::rq("action");
 		$form = new TimeframeChooserForm($action);
-		$this->page->form = $form;
+		$this->view->form = $form;
 
 		if (!$form->validate()) {
 			return;

@@ -38,9 +38,9 @@
 		}
 	},
 	"server": {
-		"host": "www.bdt",
-		"base": "http://www.bdt",
-		"relative": ""
+		"host": null,
+		"base": null,
+		"relative": null
 	},
 	"legacy": {
 		"MEM_LIST_DISPLAY_BALANCE": false,
@@ -52,11 +52,9 @@
 		"DAILY_LISTING_UPDATES": true,
 		"WEEKLY_LISTING_UPDATES": false,
 		"MONTHLY_LISTING_UPDATES": false,
-		"MEMBERS_CAN_INVOICE": false,
 		"ALLOW_IMAGES": false,
 		"OVRIDE_BALANCES": false,
 		"DEFAULT_UPDATE_INTERVAL": null,
-		"KEYWORD_SEARCH_DIR": true,
 		"SHOW_RATE_ON_LISTINGS": true,
 		"SHOW_POSTCODE_ON_LISTINGS": true,
 		"NUM_CHARS_POSTCODE_SHOW_ON_LISTINGS": 5,

@@ -14,4 +14,4 @@ $d->preFilter();
 $d->dispatch();
 $d->postFilter();
 
-echo $d->getController()->page;
+print($d->getController()->getPage()->__toString());
