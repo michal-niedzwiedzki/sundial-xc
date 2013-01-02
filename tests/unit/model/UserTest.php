@@ -29,13 +29,23 @@ final class UserTest extends PHPUnit_Framework_TestCase {
 	 * @author Michał Rudnicki <michal.rudnicki@epsi.pl>
 	 */
 	public function testSaveNewUser() {
-		$user = new User(array("name" => $this->generateUserName()));
-		$this->assertTrue($user->save());
+		$name = $this->generateUserName();
+		$user = new User(array("name" => $name, "full_name" => $name));
+		$this->assertTrue((boolean)$user->save());
 		$this->assertTrue($user->getId() > 0);
 	}
 
+	/**
+	 * Test user update
+	 *
+	 * @author Michał Rudnicki <michal.rudnicki@epsi.pl>
+	 */
 	public function testSaveExistingUser() {
-#		$user
+		$name = $this->generateUserName();
+		$user = new User(array("name" => $name, "full_name" => $name));
+		$this->assertTrue((boolean)$user->save());
+		$user->setFullName($name . "_new");
+		$this->assertTrue((boolean)$user->save());
 	}
 
 }
