@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Sundial XC\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-01-02 16:59+0100\n"
-"PO-Revision-Date: 2013-01-02 17:00+0100\n"
+"POT-Creation-Date: 2013-01-03 14:09+0100\n"
+"PO-Revision-Date: 2013-01-03 14:10+0100\n"
 "Last-Translator: Michał Rudnicki <michal.rudnicki@epsi.pl>\n"
 "Language-Team: \n"
 "Language: \n"
@@ -18,7 +18,7 @@ msgstr ""
 "X-Poedit-Language: English\n"
 "X-Poedit-Country: UNITED STATES\n"
 "X-Poedit-SourceCharset: utf-8\n"
-"X-Poedit-KeywordsList: @Title\n"
+"X-Poedit-KeywordsList: __\n"
 "X-Poedit-Basepath: /home/mrudnicki/workspace/sundial-xc\n"
 "X-Poedit-SearchPath-0: /home/mrudnicki/workspace/sundial-xc\n"
 
@@ -29,6 +29,56 @@ msgstr "Please provide user name."
 #: /home/mrudnicki/workspace/sundial-xc/controllers/LoginController.php:26
 msgid "(error_message)Please provide password."
 msgstr "Please provide password."
+
+#: /home/mrudnicki/workspace/sundial-xc/templates/pages/member/profile.phtml:1
+msgid "(heading)Profile"
+msgstr "Profile"
+
+#: /home/mrudnicki/workspace/sundial-xc/templates/pages/member/profile.phtml:3
+msgid "(list_item)Change password"
+msgstr "Change password"
+
+#: /home/mrudnicki/workspace/sundial-xc/templates/pages/member/profile.phtml:4
+msgid "(list_item)Edit profile"
+msgstr "Edit profile"
+
+#: /home/mrudnicki/workspace/sundial-xc/templates/pages/member/profile.phtml:5
+msgid "(list_item)See my profile like others see it"
+msgstr "See my profile like others see it"
+
+#: /home/mrudnicki/workspace/sundial-xc/templates/pages/member/profile.phtml:6
+msgid "(list_item)Log out"
+msgstr "Log out"
+
+#: /home/mrudnicki/workspace/sundial-xc/templates/pages/login/index.phtml:1
+msgid "(label)To enter please log in with your user name and password."
+msgstr "To enter please log in with your user name and password."
+
+#: /home/mrudnicki/workspace/sundial-xc/templates/pages/login/index.phtml:2
+msgid "(label)If you have an account please log in here"
+msgstr "If you have an account please log in here"
+
+#: /home/mrudnicki/workspace/sundial-xc/templates/pages/login/index.phtml:9
+msgid "(field)User name:"
+msgstr "User name:"
+
+#: /home/mrudnicki/workspace/sundial-xc/templates/pages/login/index.phtml:13
+msgid "(field)Password:"
+msgstr "Password:"
+
+#: /home/mrudnicki/workspace/sundial-xc/templates/pages/login/index.phtml:18
+msgid "(button)Log in"
+msgstr "Log in"
+
+#: /home/mrudnicki/workspace/sundial-xc/templates/pages/login/index.phtml:22
+#, php-format
+msgid "(label)If you don't have an account yet <a href=\"%s\">click here</a> to contact us."
+msgstr "If you don't have an account yet <a href=\"%s\">click here</a> to contact us."
+
+#: /home/mrudnicki/workspace/sundial-xc/templates/pages/login/index.phtml:23
+#, php-format
+msgid "(label)If you forgot your password <a href=\"%s\">click here</a> to recover it."
+msgstr "If you forgot your password <a href=\"%s\">click here</a> to recover it."
 
 #~ msgid "Home"
 #~ msgstr "Home"

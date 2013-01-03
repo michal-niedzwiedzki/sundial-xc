@@ -247,7 +247,7 @@ final class MemberController extends Controller {
 	}
 
 	/**
-	 * @Title "Perfil de socio"
+	 * @Title "(page_title)Perfil de socio"
 	 */
 	public function profile() {
 		$this->view->memberId = cMember::getCurrent()->member_id;

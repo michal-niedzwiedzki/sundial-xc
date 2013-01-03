@@ -19,5 +19,5 @@
 		</tr>
 	</table>
 </form>
-<p>Si no tienes una cuenta ponte en contacto con nosotros <a href="contact.php">aqui</a>.</p>
-<p>Has olvidado tu contrase√a? <a href="password_forgot.php">Pulse aqui</a>.</p>
+<p><?= __("(label)If you don't have an account yet <a href=\"%s\">click here</a> to contact us.", Link::to("contact")) ?></p>
+<p><?= __("(label)If you forgot your password <a href=\"%s\">click here</a> to recover it.", Link::to("password", "forgot")) ?></p>

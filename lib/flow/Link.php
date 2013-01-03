@@ -2,10 +2,10 @@
 
 class Link {
 
-	public static function to($controller, $action, $params) {
+	public static function to($controller, $action = NULL, $params = NULL) {
 		static $base;
 		$base or $base = Config::getInstance()->server->base;
-		$url = "{$base}/{$controller}_{$action}.php?";
+		$url = $action ? "{$base}/{$controller}_{$action}.php?" : "{$base}/{$controller}.php";
 		foreach ($params as $param => $value) {
 			$url .= urlencode($param) . "=" . urlencode($value) . "&";
 		}

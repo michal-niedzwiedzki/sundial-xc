@@ -55,19 +55,23 @@ final class Bootstrap {
 		mb_internal_encoding("UTF-8");
 		mb_regex_encoding("UTF-8");
 
+		function __($string) {
+			return vsprintf(gettext($string), array_slice(func_get_args(), 1));
+		}
+
 		if (isset($_COOKIE["locale"]) and $_COOKIE["locale"]) {
 			$locale = $_COOKIE["locale"];
 		} elseif (isset($_SERVER["HTTP_ACCEPT_LANGUAGE"])) {
-			$locale = $_SERVER["HTTP_ACCEPT_LANGUAGE"];
+			$httpAcceptLanguage = isset($_SERVER["HTTP_ACCEPT_LANGUAGE"]) ? $_SERVER["HTTP_ACCEPT_LANGUAGE"] : "en_US";
+			$locale = preg_replace("/[^A-Za-z_]+.*/", "", str_replace("-", "_", $httpAcceptLanguage));
 		} else {
 			$locale = "en_US";
 		}
-		preg_match("/[A-Za-z_]+/", $locale) or $locale = "en_US";
-		file_exists(ROOT_DIR . "/locale/{$locale}/MESSAGES") or $locale = "en_US";
 
 		putenv("LC_ALL={$locale}");
 		setlocale(LC_ALL, $locale);
 		bindtextdomain("messages", ROOT_DIR . "/locale");
+		bind_textdomain_codeset("messages", "UTF-8");
 		textdomain("messages");
 	}
 
