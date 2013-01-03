@@ -40,7 +40,8 @@ final class PasswordController extends Controller {
 
 		$member = cMember::getByEmail($email);
 		if (!$member) {
-			PageView::getInstance()->setMessage("Unknown email address");
+			PageView::getInstance()->setMessage("(error_message)Unknown email address");
+			$this->view->form = $form;
 			return;
 		}
 		$member->forgot_token = $token;
@@ -51,7 +52,7 @@ final class PasswordController extends Controller {
 		$message->to($member);
 		$message->save();
 
-		PageView::getInstance()->setMessage("Enviado correo con instrucciones para cambiar tu contrasenia");
+		PageView::getInstance()->setMessage(_("(status_message)We sent you email with instructions on how to reset your password. Please check your mail box in few minutes."));
 	}
 
 	/**
@@ -71,19 +72,19 @@ final class PasswordController extends Controller {
 
 		if (!$member->forgot_token or $member->forgot_token != $token) {
 			$this->view->form = $form;
-			PageView::getInstance()->setMessage("Token invalid");
+			PageView::getInstance()->setMessage(_("(error_message)Token invalid"));
 			return;
 		}
 
 		if (!$member->forgot_expiry or strtotime($member->forgot_expiry) < time()) {
 			$this->view->form = $form;
-			PageView::getInstance()->setMessage("Expired");
+			PageView::getInstance()->setMessage(_("(error_message)Password reset link has expired. Please reset your password again."));
 			return;
 		}
 
 		$values = $form->exportValues();
 		$member->ChangePassword($values["new_passwd"]);
-		PageView::getInstance()->setMessage("Password changed successfuly");
+		PageView::getInstance()->setMessage(_("(status_message)Password changed successfuly"));
 	}
 
 }

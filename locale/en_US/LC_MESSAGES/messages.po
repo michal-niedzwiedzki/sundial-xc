@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Sundial XC\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-01-03 14:09+0100\n"
-"PO-Revision-Date: 2013-01-03 14:10+0100\n"
+"POT-Creation-Date: 2013-01-03 16:29+0100\n"
+"PO-Revision-Date: 2013-01-03 16:36+0100\n"
 "Last-Translator: Michał Rudnicki <michal.rudnicki@epsi.pl>\n"
 "Language-Team: \n"
 "Language: \n"
@@ -29,6 +29,10 @@ msgstr "Please provide user name."
 #: /home/mrudnicki/workspace/sundial-xc/controllers/LoginController.php:26
 msgid "(error_message)Please provide password."
 msgstr "Please provide password."
+
+#: /home/mrudnicki/workspace/sundial-xc/controllers/PasswordController.php:55
+msgid "(status_message)We sent you email with instructions on how to reset your password. Please check your mail box in few minutes."
+msgstr "We sent you email with instructions on how to reset your password. Please check your mail box in few minutes."
 
 #: /home/mrudnicki/workspace/sundial-xc/templates/pages/member/profile.phtml:1
 msgid "(heading)Profile"
@@ -79,6 +83,10 @@ msgstr "If you don't have an account yet <a href=\"%s\">click here</a> to contac
 #, php-format
 msgid "(label)If you forgot your password <a href=\"%s\">click here</a> to recover it."
 msgstr "If you forgot your password <a href=\"%s\">click here</a> to recover it."
+
+#: /home/mrudnicki/workspace/sundial-xc/templates/pages/password/forgot.phtml:2
+msgid "(label)Enter your email address to proceed with password reset."
+msgstr "Enter your email address to proceed with password reset."
 
 #~ msgid "Home"
 #~ msgstr "Home"
