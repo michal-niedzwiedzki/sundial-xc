@@ -9,8 +9,8 @@ CREATE TABLE email_messages (
 
 CREATE TABLE email_recipients (
 	`id`				INT UNSIGNED PRIMARY KEY AUTO_INCREMENT COMMENT 'Message recipient serial number',
-	`message_id`		INT UNSIGNED REFERENCES email_messages (id) ON DELETE CASCADE COMMENT 'Message serial number',
-	`user_id`			INT NOT NULL COMMENT '',
+	`message_id`		INT UNSIGNED COMMENT 'Message serial number (foreign key)' REFERENCES email_messages (id) ON DELETE CASCADE,
+	`user_id`			INT NOT NULL COMMENT 'User id (foreign key)' REFERENCES users (id) ON DELETE CASCADE,
 	`name`				VARCHAR(80) NOT NULL COMMENT 'Message recipient name',
 	`address`			VARCHAR(80) NOT NULL COMMENT 'Message recipient address',
 	`field`				CHAR(3) NOT NULL COMMENT 'Recipient type (to:, cc:, bcc:)',
@@ -18,3 +18,4 @@ CREATE TABLE email_recipients (
 ) ENGINE InnoDB DEFAULT CHARSET utf8;
 
 CREATE INDEX email_recipients_message_id_idx ON email_recipients (message_id);
+CREATE INDEX email_user_id_idx ON email_recipients (user_id);

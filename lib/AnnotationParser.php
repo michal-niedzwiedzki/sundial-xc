@@ -7,33 +7,65 @@
  */
 final class AnnotationParser {
 
+	private static $cache = array();
+
 	public static function get(Reflector $reflection, $annotation) {
+		$key = crc32($reflection->__toString());
+		$annotation[0] === "@" or $annotation = "@" . $annotation;
+		isset(self::$cache[$key]) or self::$cache[$key] = self::parse($reflection);
+		return isset(self::$cache[$key][$annotation])
+			? self::$cache[$key][$annotation][0]
+			: FALSE;
+	}
+
+	public static function getAll(Reflector $reflection, $annotation) {
+		$key = crc32($reflection->__toString());
+		$annotation[0] === "@" or $annotation = "@" . $annotation;
+		isset(self::$cache[$key]) or self::$cache[$key] = self::parse($reflection);
+		return isset(self::$cache[$key][$annotation])
+			? self::$cache[$key][$annotation]
+			: array();
+	}
+
+	public static function parse(Reflector $reflection) {
 		// check if reflection provides doc comment
 		if (!method_exists($reflection, "getDocComment")) {
-			throw new Exception("Provided reflection object does not implement getDocComment() method");
+			throw new Exception("Reflector of class " . get_class($reflection) . " does not implement getDocComment() method");
 		}
+
 		// parse doc comment
+		$out = array();
 		$lines = explode("\n", $reflection->getDocComment());
 		foreach ($lines as $line) {
-			// parse the first word
+
+
+			// check if line starts with @
 			$line = trim($line, "\t\n */");
-			$pos = strpos($line, " ");
-			$firstWord = ($pos === FALSE) ? $line : substr($line, 0, $pos);
-			// check if word matches annotation
-			if ($firstWord === "@" . $annotation) {
-				// return TRUE if annotation has no parameter
-				if ($pos === FALSE) {
-					return TRUE;
-				}
-				// check if parameter is a valid json
-				$out = json_decode(substr($line, $pos + 1));
-				if ($out === NULL) {
-					throw new Exception("Annotation '$line' could not be parsed");
-				}
-				return $out;
+			if ($line[0] !== "@") {
+				continue;
 			}
+
+			// get annotation value
+			$pos = strpos($line, " ");
+			if ($pos === FALSE) {
+				$firstWord = $line;
+				$value = TRUE;
+			} else {
+				$firstWord = substr($line, 0, $pos);
+				$rest = trim(substr($line, $pos + 1));
+				if ($rest === "false" or $rest === "FALSE") {
+					$value = FALSE;
+				} else {
+					$value = json_decode($rest); // try to decode JSON string
+					$value !== FALSE or $value = $rest; // fall back to raw string
+				}
+			}
+
+			// set the value
+			isset($out[$firstWord]) or $out[$firstWord] = array();
+			$out[$firstWord][] = $value;
 		}
-		return NULL;
+		return $out;
 	}
 
 }

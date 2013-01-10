@@ -4,23 +4,14 @@ require_once dirname(__FILE__) . "/../../../bootstrap.php";
 require_once "PHPUnit/Autoload.php";
 
 /**
+ * Unit test for class User
+ *
  * @author Michał Rudnicki <michal.rudnicki@epsi.pl>
  */
 final class UserTest extends PHPUnit_Framework_TestCase {
 
-	private $userNames = array();
-
 	private function generateUserName() {
-		$userName = "U_" . microtime(TRUE);
-		$userNames[] = $userName;
-		return $userName;
-	}
-
-	public function tearDown() {
-		foreach ($this->userNames as $userName) {
-			PDOHelper::delete(User::TABLE_NAME, array("name" => $userName));
-		}
-		parent::tearDown();
+		return "U_" . microtime(TRUE);
 	}
 
 	/**
@@ -30,9 +21,9 @@ final class UserTest extends PHPUnit_Framework_TestCase {
 	 */
 	public function testSaveNewUser() {
 		$name = $this->generateUserName();
-		$user = new User(array("name" => $name, "full_name" => $name));
+		$user = new User(array("login" => $name, "name" => $name, "full_name" => $name, "email" => $name, "password" => "123"));
 		$this->assertTrue((boolean)$user->save());
-		$this->assertTrue($user->getId() > 0);
+		$this->assertTrue($user->id > 0);
 	}
 
 	/**
@@ -42,10 +33,25 @@ final class UserTest extends PHPUnit_Framework_TestCase {
 	 */
 	public function testSaveExistingUser() {
 		$name = $this->generateUserName();
-		$user = new User(array("name" => $name, "full_name" => $name));
+		$user = new User(array("login" => $name, "name" => $name, "full_name" => $name, "email" => $name, "password" => "123"));
 		$this->assertTrue((boolean)$user->save());
-		$user->setFullName($name . "_new");
+		$user->fullName = $name . "_new";
 		$this->assertTrue((boolean)$user->save());
+	}
+
+	public function testGetById() {
+		$name = $this->generateUserName();
+		$user = new User(array("login" => $name, "name" => $name, "full_name" => $name, "email" => $name, "password" => "123"));
+		$this->assertTrue((boolean)$user->save());
+		$id = $user->id;
+		unset($user);
+
+		$user = User::getById($id);
+		$this->assertSame($name, $user->login);
+		$this->assertSame($name, $user->name);
+		$this->assertSame($name, $user->fullName);
+		$this->assertSame($name, $user->email);
+		$this->assertSame(sha1("123"), $user->password);
 	}
 
 }

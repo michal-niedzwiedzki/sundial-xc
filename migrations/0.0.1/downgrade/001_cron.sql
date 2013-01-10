@@ -1,1 +1,1 @@
-DROP TABLE IF EXISTS cron;
+DROP TABLE cron;

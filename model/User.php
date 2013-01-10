@@ -1,8 +1,10 @@
 <?php
 
+/**
+ * @TableName "users"
+ * @PrimaryKey "id"
+ */
 class User {
-
-	const TABLE_NAME = "users";
 
 	const STATE_INACTIVE = "I"; // newly created account, not yet activated
 	const STATE_ACTIVE = "A"; // fully operational account
@@ -13,69 +15,107 @@ class User {
 	/**
 	 * User primary key or NULL when not yet saved
 	 * @var int|NULL
+	 * @Column "id"
 	 */
-	protected $id;
+	public $id;
 
 	/**
 	 * Short name
 	 * @var string
+	 * @Column "name"
+	 * @NotNull
 	 */
-	protected $name;
+	public $name;
 
 	/**
 	 * Full name
 	 * @var string
+	 * @Column "full_name"
+	 * @NotNull
 	 */
-	protected $fullName;
+	public $fullName;
 
 	/**
-	 * Registration date
-	 * @var int
+	 * Email address
+	 * @var string
+	 * @Column "email"
+	 * @NotNull
 	 */
-	protected $createdOn;
+	public $email;
 
 	/**
-	 * Last modification date
-	 * @var int
+	 * Login name
+	 * @var string
+	 * @Column "login"
+	 * @NotNull
 	 */
-	protected $updateOn;
+	public $login;
 
 	/**
-	 * Recent logon date
-	 * @var int
+	 * Password
+	 * @var string
+	 * @Column "password"
+	 * @NotNull
+	 * @Transformation "Sha1Transformation"
 	 */
-	protected $lastSeenOn;
+	public $password;
+
+	/**
+	 * Password salt
+	 * @var int
+	 * @Column "salt"
+	 * @NotNull
+	 */
+	public $salt;
 
 	/**
 	 * Recent state
 	 * @var string
+	 * @Column "state"
+	 * @NotNull
 	 */
-	protected $state;
+	public $state;
 
 	/**
 	 * Recent balance in seconds
 	 * @var int
+	 * @Column "balance"
+	 * @NotNull
 	 */
-	protected $balance;
+	public $balance;
 
 	/**
-	 * User accounts
-	 * @var UserAccount[]
+	 * Registration date
+	 * @var int
+	 * @Column "created_on"
+	 * @NotNull
+	 * @Transformation "DateTransformation"
 	 */
-	protected $accounts = array();
+	public $createdOn;
+
+	/**
+	 * Last modification date
+	 * @var int
+	 * @Column "updated_on"
+	 * @NotNull
+	 * @Transformation "DateTransformation"
+	 */
+	public $updateOn;
+
+	/**
+	 * Recent logon date
+	 * @var int
+	 * @Column "last_seen_on"
+	 * @NotNull
+	 * @Transformation "DateTransformation"
+	 */
+	public $lastSeenOn;
 
 	public function __construct(array $a = array()) {
 		if (empty($a)) {
 			return;
 		}
-		$this->id = $a["id"];
-		$this->name = $a["name"];
-		$this->fullName = $a["full_name"];
-		$this->createdOn = strtotime($a["created_on"]);
-		$this->updatedOn = strtotime($a["updated_on"]);
-		$this->lastSeenOn = strtotime($a["last_seen_on"]);
-		$this->state = $a["state"];
-		$this->balance = $a["balance"];
+		Persistence::revive($a, $this);
 	}
 
 	public static function getById($id) {
@@ -87,66 +127,10 @@ class User {
 		return new User($row);
 	}
 
-	public static function getByAccount($account) {
-		$sql = "SELECT * FROM users WHERE id = (SELECT user_id FROM accounts WHERE account = :account)";
-		$row = PDOHelper::fetchRow($sql, array("account" => $account));
-		if (empty($row)) {
-			return NULL;
-		}
-		return new User($row);
-	}
-
 	public function save() {
-		$this->createdOn or $this->createdOn = time();
-		$this->updatedOn = time();
-		$this->state or $this->state = self::STATE_INACTIVE;
-		$this->balance or $this->balance = 0;
-		$row = array(
-			"name" => $this->name,
-			"full_name" => $this->fullName,
-			"created_on" => date("Y-m-d H:i:s", $this->createdOn),
-			"updated_on" => date("Y-m-d H:i:s", $this->updatedOn),
-			"last_seen_on" => $this->lastSeenOn ? date("Y-m-d H:i:s", $this->lastSeenOn) : NULL,
-			"state" => $this->state,
-			"balance" => (int)$this->balance,
-		);
-		return $this->id
-			? PDOHelper::update(self::TABLE_NAME, $row, "id = :id", array("id" => $this->id))
-			: ($this->id = PDOHelper::insert(self::TABLE_NAME, $row));
-	}
-
-	public function getId() {
-		return $this->id;
-	}
-
-	public function getName() {
-		return $this->name;
-	}
-
-	public function setName($name) {
-		$this->name = $name;
-		return $this;
-	}
-
-	public function getFullName() {
-		return $this->fullName;
-	}
-
-	public function setFullName($fullName) {
-		$this->fullName = $fullName;
-		return $this;
-	}
-
-	public function getAccount($account) {
-		$this->accounts or $this->accounts = UserAccount::getByUserId($this->id);
-		if (isset($this->accounts[$account]) {
-			return $this->accounts[$account];
-		}
-	}
-
-	public function getAllAccounts() {
-		$this->accounts or $this->accounts = UserAccount::getByUserId($this->id);
-		return $this->accounts;
+		$id = Persistence::freeze($this);
+		$this->id or $this->id = $id;
+		return $id;
 	}
 
 }

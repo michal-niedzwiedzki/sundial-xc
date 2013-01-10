@@ -3,73 +3,72 @@
 require_once dirname(__FILE__) . "/../../../bootstrap.php";
 require_once "PHPUnit/Autoload.php";
 
+/**
+ * @String "foo"
+ * @Int 1
+ * @Array ["dog", "cat", "hamster"]
+ * @Object {"dog": "Azor", "cat": "Filemon", "hamster": "Kubuś"}
+ * @False false
+ * @True true
+ * @Default
+ */
+final class AnnotatedMock1 { }
+
+/**
+ * @MultipleAnnotation 1
+ * @MultipleAnnotation 2
+ * @SingleAnnotation
+ */
+final class AnnotatedMock2 { }
+
 final class AnnotationParserTest extends PHPUnit_Framework_TestCase {
 
-	const ANNOTATED_CLASS = "
-		/**
-		 * @String \"foo\"
-		 * @Int 1
-		 * @Array [\"dog\", \"cat\", \"hamster\"]
-		 * @Object {\"dog\": \"Azor\", \"cat\": \"Filemon\", \"hamster\": \"Kubuś\"}
-		 * @False false
-		 * @True true
-		 * @Default
-		 */
-		class _TestAnnotatedClass { }
-	";
-
-	private $reflection;
-
-	public function setUp() {
-		parent::setUp();
-		class_exists("_TestAnnotatedClass") or eval(self::ANNOTATED_CLASS);
-		$this->reflection = new ReflectionClass("_TestAnnotatedClass");
-	}
-
-	public function testParseString() {
-		$out = AnnotationParser::get($this->reflection, "String");
+	public function testGet() {
+		$reflection = new ReflectionClass("AnnotatedMock1");
+		// parse string
+		$out = AnnotationParser::get($reflection, "String");
 		$this->assertSame("foo", $out);
 		$this->assertTrue(is_string($out));
-	}
-
-	public function testParseInt() {
-		$out = AnnotationParser::get($this->reflection, "Int");
+		// parse int
+		$out = AnnotationParser::get($reflection, "Int");
 		$this->assertSame(1, $out);
 		$this->assertTrue(is_int($out));
-	}
-
-	public function testParseArray() {
-		$out = AnnotationParser::get($this->reflection, "Array");
+		// parse array
+		$out = AnnotationParser::get($reflection, "Array");
 		$this->assertSame(array("dog", "cat", "hamster"), $out);
 		$this->assertTrue(is_array($out));
-	}
-
-	public function testParseObject() {
+		// parse object
 		$o = new stdClass();
 		$o->dog = "Azor";
 		$o->cat = "Filemon";
 		$o->hamster = "Kubuś";
-		$out = AnnotationParser::get($this->reflection, "Object");
+		$out = AnnotationParser::get($reflection, "Object");
 		$this->assertEquals($o, $out);
 		$this->assertTrue(is_object($out));
-	}
-
-	public function testParseFalse() {
-		$out = AnnotationParser::get($this->reflection, "False");
+		// parse false
+		$out = AnnotationParser::get($reflection, "False");
 		$this->assertSame(FALSE, $out);
 		$this->assertTrue(is_bool($out));
-	}
-
-	public function testParseTrue() {
-		$out = AnnotationParser::get($this->reflection, "True");
+		// parse true
+		$out = AnnotationParser::get($reflection, "True");
+		$this->assertSame(TRUE, $out);
+		$this->assertTrue(is_bool($out));
+		// parse default
+		$out = AnnotationParser::get($reflection, "Default");
 		$this->assertSame(TRUE, $out);
 		$this->assertTrue(is_bool($out));
 	}
 
-	public function testParseDefault() {
-		$out = AnnotationParser::get($this->reflection, "Default");
-		$this->assertSame(TRUE, $out);
-		$this->assertTrue(is_bool($out));
+	public function testGetAll() {
+		$reflection = new ReflectionClass("AnnotatedMock2");
+		// parse multiple annotations
+		$out = AnnotationParser::getAll($reflection, "MultipleAnnotation");
+		$this->assertSame(array(1, 2), $out);
+		$this->assertTrue(is_array($out));
+		// parse single annotation
+		$out = AnnotationParser::getAll($reflection, "SingleAnnotation");
+		$this->assertSame(array(TRUE), $out);
+		$this->assertTrue(is_array($out));
 	}
 
 }
