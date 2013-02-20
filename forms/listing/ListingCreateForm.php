@@ -2,23 +2,23 @@
 
 final class ListingCreateForm extends Form {
 
-	protected $memberId;
+	protected $userId;
 
-	public function __construct($type, $memberId, $adminMode = FALSE) {
+	public function __construct($type, $userId, $adminMode = FALSE) {
 		parent::__construct();
-		$this->memberId = $memberId;
+		$this->userId = $userId;
 
 		if ($adminMode) {
 			$this->addElement("hidden", "mode", "admin");
-			if ($memberId) {
-				$this->addElement("hidden", "member_id", $_REQUEST["member_id"]);
+			if ($userId) {
+				$this->addElement("hidden", "user_id", $userId);
 			} else {
 				$ids = new cMemberGroup;
 				$ids->LoadMemberGroup();
-				$this->addElement("select", "member_id", "ID de Socio", $ids->MakeIDArray());
+				$this->addElement("select", "user_id", "ID de Socio", $ids->MakeIDArray());
 			}
 		} else {
-			$this->addElement("hidden", "member_id", $memberId);
+			$this->addElement("hidden", "user_id", $userId);
 			$this->addElement("hidden", "mode", "self");
 		}
 
@@ -42,7 +42,7 @@ final class ListingCreateForm extends Form {
 
 	public function verifyNotDuplicate($value) {
 		$titleList = new cTitleList($type);
-		$titles = $titleList->MakeTitleArray($this->memberId);
+		$titles = $titleList->MakeTitleArray($this->userId);
 		foreach ($titles as $title) {
 			if ($value == $title) {
 				return FALSE;

@@ -19,9 +19,6 @@ class EmailListingUpdatesExecutor extends CronJobExecutor {
 	}
 
 	public function execute() {
-		$group = new cMemberGroup();
-		$group->LoadMemberGroup();
-
 		$since = new cDateTime("-{$this->interval} DAYS");
 		$listings = new cListingGroup(OFFER_LISTING);
 		$listings->LoadListingGroup(NULL, NULL, NULL, $since->MySQLTime());
@@ -50,11 +47,7 @@ class EmailListingUpdatesExecutor extends CronJobExecutor {
 		}
 
 		$this->message = new EmailMessage(EMAIL_ADMIN, SITE_SHORT_TITLE .": Listados nuevos o actualizados ". $period, $body);
-		foreach ($group->getMembers() as $member) {
-			if ($member->email_updates == $this->interval and $member->person[0]->email) {
-				$this->message->to($member);
-			}
-		}
+		$this->message->toAll(User::getAllActive());
 		$this->message->save();
 	}
 

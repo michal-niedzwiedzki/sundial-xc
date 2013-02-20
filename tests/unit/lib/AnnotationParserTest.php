@@ -7,6 +7,7 @@ require_once "PHPUnit/Autoload.php";
  * @String "foo"
  * @Int 1
  * @Array ["dog", "cat", "hamster"]
+ * @List "dog", "cat", "hamster"
  * @Object {"dog": "Azor", "cat": "Filemon", "hamster": "Kubuś"}
  * @False false
  * @True true
@@ -35,6 +36,10 @@ final class AnnotationParserTest extends PHPUnit_Framework_TestCase {
 		$this->assertTrue(is_int($out));
 		// parse array
 		$out = AnnotationParser::get($reflection, "Array");
+		$this->assertSame(array("dog", "cat", "hamster"), $out);
+		$this->assertTrue(is_array($out));
+		// parse list
+		$out = AnnotationParser::get($reflection, "List");
 		$this->assertSame(array("dog", "cat", "hamster"), $out);
 		$this->assertTrue(is_array($out));
 		// parse object

@@ -68,8 +68,7 @@ final class ListingsController extends Controller {
 		$category = ($categoryId == "0") ? "%" : $categoryId;
 		$since = ($timeframe == "0") ? new cDateTime(LONG_LONG_AGO) : new cDateTime("-{$timeframe} dias");
 
-		$user = cMember::getCurrent();
-		$showIds = (boolean)$user->IsLoggedOn();
+		$showIds = User::isLoggedIn();
 
 		// instantiate new cOffer objects and load them
 		$listings = new cListingGroup($type);
@@ -88,7 +87,7 @@ final class ListingsController extends Controller {
 				if (NULL !== strpos(strtolower(htmlentities($l->description)), $keyword)) { // Offer description
 					$match = true;
 				}
-				if ($user->IsLoggedOn()) { // Search is only performed on these params if the user is logged in
+				if (User::isLoggedin()) { // Search is only performed on these params if the user is logged in
 					if (NULL !== strpos(strtolower($pers->first_name), $keyword)) { // Member First Name
 						$match = true;
 					}

@@ -24,6 +24,7 @@ final class UserTest extends PHPUnit_Framework_TestCase {
 		$user = new User(array("login" => $name, "name" => $name, "full_name" => $name, "email" => $name, "password" => "123"));
 		$this->assertTrue((boolean)$user->save());
 		$this->assertTrue($user->id > 0);
+		$this->assertTrue((int)$user->salt > 0);
 	}
 
 	/**
@@ -39,6 +40,11 @@ final class UserTest extends PHPUnit_Framework_TestCase {
 		$this->assertTrue((boolean)$user->save());
 	}
 
+	/**
+	 * Test getting single user by id
+	 *
+	 * @author Michał Rudnicki <michal.rudnicki@epsi.pl>
+	 */
 	public function testGetById() {
 		$name = $this->generateUserName();
 		$user = new User(array("login" => $name, "name" => $name, "full_name" => $name, "email" => $name, "password" => "123"));
@@ -51,7 +57,52 @@ final class UserTest extends PHPUnit_Framework_TestCase {
 		$this->assertSame($name, $user->name);
 		$this->assertSame($name, $user->fullName);
 		$this->assertSame($name, $user->email);
-		$this->assertSame(sha1("123"), $user->password);
+		$this->assertSame(sha1("123" . $user->salt), $user->password);
 	}
+
+	/**
+	 * Test getting collection of users using filter
+	 *
+	 * @author Michał Rudnicki <michal.rudnicki@epsi.pl>
+	 */
+	public function testFilter() {
+		$name = $this->generateUserName();
+		$user = new User(array("login" => $name, "name" => $name, "full_name" => $name, "email" => $name, "password" => "123"));
+		$user->save();
+
+		$return = array("login = :login", array("login" => $name));
+		$filter = $this->getMock("UserFilter");
+		$filter->expects($this->once())
+			->method("get")
+			->will($this->returnValue($return));
+
+		$users = User::filter($filter);
+		$this->assertSame(1, count($users));
+		$this->assertTrue($users[0] instanceof User);
+		$this->assertSame($name, $users[0]->name);
+	}
+
+	/**
+	 * Test validation of plain text password against hashed secret
+	 *
+	 * @author Michał Rudnicki <michal.rudnicki@epsi.pl>
+	 */
+	public function testValidatePassword() {
+		$password = "MyPassword_123";
+		$salt = 100;
+		$hashed = sha1($password . $salt);
+
+		$user = new User(array("salt" => $salt, "password" => $hashed));
+		$this->assertTrue($user->validatePassword($password));
+	}
+
+	public function testMakePassword() {
+		$password = "MyPassword_123";
+		$salt = 100;
+		$hashed = User::makePassword($password, $salt);
+
+		$this->assertSame(sha1($password . $salt), $hashed);
+	}
+
 
 }

@@ -53,11 +53,12 @@ final class AnnotationParser {
 			} else {
 				$firstWord = substr($line, 0, $pos);
 				$rest = trim(substr($line, $pos + 1));
-				if ($rest === "false" or $rest === "FALSE") {
-					$value = FALSE;
+				if ($rest === "null" or $rest === "NULL" or $rest === "Null") {
+					$value = NULL;
 				} else {
 					$value = json_decode($rest); // try to decode JSON string
-					$value !== FALSE or $value = $rest; // fall back to raw string
+					NULL === $value and $value = json_decode("[{$rest}]", TRUE); // try to decode JSON string as hash array
+					NULL === $value and $value = $rest; // fall back to raw string
 				}
 			}
 

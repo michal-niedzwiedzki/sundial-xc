@@ -2,7 +2,7 @@
 
 final class HolidayForm extends Form {
 
-	public function __construct($memberId, $adminMode) {
+	public function __construct($userId, $adminMode) {
 		parent::__construct();
 
 		$today = getdate();
@@ -14,7 +14,7 @@ final class HolidayForm extends Form {
 		);
 
 		$this->addElement("hidden", "mode", $adminMode ? "admin" : "self");
-		$this->addElement("hidden", "member_id", $memberId);
+		$this->addElement("hidden", "user_id", $userId);
 		$this->addElement("date", "return_date", "Fecha de reactivación?", $options);
 		$this->addElement("submit", "btnSubmit", "Desactivar");
 

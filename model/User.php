@@ -1,8 +1,16 @@
 <?php
 
 /**
+ * User
+ *
+ * Knows its offers and trades.
+ * Can be retrieved from or stored into database.
+ * Can create and remove session.
+ *
  * @TableName "users"
  * @PrimaryKey "id"
+ *
+ * @author Michał Rudnicki <michal.rudnicki@epsi.pl>
  */
 class User {
 
@@ -11,6 +19,13 @@ class User {
 	const STATE_EXPIRED = "E"; // account expired due to not logging in for long time
 	const STATE_SUSPENDED = "S"; // account suspended by administrator
 	const STATE_DELETED = "D"; // account deleted
+
+	const SESSION_KEY = "userId";
+	const ADMIN_LOGIN = "admin";
+	const ADMIN_PASSWORD = "password";
+	const TEST_PASSWORD = "test_password";
+
+	public static $currentUser;
 
 	/**
 	 * User primary key or NULL when not yet saved
@@ -56,9 +71,11 @@ class User {
 	 * @var string
 	 * @Column "password"
 	 * @NotNull
-	 * @Transformation "Sha1Transformation"
+	 * @Transformation "CopyTransformation", "hashedPassword"
 	 */
 	public $password;
+
+	public $hashedPassword;
 
 	/**
 	 * Password salt
@@ -67,6 +84,21 @@ class User {
 	 * @NotNull
 	 */
 	public $salt;
+
+	/**
+	 * Password reset token
+	 * @var int
+	 * @Column "token"
+	 */
+	public $token;
+
+	/**
+	 * Password reset token expiry date
+	 * @var int
+	 * @Column "token_expires_on"
+	 * @Transformation "DateTransformation"
+	 */
+	public $tokenExpiresOn;
 
 	/**
 	 * Recent state
@@ -83,6 +115,15 @@ class User {
 	 * @NotNull
 	 */
 	public $balance;
+
+	/**
+	 * Administrator flag
+	 * @var boolean
+	 * @Column "is_admin"
+	 * @NotNull
+	 * @Transformation "BooleanTransformation"
+	 */
+	public $isAdmin;
 
 	/**
 	 * Registration date
@@ -111,13 +152,21 @@ class User {
 	 */
 	public $lastSeenOn;
 
+	/**
+	 * Constructor
+	 *
+	 * @param array $a database row as hash
+	 */
 	public function __construct(array $a = array()) {
-		if (empty($a)) {
-			return;
-		}
-		Persistence::revive($a, $this);
+		empty($a) or Persistence::revive($a, $this);
 	}
 
+	/**
+	 * Return user by primary key or NULL
+	 *
+	 * @param int $id
+	 * @return User|NULL
+	 */
 	public static function getById($id) {
 		$sql = "SELECT * FROM users WHERE id = :id";
 		$row = PDOHelper::fetchRow($sql, array("id" => $id));
@@ -127,10 +176,171 @@ class User {
 		return new User($row);
 	}
 
+	/**
+	 * Return user by login name or NULL
+	 *
+	 * @param string $login
+	 * @return User|NULL
+	 */
+	public static function getByLogin($login) {
+		$sql = "SELECT * FROM users WHERE login = :login";
+		$row = PDOHelper::fetchRow($sql, array("login" => $login));
+		if (empty($row)) {
+			return NULL;
+		}
+		return new User($row);
+	}
+
+	/**
+	 * Return user by email address or NULL
+	 *
+	 * @param string $email
+	 * @return User|NULL
+	 */
+	public static function getByEmail($email) {
+		$sql = "SELECT * FROM users WHERE email = :email";
+		$row = PDOHelper::fetchRow($sql, array("email" => $email));
+		if (empty($row)) {
+			return NULL;
+		}
+		return new User($row);
+	}
+
+	public static function getAllActive() {
+		$filter = new UserFilter();
+		$filter->active();
+		return $this->filter($filter);
+	}
+
+	public static function getAll() {
+		return $this->filter(new UserFilter());
+	}
+
+	/**
+	 * Rerutn collection of users by filter criteria with id as key
+	 *
+	 * @param UserFilter $filter, default no filter (all users)
+	 * @return User[]
+	 */
+	public static function filter(UserFilter $filter = NULL) {
+		$filter or $filter = new UserFilter();
+		$users = array();
+		list ($where, $params) = $filter->get();
+		$sql = "SELECT * FROM users WHERE $where";
+		foreach (PDOHelper::fetchAll($sql, $params) as $row) {
+			$users[$user->id] = new User($row);
+		}
+		return $users;
+	}
+
+	/**
+	 * Save user into database and return its primary key
+	 *
+	 * @return int
+	 */
 	public function save() {
+		if (NULL !== $this->password and $this->password !== $this->hashedPassword) {
+			// hash password if updated
+			$this->salt or $this->salt = rand(100, 999);
+			$this->password = sha1($this->password . $this->salt);
+			$this->hashedPassword = $this->password;
+		} else {
+			$this->password = NULL;
+		}
 		$id = Persistence::freeze($this);
 		$this->id or $this->id = $id;
 		return $id;
+	}
+
+	/**
+	 * Return if user is an admin
+	 *
+	 * @return boolean
+	 */
+	public function isAdmin() {
+		return (boolean)$this->isAdmin;
+	}
+
+	/**
+	 * Validate string against hashed and salted password
+	 *
+	 * @param string $password
+	 * @return boolean
+	 */
+	public function validatePassword($password) {
+		return $this->password === self::makePassword($password . $this->salt);
+	}
+
+	/**
+	 * Make password of given string and salt
+	 *
+	 * @param string $password
+	 * @param int $salt optional
+	 * @return string
+	 */
+	public static function makePassword($password, $salt = NULL) {
+		return sha1($password . $salt);
+	}
+
+	public static function isLoggedIn() {
+		return HTTPHelper::server(self::SESSION_KEY);
+	}
+
+	public static function logIn(User $currentUser) {
+		$_SESSION[self::SESSION_KEY] = $currentUser->id;
+		self::$currentUser = $currentUser;
+	}
+
+	public static function logOut() {
+		unset($_SESSION[self::SESSION_KEY]);
+		self::$currentUser = new User();
+	}
+
+	/**
+	 * Return currently logged in user or empty user instance if not logged in
+	 *
+	 * @return User
+	 */
+	public static function getCurrent() {
+		if (NULL === self::$currentUser) {
+			($id = HTTPHelper::session("userId"))
+				? self::$currentUser = User::getById($id)
+				: self::$currentUser = new User();
+		}
+		return self::$currentUser;
+	}
+
+	/**
+	 * Return id of currently logged in user or NULL if not logged in
+	 *
+	 * @return int|NULL
+	 */
+	public static function getCurrentId() {
+		return (NULL === self::$currentUser) ? NULL : self::$currentUser->id;
+	}
+
+	/**
+	 * Return collection of trades
+	 *
+	 * @param TradeFilter $filter
+	 * @return Trade[]
+	 */
+	public function getTrades(TradeFilter $filter = NULL) {
+		$filter or $filter = new TradeFilter();
+		$filter->setUserId($this->id);
+		return Trade::filter($filter);
+	}
+
+	/**
+	 * Return collection of offers
+	 *
+	 * @param OfferFilter $filter
+	 * @return Offer[]
+	 */
+	public function getOffers(OfferFilter $filter = NULL) {
+		$filter or $filter = new OfferFilter();
+		$filter->setUserId($this->id);
+		return Offer::filter($filter);
 	}
 
 }

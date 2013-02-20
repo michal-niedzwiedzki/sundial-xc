@@ -68,16 +68,15 @@ final class InstallController extends Controller {
 	 * @Title "Sundial XC installation wizard - Step 4: Administrator password"
 	 */
 	public function step4_admin() {
-		$admin = new cMember();
-		$admin->LoadMember("admin");
-		$defaultPassword = $admin->password === sha1(cMember::DEFAULT_PASSWORD);
+		$admin = User::getByLogin(User::ADMIN_LOGIN);
+		$defaultPassword = $admin->password === sha1(User::ADMIN_PASSWORD);
 		$this->view->defaultPassword = $defaultPassword;
 		$this->view->passwordChanged = FALSE;
 		if ($defaultPassword and $password = HTTPHelper::post("password")) {
-			PDOHelper::update(
-				"member",
-				array("password" => sha1($password)), "id = :id", array("id" => "admin")
-			);
+			$salt = rand(100, 999);
+			PDOHelper::update("member", array("password" => sha1($password)), "id = :id", array("id" => "admin"));
+			$admin->password = $password; // will be hashed automatically, see User::$password
+			$admin->save();
 			$this->passwordChanged = TRUE;
 		}
 	}

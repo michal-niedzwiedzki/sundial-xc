@@ -7,18 +7,17 @@ final class FeedbackController extends Controller {
 	 */
 	public function all() {
 		$mode = HTTPHelper::rq("mode");
-		$memberId = $mode == "other"
-			? HTTPHelper::rq("member_id")
-			: cMember::getCurrent()->getId();
+		$userId = $mode == "other"
+			? HTTPHelper::rq("user_id")
+			: User::getCurrentId();
 
-		$member = new cMember;
-		$member->LoadMember($memberId);
+		$user = User::getById($userId);
 
 		$feedbackgrp = new cFeedbackGroup;
-		$feedbackgrp->LoadFeedbackGroup($memberId);
+		$feedbackgrp->LoadFeedbackGroup($userId);
 
 		if (isset($feedbackgrp->feedback)) {
-			$this->view->table = $feedbackgrp->DisplayFeedbackTable($user->member_id);
+			$this->view->table = $feedbackgrp->DisplayFeedbackTable($user->id);
 		}
 		$this->view->other = $mode == "other";
 		$this->view->user = $member;

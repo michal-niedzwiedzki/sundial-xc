@@ -14,7 +14,7 @@ final class MemberCreateForm extends Form {
 
 		$today = getdate();
 		$options = array("language"=> "es", "format" => "dFY", "minYear"=>JOIN_YEAR_MINIMUM, "maxYear"=>$today["year"]);
-		$this->addElement("date", "join_date",	"Fecha de inscripción", $options);
+		$this->addElement("date", "join_date", "Fecha de inscripción", $options);
 
 		$this->addElement("text", "first_name", "Nombre", array("size" => 15, "maxlength" => 20));
 		$this->addElement("text", "mid_name", "Primer Apellido", array("size" => 20, "maxlength" => 30));
@@ -41,12 +41,12 @@ final class MemberCreateForm extends Form {
 		$this->addRule('mid_name', 'Insertar al menos un apellido', 'required');
 		$this->addRule('fax_number', 'Insertar identificación', 'required');
 
-		$this->registerRule("verify_unique_member_id", "function", "verify_unique_member_id", $this);
-		$this->addRule('member_id', 'Este ID de soci@ ya existe', 'verify_unique_member_id');
-		$this->registerRule("verify_good_member_id", "function", "verify_good_member_id", $this);
-		//$this->addRule('member_id', 'Special characters are not allowed', 'verify_good_member_id');
-		$this->registerRule("verify_good_password", "function", "verify_good_password", $this);
-		$this->addRule('password', 'La contraseña debe tener al menos un numero', 'verify_good_password');
+		$this->registerRule("verifyLoginUnique", "function", "verifyLoginUnique", $this);
+		$this->addRule('member_id', 'Este ID de soci@ ya existe', 'verifyLoginUnique');
+		$this->registerRule("varifyLoginCharacters", "function", "varifyLoginCharacters", $this);
+		//$this->addRule('member_id', 'Special characters are not allowed', 'varifyLoginCharacters');
+		$this->registerRule("verifyPasswordStrength", "function", "verifyPasswordStrength", $this);
+		$this->addRule('password', 'La contraseña debe tener al menos un numero', 'verifyPasswordStrength');
 		$this->registerRule("verify_no_apostraphes_or_backslashes", "function", "verify_no_apostraphes_or_backslashes", $this);
 		$this->addRule("password", "La contraseña no puede tener los caracteres ' o \\", "verify_no_apostraphes_or_backslashes");
 		$this->registerRule("verify_role_allowed", "function", "verify_role_allowed", $this);
@@ -63,35 +63,22 @@ final class MemberCreateForm extends Form {
 		//$this->addRule('phone2', 'Formato invalido para número de teléfono', 'verify_phone_format');
 		//$this->addRule('fax', 'Phone format invalid', 'verify_phone_format');
 
-		$current_date = array("Y"=>$today["year"], "F"=>$today["mon"], "d"=>$today["mday"]);
+		$current_date = array("Y" => $today["year"], "F" => $today["mon"], "d" => $today["mday"]);
 		$defaults = array(
-			"password" => cMember::GeneratePassword(),
+			"password" => rand(1000, 9999) . rand(1000, 9999),
 			"dob" => $current_date,
 			"join_date" => $current_date,
-			"account_type" => "S",
-			"member_role" => "0",
 			"email_updates" => $config->legacy->DEFAULT_UPDATE_INTERVAL,
-			"address_state_code" => DEFAULT_STATE,
-			"address_country" => DEFAULT_COUNTRY
 		);
 		$this->setDefaults($defaults);
 	}
 
-	public function verify_unique_member_id($value) {
-		$member = new cMember();
-		return !($member->LoadMember($value, false));
+	public function verifyLoginUnique($login) {
+		return (boolean)User::getByLogin($login);
 	}
 
-	public function verify_good_member_id($value) {
-		if (ctype_alnum($value)) {
-			return true;
-		}
-		$memberId = ereg_replace("\_","",$value);
-		$memberId = ereg_replace("\-","",$memberId);
-		$memberId = ereg_replace("\.","",$memberId);
-		if (ctype_alnum($memberId)) {
-			return true;
-		}
+	public function varifyLoginCharacters($value) {
+		return ctype_alnum($value);
 	}
 
 	public function verify_role_allowed($value) {
@@ -101,22 +88,11 @@ final class MemberCreateForm extends Form {
 
 	public function verify_reasonable_dob($value) {
 		$dob = strtotime($value['Y'] . '/' . $value['F'] . '/' . $value['d']);
-		if ($dob > time() - 3600 * 24 * 365 * 3) { // 3 years
-			return FALSE;
-		}
-		return TRUE;
+		return $dob > time() - 3600 * 24 * 365 * 3; // 3 years
 	}
 
-	public function verify_good_password($value) {
-		$i = 0;
-		$length = strlen($value);
-		while($i < $length) {
-			if (ctype_digit($value{$i})) {
-				return true;
-			}
-			$i+=1;
-		}
-		return false;
+	public function verifyPasswordStrength($password) {
+		return strlen($password) > 6;
 	}
 
 	public function verify_no_apostraphes_or_backslashes($value) {

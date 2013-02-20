@@ -3,41 +3,35 @@
 final class MemberController extends Controller {
 
 	/**
-	 * @Level 1
+	 * @Admin
 	 * @Title "Seleccionar socio para cambio"
 	 */
 	public function choose() {
-		$action = HTTPHelper::rq("action");
+		$whereTo = HTTPHelper::rq("action");
 		$get1 = HTTPHelper::rq("get1");
 		$get1val = HTTPHelper::rq("get1val");
 		$inactive = HTTPHelper::rq("inactive");
 
-		$ids = new cMemberGroup;
-		$inactive ? $ids->LoadMemberGroup(false, true) : $ids->LoadMemberGroup();
-		$idsArray = $ids->MakeIDArray();
+		$inactive
+			? $users = User::getAll()
+			: $users = User::getAllActive();
+		$ids = array_map(function(User $user) { return $user->full_name; }, $users);
 
-		$form = new MemberChooseForm($action, $ids->MakeIDArray());
+		$form = new MemberChooseForm($action, $ids);
 		if ($get1) {
 			$form->addElement("hidden", "get1", $get1);
 			$form->addElement("hidden", "get1val", $get1val);
 		}
-
 		$this->view->form = $form;
 
 		if (!$form->validate()) {
 			return;
 		}
-
-		$form->freeze();
-		$form->process();
-		$values = $form->exportValues();
-		$user = cMember::getCurrent();
-		if ($get1)
-			$get_string = "&". $get1 ."=". $get1val;
-		else
-			$get_string = "";
-		header("Location: ".HTTP_BASE."/". $action .".php?mode=admin&member_id=".$values["member_id"] . $get_string);
-		exit;
+		$values = $form->process();
+		$get_string = $get1
+			? "&". $get1 ."=". $get1val
+			: $get_string = "";
+		HTTPHelper::redirectSeeOther(HTTP_BASE . "/". $action .".php?mode=admin&member_id=".$values["member_id"] . $get_string);
 	}
 
 	public function contact_choose() {
@@ -117,98 +111,43 @@ final class MemberController extends Controller {
 	 * @Title "Directorio de Socios"
 	 */
 	public function directory() {
-		$user = cMember::getCurrent();
+		$config = Config::getInstance();
+		$currentUser = cMember::getCurrent();
 
 		$this->view->searchId = HTTPHelper::rq("uID");
 		$this->view->searchName = HTTPHelper::rq("uName");
 		$this->view->searchOrder = HTTPHelper::rq("orderBy");
 
-		$member_list = new cMemberGroup();
-		//$member_list->LoadMemberGroup();
-
-		// How should results be ordered?
+		// set order
+		$filter = new UserFilter();
 		switch(HTTPHelper::rq("orderBy")) {
 			case "fm":
-				$orderBy = 'ORDER BY p.first_name, p.mid_name ';
-				break;
-			case "idA":
-				$orderBy = 'ORDER BY m.member_id';
-				break;
-			case "fml":
-				$orderBy = 'ORDER BY p.mid_name, p.first_name DESC';
-				break;
-			case "lf":
-				$orderBy = 'ORDER BY p.last_name, first_name DESC';
+				$filter->orderByName();
 				break;
 			default:
-				$orderBy = 'ORDER BY m.member_id';
+				$filter->orderById();
+				break;
 		}
 
 		// SQL condition string
 		$condition = "TRUE";
 		$params = array();
 
-		if (HTTPHelper::rq("uID")) { // We're searching for a specific member ID in the SQL
-			$condition .= " AND m.member_id = :id";
-			$params["id"] = trim(HTTPHelper::rq("uID"));
-		}
+		// search by user id
+		($id = HTTPHelper::rq("uID")) and = $filter->id($id);
 
-		if (HTTPHelper::rq("uName")) { // We're searching for a specific username in the SQL
-			$uName = trim(HTTPHelper::rq("uName"));
-			// Does it look like we've been provided with a first AND last name?
-			$uName = explode(" ", $uName);
-			$nameSrch = "p.first_name LIKE :firstName";
-			$params["firstName"] = "%" . trim($uName[0]) . "%";
-			if (isset($uName[1])) { // surname provided
-				$nameSrch .= " OR p.middle_name LIKE :middleName";
-				$params["middleName"] = "%" . trim($uName[1]) . "%";
-			} else { // No surname, but term entered may be surname so apply to that too
-				$nameSrch .= " OR p.middle_name LIKE :middleName";
-				$params["middleName"] = "%" . trim($uName[0]) . "%";
-			}
-			$condition .= " AND ($nameSrch)";
-		}
+		// search by login or full name
+		($phrase = HTTPHelper::rq("uName")) and $filter->text($phrase);
 
-		if (HTTPHelper::rq("uLoc")) { // We're searching for a specific Location in the SQL
-			$condition .= " AND (p.address_post_code LIKE :postCode OR p.address_street2 LIKE :street2 OR p.address_city LIKE :city OR p.address_country LIKE :country";
-			$params["postCode"] = "%" . trim(HTTPHelper::rq("uLoc")) . "%";
-			$params["street2"] = "%" . trim(HTTPHelper::rq("uLoc")) . "%";
-			$params["city"] = "%" . trim(HTTPHelper::rq("uLoc")) . "%";
-			$params["country"] = "%" . trim(HTTPHelper::rq("uLoc")) . "%";
-		}
+		// disable inactive users if set in config
+		$config->legacy->SHOW_INACTIVE_MEMBERS and $filter->active();
 
-		// Do search in SQL
-		$sql = "
-			SELECT m.member_id FROM member AS m, person AS p
-			WHERE m.member_id = p.member_id AND primary_member = 'Y' AND $condition $orderBy
-		";
-		$out = PDOHelper::fetchAll($sql, $params);
-		foreach ($out as $i => $row) {
-			$member_list->members[$i] = new cMember();
-			$member_list->members[$i]->LoadMember($row["member_id"]);
-		}
-
-		$rows = array();
-		$showInactive = Config::getInstance()->legacy->SHOW_INACTIVE_MEMBERS;
-		if (!empty($member_list->members)) {
-			foreach ($member_list->members as $i => $member) {
-				if ($member->status != "I" or $showInactive) { // force display of inactive members off, unless specified otherwise in config file
-					if ($member->account_type != "F") {  // Don't display fund accounts
-						$rows[] = array(
-							"id" => $member->member_id,
-							"names" => $member->AllNames(),
-							"phones" => $member->AllPhones(),
-							"balance" => $member->balance,
-						);
-					}
-				} // end loop to force display of inactive members off
-			}
-		}
+		// fetch users
+		$users = User::filter($filter);
 
 		$table = new View("tables/members");
-		$table->rows = $rows;
-		$table->displayBalance = Config::getInstance()->legacy->MEM_LIST_DISPLAY_BALANCE or $user->member_role >= 1;
-
+		$table->users = $users;
+		$table->displayBalance = $config->legacy->MEM_LIST_DISPLAY_BALANCE or $currentUser->isAdmin();
 		$this->view->table = $table;
 	}
 
@@ -250,7 +189,11 @@ final class MemberController extends Controller {
 	 * @Title "Perfil de socio"
 	 */
 	public function profile() {
-		$this->view->memberId = cMember::getCurrent()->member_id;
+		$currentUser = User::getCurrent();
+		$id = HTTPHelper::rq("id");
+		($id and $currentUser->isAdmin())
+			? $this->view->user = User::getById($id)
+			: $this->view->user = $currentUser;
 	}
 
 	public function status_change() {
@@ -333,9 +276,7 @@ final class MemberController extends Controller {
 		if (!$form->validate()) {
 			return;
 		}
-		$form->freeze();
-		$form->process();
-		$values = $form->exportValues();
+		$values = $form->process();
 		$member = new cMember();
 		$member->LoadMember($values["member_id"]);
 

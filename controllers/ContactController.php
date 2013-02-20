@@ -43,22 +43,17 @@ final class ContactController extends Controller {
 		}
 		$form->freeze();
 		$form->process();
-
 		$values = $form->exportValues();
-		$errors = array();
 
-		$members = new cMemberGroup;
-		$members->LoadMemberGroup();
-		foreach ($members->members as $member) {
-			if ($member->person[0]->email) {
-				$mailed = LIVE ? $member->esmail($member->person[0]->email, $values["subject"], wordwrap($values["message"], 64)) : TRUE;
-				$mailed or $errors[] = $member->person[0]->email;
-			}
-		}
+		$filter = new UserFilter();
+		$filter->active();
+		$users = User::filter($filter);
 
-		empty($errors)
-			? PageView::setMessage("Tu mensaje ha sido enviado.")
-			: PageView::setMessage("Ha ocurrido un error enviando el mensaje a: " . implode(", ", $errors));
+		$message = new EmailMessage(EMAIL_ADMIN, $values["subject"], wordwrap($values["message"], 64));
+		$message->toAll($users);
+		$message->save();
+
+		PageView::setMessage("Tu mensaje ha sido enviado.");
 	}
 
 }

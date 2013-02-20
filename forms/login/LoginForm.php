@@ -14,7 +14,7 @@ final class LoginForm extends Form {
 	}
 
 	public function verifyUsernameExists($name, $value) {
-		return cMember::getCurrent()->ValidatePassword($value);
+		return (boolean)User::getByLogin($value);
 	}
 
 }

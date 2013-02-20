@@ -13,8 +13,8 @@ final class LoginControllerTest extends PHPUnit_Framework_TestCase {
 
 	public function setUp() {
 		parent::setUp();
-		$this->user = UsersMother::create();
-		$this->user->Logout();
+		User::logOut();
+		$this->user = UsersMother::regular();
 		$this->dispatcher = Dispatcher::getInstance();
 		$_SESSION = array();
 	}
@@ -30,16 +30,20 @@ final class LoginControllerTest extends PHPUnit_Framework_TestCase {
 			"csrf" => CSRF,
 			"user" => $this->user->getId(),
 			"pass" => cMember::DEFAULT_PASSWORD,
-            "submit" => "submit",
-        ));
+			"submit" => "submit",
+		));
 
 		// run controller
 		Dispatcher::getInstance()->configure("login", "index")->dispatch();
 
 		// test if user logged in
-		$current = cMember::getCurrent();
-		$this->assertEquals($this->user->getId(), $current->getId());
-		$this->assertEquals($this->user->getId(), $_SESSION["user_login"]);
+		$currentUser = User::getCurrent();
+		$this->assertTrue(User::isLoggedIn());
+		$this->assertTrue(User::getCurrentId() > 0);
+		$this->assertTrue($currentUser->id > 0);
+		$this->assertSame($this->user->id, $currentUser->id);
+		$this->assertSame($this->user->id, User::getCurrentId());
+		$this->assertSame($this->user->id, $_SESSION[User::SESSION_KEY]);
 	}
 
 	/**
@@ -53,8 +57,8 @@ final class LoginControllerTest extends PHPUnit_Framework_TestCase {
 			"csrf" => CSRF,
 			"user" => $this->user->getId(),
 			"pass" => "BAD_" . cMember::DEFAULT_PASSWORD,
-            "submit" => "submit",
-        ));
+			"submit" => "submit",
+		));
 
 		// run controller
 		Dispatcher::getInstance()->configure("login", "index")->dispatch();

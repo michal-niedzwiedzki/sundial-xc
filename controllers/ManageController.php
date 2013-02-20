@@ -8,9 +8,7 @@ final class ManageController extends Controller {
 	 */
 	public function restrictions() {
 		$config = Config::getInstance();
-
 		$user = cMember::getCurrent();
-		$user->MustBeLevel(1);
 
 		$sql = "
 			SELECT * FROM member AS m, person AS p

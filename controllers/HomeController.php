@@ -7,7 +7,7 @@ final class HomeController extends Controller {
 	 * @Title "Posición global"
 	 */
 	public function index() {
-		$this->view->isLoggedOn = cMember::IsLoggedOn();
+		$this->view->isLoggedOn = (boolean)User::getCurrentUser()->id;
 	}
 
 }

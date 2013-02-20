@@ -20,7 +20,7 @@ $d->addFilter(new CSRFDispatchFilter()); // checks CSRF token for POST requests
 $d->addFilter(new PathInfoDispatchFilter()); // picks up route info from $_SERVER['PATH_INFO']
 $d->addFilter(new PageNotFoundDispatchFilter()); // produces 404 error when page not found
 $d->addFilter(new PublicPageDispatchFilter()); // produces 403 error if not logged in while accessing non-public page
-$d->addFilter(new AccessLevelDispatchFilter()); // produces 403 error if insufficient access level
+$d->addFilter(new AdminDispatchFilter()); // produces 403 error if insufficient access level
 $d->addFilter(new PageTitleDispatchFilter()); // picks up page title and injects into HTML head
 $d->addFilter(new PageTemplateDispatchFilter()); // picks up page template and injects view instance into controller
 

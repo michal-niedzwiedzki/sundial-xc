@@ -2,6 +2,12 @@
 
 final class Persistence {
 
+	/**
+	 * Store object into database and return its primary key value, otherwise FALSE
+	 *
+	 * @param stdClass $subject
+	 * @return mixed
+	 */
 	public static function freeze(stdClass $subject) {
 		$rc = new ReflectionClass($subject);
 		$tableName = AnnotationParser::get($rc, "TableName");
@@ -33,10 +39,7 @@ final class Persistence {
 			// run through transformations and store for insert/update
 			$transformations = AnnotationParser::getAll($rp, "Transformation");
 			foreach ($transformations as $transformation) {
-				if (!class_exists($transformation)) {
-					throw new Exception("Transformation class '$transformation' not found");
-				}
-				$value = $transformation::freeze($value);
+				$value = self::transform(TRUE, $transformation, $value, $subject);
 			}
 			$a[$column] = $value;
 		}
@@ -51,7 +54,13 @@ final class Persistence {
 		return $ok ? $keyValue : FALSE;
 	}
 
-	public static function revive($row, stdClass $subject) {
+	/**
+	 * Hydrate object with database row
+	 *
+	 * @param array $row
+	 * @param stdClass $subject
+	 */
+	public static function revive(array $row, stdClass $subject) {
 		$rc = new ReflectionClass($subject);
 		foreach ($rc->getProperties() as $rp) {
 
@@ -61,16 +70,44 @@ final class Persistence {
 				continue;
 			}
 			$property = $rp->getName();
+			$value = $row[$column];
 
 			// run through transformations
 			$transformations = AnnotationParser::getAll($rp, "Transformation");
 			foreach ($transformations as $transformation) {
-				$value = $transformation::freeze($value);
+				$value = self::transform(FALSE, $transformation, $value, $row);
 			}
 
 			// load it up
-			$subject->$property = $row[$column];
+			$subject->$property = $value;
 		}
+	}
+
+	/**
+	 * Apply transformation to a value within given context
+	 *
+	 * When transformation is array first element is used as transformation name,
+	 * other elements are passed as additional parameters to operation.
+	 * Context can be object (for freeze) or array (for revive).
+	 *
+	 * @param boolean $freeze TRUE for freeze, FALSE for revive
+	 * @param string|array $transformation to be applied, with additional parameters when passed as array
+	 * @param object|array $context for transformation
+	 * @return mixed
+	 * @throws Exception
+	 */
+	public static function transform($freeze, $transformation, $value, $context) {
+		if (is_array($transformation)) {
+			$params = $transformation;
+			$transformation = array_shift($params);
+		} else {
+			$params = array();
+		}
+		if (!class_exists($transformation)) {
+			throw new Exception("Transformation class '$transformation' not found");
+		}
+		$op = $freeze ? "freeze" : "revive";
+		return $transformation::freeze($value, $params, $row);
 	}
 
 }

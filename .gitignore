@@ -6,3 +6,4 @@ env.txt
 var/config/*
 var/migrations/*
 env.txt-
+build.*

@@ -125,12 +125,26 @@ class EmailMessage {
 	/**
 	 * Add user as recipient in To: field
 	 *
-	 * @param cMember $user
+	 * @param User $user
 	 * @return EmailMessage
 	 * @author Michał Rudnicki <michal.rudnicki@epsi.pl>
 	 */
-	public function to(cMember $user) {
-		$this->addRecipient(self::FIELD_TO, 0, "", $user->getEmail());
+	public function to(User $user) {
+		$this->addRecipient(self::FIELD_TO, $user->id, $user->fullName, $user->email);
+		return $this;
+	}
+
+	/**
+	 * Add users as recipients in To: field
+	 *
+	 * @param User[] $user
+	 * @return EmailMessage
+	 * @author Michał Rudnicki <michal.rudnicki@epsi.pl>
+	 */
+	public function toAll(array $users) {
+		foreach ($users as $user) {
+			$this->to($user);
+		}
 		return $this;
 	}
 
