@@ -17,7 +17,7 @@ final class TradeForm extends Form {
 		$this->addElement("select", "category", "Categoría", $categoriesList);
 		$this->addElement("text", "units", "Cantidad de ". UNITS ."", array("size" => 5, "maxlength" => 10));
 		$this->addElement("textarea", "description", "Añadir una descripción del intercambio", array("cols"=>50, "rows"=>4, "wrap"=>"soft"));
-		$this->addElement("submit", "btnSubmit", "Insertar");
+		$this->addElement("submit", "btnSubmit", _("(button)Save"));
 
 		$this->registerRule("verify_max255", "function", "verify_max255", "TradeForm");
 		$this->registerRule("verify_selection", "function", "verify_selection", "TradeForm");

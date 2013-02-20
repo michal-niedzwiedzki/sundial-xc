@@ -31,25 +31,25 @@ final class PageView extends View {
 		$this->debug = array();
 
 		$sidebar = array(
-			array("text" => "Inicio", "link" => "index.php"),
-			array("text" => "Quiero saber más", "link" => "info/more.php"),
-			array("text" => "Noticias", "link" => "news.php"),
-			array("text" => "Blog", "link" => "http://a2manos-dosdemayo.blogspot.com"),
-			array("text" => "Servicios ofrecidos", "link" => "listings.php?type=Offer"),
-			array("text" => "Servicios solicitados", "link" => "listings.php?type=Want"),
-			array("text" => "Actualizar servicios", "link" => "listings_menu.php"),
-			array("text" => "Intercambios", "link" => "exchange_menu.php"),
-			array("text" => "Listado de soci@s", "link" => "member_directory.php"),
-			array("text" => "Perfil de soci@", "link" => "member_profile.php"),
-			array("text" => "Contacto", "link" => "contact.php"),
+			array("text" => _("(navigation)Home"), "link" => "index.php"),
+			array("text" => _("(navigation)Learn more"), "link" => "info/more.php"),
+			array("text" => _("(navigation)News"), "link" => "news.php"),
+			array("text" => _("(navigation)Blog"), "link" => "http://a2manos-dosdemayo.blogspot.com"),
+			array("text" => _("(navigation)Services offered"), "link" => "listings.php?type=Offer"),
+			array("text" => _("(navigation)Services wanted"), "link" => "listings.php?type=Want"),
+			array("text" => _("(navigation)Update services"), "link" => "listings_menu.php"),
+			array("text" => _("(navigation)Service exchange"), "link" => "exchange_menu.php"),
+			array("text" => _("(navigation)Members"), "link" => "member_directory.php"),
+			array("text" => _("(navigation)Your profile"), "link" => "member_profile.php"),
+			array("text" => _("(navigation)Contact us"), "link" => "contact.php"),
 		);
 		if (cMember::getCurrent()->member_role > 0) {
-			$sidebar[] = array("text" => "Administración", "link" => "admin_menu.php");
+			$sidebar[] = array("text" => _("(navigation)Administration"), "link" => "admin_menu.php");
 		}
 		if (cMember::isLoggedOn()) {
-			$sidebar[] = array("text" => "Salir", "link" => "login_logout.php");
+			$sidebar[] = array("text" => _("(navigation)Log out"), "link" => "login_logout.php");
 		} else {
-			$sidebar[] = array("text" => "Entrar", "link" => "member_login.php");
+			$sidebar[] = array("text" => _("(navigation)Log in "), "link" => "member_login.php");
 		}
 		$this->sidebar = $sidebar;
 		$this->showSidebar = TRUE;
