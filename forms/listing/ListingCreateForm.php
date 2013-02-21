@@ -22,13 +22,12 @@ final class ListingCreateForm extends Form {
 			$this->addElement("hidden", "mode", "self");
 		}
 
+		$categories = Category::getAll();
+		$categoriesList = array_map(function(Category $c) { return $c->description; }, $categories);
+
 		$this->addElement("hidden", "type", $type);
 		$this->addElement("text", "title", "Nombre", array("size" => 30, "maxlength" => 60));
-		$categoryList = new cCategoryList();
-		$this->addElement("select", "category", "Categoría", $categoryList->MakeCategoryArray());
-#		USE_RATES
-#			? $this->addElement("text", "rate", "Rate", array("size" => 15, "maxlength" => 30))
-#			: $this->addElement("hidden", "rate");
+		$this->addElement("select", "category", "Categoría", $categoriesList);
 		$this->addElement("textarea", "description", "Descripción", array("cols" => 45, "rows" => 5, "wrap" => "soft"));
 		$this->addElement("submit", "btnSubmit", "Insertar");
 
@@ -52,7 +51,7 @@ final class ListingCreateForm extends Form {
 	}
 
 	public function verifyCategory($value) {
-		return $value != "0";
+		return $value and NULL !== Category::getById($value);
 	}
 
 }

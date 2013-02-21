@@ -35,7 +35,7 @@ final class PasswordController extends Controller {
 		$values = $form->process();
 
 		$email = $values["email"];
-		$token = rand(1000, 9999) . rand(1000, 9999)
+		$token = rand(1000, 9999) . rand(1000, 9999);
 		$link = Link::to("password", "reset", array("email" => $email, "token" => $token));
 
 		$user = User::getByEmail($email);

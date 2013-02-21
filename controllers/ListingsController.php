@@ -11,9 +11,9 @@ final class ListingsController extends Controller {
 			? $title = "Listado de servicios ofrecidos"
 			: $title = "Listado de servicios solicitados";
 
-		$category_list = new cCategoryList();
-		$categories = $category_list->MakeCategoryArray(ACTIVE, substr($type, 0, 1));
-		$categories[0] = "(Ver todas)";
+		$categories = Category::getAll();
+		$categoriesList = array_map(function(Category $c) { return $c->description; }, $categories);
+		$categoriesList[0] = "(Ver todas)";
 
 		$text = "Nuevos/actualizados en ";
 		$options = array(
@@ -27,7 +27,7 @@ final class ListingsController extends Controller {
 
 		$form = FormHelper::standard();
 		$form->addElement("hidden","type", $type);
-		$form->addElement("select", "category", "Categoría", $categories);
+		$form->addElement("select", "category", "Categoría", $categoriesList);
 		$form->addElement("select", "timeframe", "Rango de Tiempo", $options);
 		Config::getInstance()->legacy->KEYWORD_SEARCH_DIR and $form->addElement("text","keyword","Palabra clave");
 		$form->addElement("submit", "btnSubmit", "Continuar");

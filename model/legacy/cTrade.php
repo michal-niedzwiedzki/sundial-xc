@@ -14,7 +14,7 @@ class cTrade {
 	var $member_from;
 	var $member_to;
 	var $amount;
-	var $category;		// this will be an object of class cCategory
+	var $category;		// this will be an object of class Category
 	var $description;
 	var $type;
 	var $feedback_buyer;	// added after trade completed; object of type cFeedback
@@ -28,8 +28,7 @@ class cTrade {
 			$this->member_from = $member_from;
 			$this->member_to = $member_to;
 			$this->type = $type;
-			$this->category = new cCategory();
-			$this->category->LoadCategory($category);
+			$this->category = Category::getById($category);
 		}
 	}
 
@@ -80,8 +79,7 @@ class cTrade {
 		$this->amount = $row["amount"];
 		$this->description = $row["description"];
 		$this->type = $row["type"];
-		$this->category = new cCategory();
-		$this->category->LoadCategory($row["category"]);
+		$this->category = Category::getById($row["category"]);
 /*
 		$feedback = new cFeedback;
 		$feedback_id = $feedback->FindTradeFeedback($tradeId, $this->member_from->member_id);
@@ -115,10 +113,10 @@ class cTrade {
 
 		$balances = new cBalancesTotal;
 
-		// TODO: At some point, we should handle out-of-balance problems without shutting 
-		// down all trades.  But for now, seems like a wonderfully simple solution.	
+		// TODO: At some point, we should handle out-of-balance problems without shutting
+		// down all trades.  But for now, seems like a wonderfully simple solution.
 		//
-		// [chris] Have added a few more methods for dealing with out-of-balance scenarios (admin can set his/her preferred method in inc.config.php)	
+		// [chris] Have added a few more methods for dealing with out-of-balance scenarios (admin can set his/her preferred method in inc.config.php)
 
 		if(!$balances->Balanced()) {
 
@@ -126,21 +124,21 @@ class cTrade {
 				$mailed = mail(EMAIL_ADMIN, "Database out of balance on ".SITE_LONG_TITLE."!", "Hi admin,\n\nWe thought you should know that whilst processing a trade the system detected that your trade database is out of balance! Obviously something has gone wrong somewhere along the line and we suggest you investigate the cause of this ASAP.\n\nhttp://".SERVER_DOMAIN.SERVER_PATH_URL."", EMAIL_FROM);
 
 			switch(OOB_ACTION) { // How should we handle the out-of-balance event?
-				
+
 				case("FATAL"): // FATAL: The original method for dealing which is to abort the transaction
-					
-					cError::getInstance()->Error("The trade database is out of balance!  Please contact your administrator at ". PHONE_ADMIN .".", ERROR_SEVERITY_HIGH);  
+
+					cError::getInstance()->Error("The trade database is out of balance!  Please contact your administrator at ". PHONE_ADMIN .".", ERROR_SEVERITY_HIGH);
 					return FALSE;
-					
+
 				break;
-				
+
 				default: // SILENT: Just ignore the situation and don't burden the user with warnings/error messages
-					
+
 						// doing nothing...
-						
+
 				break;
 			}
-		}	
+		}
 
 		// NOTE: Need table type InnoDB to do the following transaction-style statements.
 		PDOHelper::set("AUTOCOMMIT", 0);

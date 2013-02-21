@@ -41,27 +41,23 @@ final class TradeController extends Controller {
 	 */
 	public function index() {
 		$config = Config::getInstance();
-		$user = cMember::getCurrent();
+		$currentUser = User::getCurrent();
 		$mode = HTTPHelper::rq("mode");
 		$typ = HTTPHelper::rq("typ");
 
-		$nameList = new cMemberGroup;
-		$nameList->LoadMemberGroup();
-		$nameArray = $nameList->MakeNameArray();
+		$users = User::getAllActive();
+		$usersList = array_map(function(User $user) { return $user->fullName; }, $users);
 
-		$categoryList = new cCategoryList();
-		$categoryArray = $categoryList->MakeCategoryArray();
+		$categories = Category::getAll();
+		$categoriesList = array_map(function(Category $c) { return $c->description; }, $categories);
 
-		$form = new TradeForm($user, $mode, $nameArray, $categoryArray);
+		$form = new TradeForm($user, $mode, $usersList, $categoiesList);
 		$this->view->form = $form;
 
 		if (!$form->validate()) {
 			return;
 		}
-
-		$form->freeze();
-		$form->process();
-		$values = $form->exportValues();
+		$values = $form->process();
 
 		if (isset($values['minutes']) and $values['minutes'] > 0) {
 			$values['units'] = $values['units'] + ($values['minutes'] / 60);

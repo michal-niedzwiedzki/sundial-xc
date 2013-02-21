@@ -11,8 +11,8 @@ class cSite {
 	var $redirect_url;
 	var $magic_quotes_gpc_status;
 	var $magic_quotes_runtime_status;
-	var $site_sections  // An array of cSiteSection objects
-	
+	var $site_sections;  // An array of cSiteSection objects
+
 	function SetMagicQuotesGPC ($turn_on) {
 		if($turn_on) {
 			if(set_magic_quotes_gpc ($turn_on))
@@ -23,9 +23,9 @@ class cSite {
 			set_magic_quotes_gpc (0);
 			$this->magic_quotes_gpc_status = false;
 		}
-		
+
 	}
-	
+
 	function SetMagicQuotesRuntime ($turn_on) {
 		if($turn_on) {
 			if(set_magic_quotes_runtime (1))
@@ -36,17 +36,17 @@ class cSite {
 			set_magic_quotes_runtime (0);
 			$this->magic_quotes_runtime_status = false;
 		}
-		
+
 	}
-	
+
 	function BasePath () {
 		return $this->server_domain . $this->server_path_url;
 	}
-	
+
 	function IncludesPath () {
 		return $server_filesystem_base . $server_path_url ."/includes/";
 	}
-	
+
 	function ClassesPath () {
 		return $server_filesystem_base . $server_path_url ."/classes/";
 	}
@@ -60,7 +60,7 @@ class cSite {
 class cSiteSection {
 	var $description;
 	var $url;
-	
+
 	function cSiteSection($description, $url) {
 		$this->description = $description;
 		$this->url = $url;

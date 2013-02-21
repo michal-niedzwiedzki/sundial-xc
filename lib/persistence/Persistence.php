@@ -25,8 +25,8 @@ final class Persistence {
 			$value = $rp->getValue($subject);
 			$notNull = AnnotationParser::get($rp, "NotNull");
 
-			// ignore primary key updates
-			if ($keyName === $name) {
+			// ignore primary key updates but keep its value
+			if ($keyName === $column) {
 				$keyValue = $value;
 				continue;
 			}

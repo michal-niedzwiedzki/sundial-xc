@@ -3,20 +3,16 @@
 require_once dirname(__FILE__) . "/../../../bootstrap.php";
 require_once "PHPUnit/Autoload.php";
 
+require_once ROOT_DIR . "/controllers/LoginController.php";
+
 /**
  * @author Michał Rudnicki <michal.rudnicki@epsi.pl>
  */
 final class LoginControllerTest extends PHPUnit_Framework_TestCase {
 
-	private $user;
-	private $dispatcher;
-
 	public function setUp() {
 		parent::setUp();
 		User::logOut();
-		$this->user = UsersMother::regular();
-		$this->dispatcher = Dispatcher::getInstance();
-		$_SESSION = array();
 	}
 
 	/**
@@ -24,49 +20,79 @@ final class LoginControllerTest extends PHPUnit_Framework_TestCase {
 	 *
 	 * @author Michał Rudnicki <michal.rudnicki@epsi.pl>
 	 */
-	public function testIndex_successful() {
+	public function testIndexLoginSuccessful() {
+		$user = UsersMother::regular();
+
 		// mock request data
 		HTTPHelper::mockPost(array(
 			"csrf" => CSRF,
-			"user" => $this->user->getId(),
-			"pass" => cMember::DEFAULT_PASSWORD,
+			"user" => $user->login,
+			"pass" => User::TEST_PASSWORD,
 			"submit" => "submit",
 		));
 
 		// run controller
-		Dispatcher::getInstance()->configure("login", "index")->dispatch();
+		$controller = new LoginController();
+		$controller->index();
 
 		// test if user logged in
 		$currentUser = User::getCurrent();
 		$this->assertTrue(User::isLoggedIn());
 		$this->assertTrue(User::getCurrentId() > 0);
 		$this->assertTrue($currentUser->id > 0);
-		$this->assertSame($this->user->id, $currentUser->id);
-		$this->assertSame($this->user->id, User::getCurrentId());
-		$this->assertSame($this->user->id, $_SESSION[User::SESSION_KEY]);
+		$this->assertSame($user->id, $currentUser->id);
+		$this->assertSame($user->id, User::getCurrentId());
+		$this->assertSame($user->id, $_SESSION[User::SESSION_KEY]);
 	}
 
 	/**
-	 * Test login failed
+	 * Test login failed due to bad login
 	 *
 	 * @author Michał Rudnicki <michal.rudnicki@epsi.pl>
 	 */
-	public function testIndex_failed() {
+	public function testIndexLoginFailedBadLogin() {
 		// mock request data
 		HTTPHelper::mockPost(array(
 			"csrf" => CSRF,
-			"user" => $this->user->getId(),
-			"pass" => "BAD_" . cMember::DEFAULT_PASSWORD,
+			"user" => "BAD_LOGIN",
+			"pass" => User::TEST_PASSWORD,
 			"submit" => "submit",
 		));
 
 		// run controller
-		Dispatcher::getInstance()->configure("login", "index")->dispatch();
+		$controller = new LoginController();
+		$controller->index();
 
 		// test if user logged in
-		$current = cMember::getCurrent();
-		$this->assertEquals("", $current->getId());
-		$this->assertFalse(array_key_exists("user_login", $_SESSION));
+		$this->assertFalse(User::isLoggedIn());
+		$this->assertNull(User::getCurrent());
+		$this->assertNull(User::getCurrentId());
+	}
+
+	/**
+	 * Test login failed due to bad password
+	 *
+	 * @author Michał Rudnicki <michal.rudnicki@epsi.pl>
+	 */
+	public function testIndexLoginFailedBadPassword() {
+		$user = UsersMother::regular();
+
+		// mock request data
+		HTTPHelper::mockPost(array(
+			"csrf" => CSRF,
+			"user" => $user->login,
+			"pass" => User::TEST_PASSWORD . "_BAD_PASSWORD",
+			"submit" => "submit",
+		));
+
+		// run controller
+		$controller = new LoginController();
+		$controller->index();
+
+		// test if user logged in
+		$this->assertFalse(User::isLoggedIn());
+		$this->assertNull(User::getCurrent());
+		$this->assertNull(User::getCurrentId());
 	}
 
 }

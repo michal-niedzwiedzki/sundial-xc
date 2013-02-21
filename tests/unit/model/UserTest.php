@@ -104,5 +104,4 @@ final class UserTest extends PHPUnit_Framework_TestCase {
 		$this->assertSame(sha1($password . $salt), $hashed);
 	}
 
-
 }

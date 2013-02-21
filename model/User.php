@@ -282,30 +282,42 @@ class User {
 		return sha1($password . $salt);
 	}
 
+	/**
+	 * Return if current user is logged in
+	 *
+	 * @return boolean
+	 */
 	public static function isLoggedIn() {
-		return HTTPHelper::server(self::SESSION_KEY);
+		return (boolean)HTTPHelper::session(self::SESSION_KEY);
 	}
 
+	/**
+	 * Set current user as logged in
+	 *
+	 * @param User $currentUser
+	 */
 	public static function logIn(User $currentUser) {
 		$_SESSION[self::SESSION_KEY] = $currentUser->id;
 		self::$currentUser = $currentUser;
 	}
 
+	/**
+	 * Set current user as logged out
+	 */
 	public static function logOut() {
 		unset($_SESSION[self::SESSION_KEY]);
-		self::$currentUser = new User();
+		self::$currentUser = NULL;
 	}
 
 	/**
-	 * Return currently logged in user or empty user instance if not logged in
+	 * Return currently logged in user or NULL if not logged in
 	 *
 	 * @return User
 	 */
 	public static function getCurrent() {
 		if (NULL === self::$currentUser) {
-			($id = HTTPHelper::session("userId"))
-				? self::$currentUser = User::getById($id)
-				: self::$currentUser = new User();
+			$id = HTTPHelper::session("userId");
+			$id and self::$currentUser = User::getById($id);
 		}
 		return self::$currentUser;
 	}

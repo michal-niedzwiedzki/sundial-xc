@@ -6,8 +6,7 @@ final class LoginController extends Controller {
 	 * @Public
 	 */
 	public function index() {
-		$redirUrl = HTTPHelper::post("location");
-		$redirUrl or $redirUrl = "member_profile.php";
+		$redirUrl = HTTPHelper::post("location", "member_profile.php");
 		$this->view->redirUrl = $redirUrl;
 		$this->view->csrf = CSRF;
 
@@ -19,15 +18,16 @@ final class LoginController extends Controller {
 
 		// authenticate and log in
 		$login = trim(HTTPHelper::post("user"));
-		$pass = trim(HTTPHelper::post("pass"));
+		$password = trim(HTTPHelper::post("pass"));
 		if (!$login) {
 			cError::getInstance()->Error("Inserta un nombre de usuario para entrar.");
-		} elseif (!$pass) {
+		} elseif (!$password) {
 			cError::getInstance()->Error("No puede entrar sin contraseña. Si ha olvidado su contraseña puede pedir de nosotros una contrase�nu�a eva");
 		}
 
 		$user = User::getByLogin($login);
-		if ($user and $user->validatePassword($pass)) {
+		if ($user and $user->validatePassword($password)) {
+			User::logIn($user);
 			HTTPHelper::redirectSeeOther($redirUrl);
 		}
 	}

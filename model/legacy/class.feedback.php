@@ -25,58 +25,58 @@ class cFeedback {
 			$this->rating = $rating;
 			$this->comment = $comment;
 			$this->context = $context;
-			$this->category = new cCategory();
+			$this->category = new Category();
 			$this->category->LoadCategory($category);
 		}
 	}
 
 /*	function VerifyTradeMembers() { // Prevent accidental or malicious entry of feedback in which
 							  // seller and buyer do not match up with the recorded trade.
-		
+
 		if ($this->member_about->member_id == $this->trade->member_from->member_id) {
 			if ($this->member_author->member_id == $this->trade->member_to->member_id)
 				return true;
 		} elseif ($this->member_about->member_id == $this->trade->member_to->member_id) {
 			if ($this->member_author->member_id == $this->trade->member_from->member_id)
 				return true;
-		} 
-		
+		}
+
 		cError::getInstance()->Error("Members do not match the trade selected.");
 		return FALSE;
 	} */
-	
+
 	function SaveFeedback () {
 		global $cDB;
-		
+
 //		$this->VerifyTradeMembers();
 		if($this->FindTradeFeedback($this->trade_id, $this->member_author->member_id)) {
 			cError::getInstance()->Error("Cannot create duplicate feedback.");
 			return false;
 		}
-		
+
 		$insert = $cDB->Query("INSERT INTO ". DB::FEEDBACK ."(feedback_date, status, member_id_author, member_id_about, trade_id, rating, comment) VALUES (now(), ". $cDB->EscTxt($this->status) .", ". $cDB->EscTxt($this->member_author->member_id) .", ". $cDB->EscTxt($this->member_about->member_id) .", ". $cDB->EscTxt($this->trade_id) .", ". $cDB->EscTxt($this->rating) .", ". $cDB->EscTxt($this->comment) .");");
 
 		if(mysql_affected_rows() == 1) {
-			$this->feedback_id = mysql_insert_id();	
+			$this->feedback_id = mysql_insert_id();
 			$query = $cDB->Query("SELECT feedback_date from ". DB::FEEDBACK ." WHERE feedback_id=". $this->feedback_id .";");
 			$row = mysql_fetch_array($query);
-			$this->feedback_date = $row[0];	
+			$this->feedback_date = $row[0];
 			return true;
 		} else {
 			return false;
-		}	
+		}
 	}
-	
+
 	function LoadFeedback ($feedback_id) {
 		global $cDB;
-		
+
 		$query = $cDB->Query("SELECT feedback_date, ".DB::FEEDBACK.".status, member_id_author, member_id_about, ".DB::FEEDBACK.".trade_id, rating, comment, member_id_from, category FROM ".DB::FEEDBACK.",". DB::TRADES ." WHERE ".DB::FEEDBACK.".trade_id=". DB::TRADES .".trade_id AND feedback_id=". $cDB->EscTxt($feedback_id) .";");
-		
-		if($row = mysql_fetch_array($query)) {		
-			$this->feedback_id = $feedback_id;		
+
+		if($row = mysql_fetch_array($query)) {
+			$this->feedback_id = $feedback_id;
 			$this->feedback_date = new cDateTime($row[0]);
 			$this->status = $row[1];
-			$this->member_author = new cMember; 
+			$this->member_author = new cMember;
 			$this->member_author->LoadMember($row[2]);
 			$this->member_about = new cMember;
 			$this->member_about->LoadMember($row[3]);
@@ -87,9 +87,8 @@ class cFeedback {
 				$this->context = BUYER;
 			else
 				$this->context = SELLER;
-				
-			$this->category = new cCategory();
-			$this->category->LoadCategory($row[8]);	
+
+			$this->category = Category::getById($row[8]);
 			$rebuttal_group = new cFeedbackRebuttalGroup();
 			if($rebuttal_group->LoadRebuttalGroup($feedback_id))
 				$this->rebuttals = $rebuttal_group;
@@ -97,24 +96,24 @@ class cFeedback {
 		} else {
 			cError::getInstance()->Error("There was an error accessing the feedback table.  Please try again later.");
 			return FALSE;
-		}		
+		}
 	}
 
 	function FindTradeFeedback ($trade_id, $member_id) {
 		global $cDB;
-		
+
 		$query = $cDB->Query("SELECT feedback_id FROM ". DB::FEEDBACK ." WHERE trade_id=". $cDB->EscTxt($trade_id) ." AND member_id_author=". $cDB->EscTxt($member_id) .";");
-		
+
 		if($row = mysql_fetch_array($query))
 			return $row[0];
 		else
 			return false;
 	}
-	
+
 	function DisplayFeedback () {
 		return $this->RatingText() . "<BR>" . $this->feedback_date->StandardDate(). "<BR>". $this->Context() . "<BR>". $this->member_author->PrimaryName() ." (" . $this->member_author->member_id . ")" . "<BR>" . $this->category->description . "<BR>" . $this->comment;
 	}
-	
+
 	function RatingText () {
 		if ($this->rating == POSITIVE)
 			return "Positive";
@@ -122,8 +121,8 @@ class cFeedback {
 			return "Negative";
 		else
 			return "Neutral";
-	}	
-	
+	}
+
 	function Context () {
 		if ($this->context == SELLER)
 			return "Seller";
@@ -182,19 +181,19 @@ class cFeedbackGroup {
 	}
 
 	function PercentPositive() {
-		return number_format(($this->num_positive / ($this->num_positive + $this->num_negative + $this->num_neutral)) * 100, 0); 
+		return number_format(($this->num_positive / ($this->num_positive + $this->num_negative + $this->num_neutral)) * 100, 0);
 	}
-	
+
 	function TotalFeedback() {
 		return $this->num_positive + $this->num_negative + $this->num_neutral;
 	}
-	
-	function DisplayFeedbackTable($member_viewing) {		
+
+	function DisplayFeedbackTable($member_viewing) {
 		$output = "<TABLE BORDER=0 CELLSPACING=0 CELLPADDING=3 WIDTH=\"100%\"><TR BGCOLOR=\"#d8dbea\"><TD><FONT SIZE=2><B>Type</B></FONT></TD><TD><FONT SIZE=2><B>Date</B></FONT></TD><TD><FONT SIZE=2><B>Context</B></FONT></TD><TD><FONT SIZE=2><B>From</B></FONT></TD><TD><FONT SIZE=2><B>Comment</B></FONT></TD></TR>";
-		
+
 		if(!$this->feedback)
 			return $output. "</TABLE>";   // No feedback yet, presumably
-		
+
 		$i=0;
 		foreach($this->feedback as $feedback) {
 			if($feedback->rating == NEGATIVE)
@@ -203,29 +202,29 @@ class cFeedbackGroup {
 				$fcolor = "#4a5fa4";
 			else
 				$fcolor = "#554f4f";
-				
+
 			if($i % 2)
 				$bgcolor = "#e4e9ea";
 			else
 				$bgcolor = "#FFFFFF";
-				
+
 			$output .= "<TR VALIGN=TOP BGCOLOR=". $bgcolor ."><TD><FONT SIZE=2 COLOR=".$fcolor.">". $feedback->RatingText()."</FONT></TD><TD><FONT SIZE=2 COLOR=".$fcolor.">". $feedback->feedback_date->ShortDate() ."</FONT></TD><TD><FONT SIZE=2 COLOR=".$fcolor.">". $feedback->Context() .": " . $feedback->category->description ."</FONT></TD><TD><FONT SIZE=2 COLOR=".$fcolor.">". $feedback->member_author->member_id ."</FONT></TD><TD><FONT SIZE=2 COLOR=".$fcolor.">". $feedback->comment;
 			if(isset($feedback->rebuttals))
 				$output .= $feedback->rebuttals->DisplayRebuttalGroup($feedback->member_about->member_id); // TODO: Shouldn't have to pass this value, should incorporate into cFeedbackRebuttal
-			
+
 			if($feedback->rating != POSITIVE) {
 				if ($member_viewing == $feedback->member_about->member_id)
-					$output .= "<BR><A HREF=feedback_reply.php?feedback_id=". $feedback->feedback_id ."&mode=self&author=". $member_viewing ."&about=".$feedback->member_author->member_id .">Reply</A> "; 
+					$output .= "<BR><A HREF=feedback_reply.php?feedback_id=". $feedback->feedback_id ."&mode=self&author=". $member_viewing ."&about=".$feedback->member_author->member_id .">Reply</A> ";
 				elseif ($member_viewing == $feedback->member_author->member_id)
 					$output .= "<BR><A HREF=feedback_reply.php?feedback_id=". $feedback->feedback_id ."&mode=self&author=". $member_viewing ."&about=".$feedback->member_about->member_id .">Follow Up</A> ";
 			}
-			
+
 			$output .= "</FONT></TD></TR>";
 			$i+=1;
-		}	
+		}
 		return $output ."</TABLE>";
 	}
-	
+
 }
 
 class cFeedbackRebuttal {
@@ -243,33 +242,33 @@ class cFeedbackRebuttal {
 			$this->comment = $comment;
 		}
 	}
-	
+
 	function SaveRebuttal () {
 		global $cDB;
-		
+
 		$insert = $cDB->Query("INSERT INTO ". DB::REBUTTAL ."(rebuttal_date, member_id, feedback_id, comment) VALUES (now(), ". $cDB->EscTxt($this->member_author->member_id) .", ". $cDB->EscTxt($this->feedback_id) .", ". $cDB->EscTxt($this->comment) .");");
 
 		if(mysql_affected_rows() == 1) {
-			$this->rebuttal_id = mysql_insert_id();	
+			$this->rebuttal_id = mysql_insert_id();
 			$query = $cDB->Query("SELECT rebuttal_date from ". DB::REBUTTAL ." WHERE rebuttal_id=". $cDB->EscTxt($this->rebuttal_id) .";");
 			$row = mysql_fetch_array($query);
-			$this->rebuttal_date = $row[0];	
+			$this->rebuttal_date = $row[0];
 			return true;
 		} else {
 			return false;
-		}	
+		}
 	}
-	
+
 	function LoadRebuttal ($rebuttal_id) {
 		global $cDB;
-		
+
 		$query = $cDB->Query("SELECT rebuttal_date, feedback_id, member_id, comment FROM ".DB::REBUTTAL." WHERE rebuttal_id=". $cDB->EscTxt($rebuttal_id) .";");
-		
-		if($row = mysql_fetch_array($query)) {		
-			$this->rebuttal_id = $rebuttal_id;		
+
+		if($row = mysql_fetch_array($query)) {
+			$this->rebuttal_id = $rebuttal_id;
 			$this->rebuttal_date = new cDateTime($row[0]);
 			$this->feedback_id = $row[1];
-			$this->member_author = new cMember; 
+			$this->member_author = new cMember;
 			$this->member_author->LoadMember($row[2]);
 			$this->comment = $cDB->UnEscTxt($row[3]);
 
@@ -277,34 +276,34 @@ class cFeedbackRebuttal {
 		} else {
 			cError::getInstance()->Error("There was an error accessing the rebuttal table.  Please try again later.");
 			return FALSE;
-		}		
+		}
 	}
-}	
+}
 
 class cFeedbackRebuttalGroup {
 	var $rebuttals;		// will be an array of cFeedbackRebuttal objects
 	var $feedback_id;
-	
+
 	function LoadRebuttalGroup($feedback_id) {
 		global $cDB;
-		
+
 		$this->feedback_id = $feedback_id;
-		$query = $cDB->Query("SELECT rebuttal_id FROM ".DB::REBUTTAL." WHERE feedback_id=". $cDB->EscTxt($feedback_id) ." ORDER by rebuttal_date;");		
-	
+		$query = $cDB->Query("SELECT rebuttal_id FROM ".DB::REBUTTAL." WHERE feedback_id=". $cDB->EscTxt($feedback_id) ." ORDER by rebuttal_date;");
+
 		$i=0;
 		while($row = mysql_fetch_array($query))
 		{
-			$this->rebuttals[$i] = new cFeedbackRebuttal;			
+			$this->rebuttals[$i] = new cFeedbackRebuttal;
 			$this->rebuttals[$i]->LoadRebuttal($row[0]);
 			$i += 1;
 		}
-		
+
 		if($i == 0)
 			return false;
 		else
 			return true;
 	}
-	
+
 	function DisplayRebuttalGroup($member_about) {
 		$output = "";
 		foreach($this->rebuttals as $rebuttal) {
@@ -312,9 +311,9 @@ class cFeedbackRebuttalGroup {
 				$output .= "<BR><B>Reply: </B>";
 			else
 				$output .= "<BR><B>Follow Up: </B>";
-				
+
 			$output .= $rebuttal->comment;
-		}		
+		}
 		return $output;
 	}
 }

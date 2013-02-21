@@ -11,7 +11,7 @@ class cListing {
 	var $member; // this will be an object of class cMember
 	var $title;
 	var $description;
-	var $category; // this will be an object of class cCategory
+	var $category; // this will be an object of class Category
 	var $rate;
 	var $status;
 	var $posting_date; // the date a listing was created or last modified
@@ -29,8 +29,7 @@ class cListing {
 			$this->type = $values['type'];
 			$this->reactivate_date = null;
 			$this->status = 'A';
-			$this->category = new cCategory();
-			$this->category->LoadCategory($values['category']);
+			$this->category = Category::getById($values['category']);
 		}
 	}
 
@@ -104,8 +103,7 @@ class cListing {
 		$this->expire_date = $row['expire_date'];
 		$this->reactivate_date = $row['reactivate_date'];
 		$this->type = $this->TypeDesc($typeCode);
-		$this->category = new cCategory();
-		$this->category->LoadCategory($row['category_code']);
+		$this->category = Category::getById($row['category_code']);
 
 		// load member associated with member_id
 		$this->member = new cMember;

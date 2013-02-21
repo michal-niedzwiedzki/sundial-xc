@@ -72,8 +72,7 @@ final class ListingController extends Controller {
 		}
 		$values = $form->process();
 
-		$category = new cCategory();
-		$category->LoadCategory($listing->category->id);
+		$category = Category::getById($listing->category->id);
 
 		$listing->category = $category;
 		$listing->description = $values["description"];

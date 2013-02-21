@@ -15,7 +15,7 @@ final class MemberController extends Controller {
 		$inactive
 			? $users = User::getAll()
 			: $users = User::getAllActive();
-		$ids = array_map(function(User $user) { return $user->full_name; }, $users);
+		$ids = array_map(function(User $user) { return $user->fullName; }, $users);
 
 		$form = new MemberChooseForm($action, $ids);
 		if ($get1) {
@@ -134,7 +134,7 @@ final class MemberController extends Controller {
 		$params = array();
 
 		// search by user id
-		($id = HTTPHelper::rq("uID")) and = $filter->id($id);
+		($id = HTTPHelper::rq("uID")) and $filter->id($id);
 
 		// search by login or full name
 		($phrase = HTTPHelper::rq("uName")) and $filter->text($phrase);

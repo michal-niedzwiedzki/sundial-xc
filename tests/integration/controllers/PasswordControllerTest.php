@@ -3,17 +3,15 @@
 require_once dirname(__FILE__) . "/../../../bootstrap.php";
 require_once "PHPUnit/Autoload.php";
 
+require_once ROOT_DIR . "/controllers/PasswordController.php";
+
 /**
  * @author Michał Rudnicki <michal.rudnicki@epsi.pl>
  */
 final class PasswordControllerTest extends PHPUnit_Framework_TestCase {
 
-	private $controller;
-
 	public function setUp() {
 		parent::setUp();
-		require_once ROOT_DIR . "/controllers/PasswordController.php";
-		$this->controller = new PasswordController();
 	}
 
 	/**
@@ -37,7 +35,8 @@ final class PasswordControllerTest extends PHPUnit_Framework_TestCase {
 		$this->assertNull($member->forgot_expiry);
 
 		// run controller action
-		$this->controller->forgot();
+		$controller = new PasswordController();
+		$controller->forgot();
 
 		// test if token set
 		$member = cMember::getByEmail($email);
@@ -72,7 +71,8 @@ final class PasswordControllerTest extends PHPUnit_Framework_TestCase {
 		$this->assertNotNull($member->forgot_expiry);
 
 		// run controller action
-		$this->controller->reset();
+		$controller = new PasswordController();
+		$controller->reset();
 
 		// test if token set
 		$member = cMember::getByEmail($email);
