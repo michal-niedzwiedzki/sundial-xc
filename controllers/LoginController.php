@@ -20,9 +20,9 @@ final class LoginController extends Controller {
 		$login = trim(HTTPHelper::post("user"));
 		$password = trim(HTTPHelper::post("pass"));
 		if (!$login) {
-			cError::getInstance()->Error("Inserta un nombre de usuario para entrar.");
+			return PageView::getInstance()->displayError("Inserta un nombre de usuario para entrar.");
 		} elseif (!$password) {
-			cError::getInstance()->Error("No puede entrar sin contraseña. Si ha olvidado su contraseña puede pedir de nosotros una contrase�nu�a eva");
+			return PageView::getInstance()->displayError("No puede entrar sin contraseña. Si ha olvidado su contraseña puede pedir de nosotros una contrase�nu�a eva");
 		}
 
 		$user = User::getByLogin($login);

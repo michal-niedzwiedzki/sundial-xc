@@ -33,7 +33,7 @@ class cUpload {
 		$query = $cDB->Query("SELECT null from ". DB::UPLOADS ." WHERE filename ='".$_FILES['userfile']['name']."';");
 		
 		if($row = mysql_fetch_array($query)) {
-			cError::getInstance()->Error("A file with this name already exists on the server.");
+			PageView::getInstance()->displayError("A file with this name already exists on the server.");
 			return false;
 		}		
 			
@@ -50,11 +50,11 @@ class cUpload {
 					$this->upload_date = $row[0];					
 				return true;
 			} else {
-				cError::getInstance()->Error("Could not save database row for uploaded file.");
+				PageView::getInstance()->displayError("Could not save database row for uploaded file.");
 				return false;
 			}				
 		} else {
-			cError::getInstance()->Error("Could not save uploaded file. This could be because of a permissions problem.  Does the web user have permission to write to the uploads directory?  It could also be that the file is too large.  The current maximum size of file allowed is ".MAX_FILE_UPLOAD." bytes.");
+			PageView::getInstance()->displayError("Could not save uploaded file. This could be because of a permissions problem.  Does the web user have permission to write to the uploads directory?  It could also be that the file is too large.  The current maximum size of file allowed is ".MAX_FILE_UPLOAD." bytes.");
 			return false;
 		}
 	}
@@ -64,7 +64,7 @@ class cUpload {
 		$sql = "SELECT * FROM $tableName WHERE upload_id = :id";
 		$row = PDOHelper::fetchRow($sql, array("id" => $uploadId));
 		if (empty($row)) {
-			cError::getInstance()->Error("There was an error accessing the uploads table. Please try again later.");
+			PageView::getInstance()->displayError("There was an error accessing the uploads table. Please try again later.");
 			return;
 		}
 		$this->upload_id = $uploadId;
@@ -84,11 +84,11 @@ class cUpload {
 			if(mysql_affected_rows() == 1) {
 				return true;
 			} else {
-				cError::getInstance()->Error("File was deleted but could not delete row from database.  The row will have to removed manually.  Please contact your systems administrator.");
+				PageView::getInstance()->displayError("File was deleted but could not delete row from database.  The row will have to removed manually.  Please contact your systems administrator.");
 				return FALSE;
 			}			
 		} else {
-			cError::getInstance()->Error("Could not delete file - ". $this->filename .".  Please try again later.");
+			PageView::getInstance()->displayError("Could not delete file - ". $this->filename .".  Please try again later.");
 			return FALSE;
 		}
 	}

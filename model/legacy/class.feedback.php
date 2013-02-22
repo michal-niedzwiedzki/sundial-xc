@@ -41,7 +41,7 @@ class cFeedback {
 				return true;
 		}
 
-		cError::getInstance()->Error("Members do not match the trade selected.");
+		PageView::getInstance()->displayError("Members do not match the trade selected.");
 		return FALSE;
 	} */
 
@@ -50,7 +50,7 @@ class cFeedback {
 
 //		$this->VerifyTradeMembers();
 		if($this->FindTradeFeedback($this->trade_id, $this->member_author->member_id)) {
-			cError::getInstance()->Error("Cannot create duplicate feedback.");
+			PageView::getInstance()->displayError("Cannot create duplicate feedback.");
 			return false;
 		}
 
@@ -94,7 +94,7 @@ class cFeedback {
 				$this->rebuttals = $rebuttal_group;
 			return true;
 		} else {
-			cError::getInstance()->Error("There was an error accessing the feedback table.  Please try again later.");
+			PageView::getInstance()->displayError("There was an error accessing the feedback table.  Please try again later.");
 			return FALSE;
 		}
 	}
@@ -274,7 +274,7 @@ class cFeedbackRebuttal {
 
 			return true;
 		} else {
-			cError::getInstance()->Error("There was an error accessing the rebuttal table.  Please try again later.");
+			PageView::getInstance()->displayError("There was an error accessing the rebuttal table.  Please try again later.");
 			return FALSE;
 		}
 	}

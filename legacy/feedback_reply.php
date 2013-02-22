@@ -69,7 +69,7 @@ function process_data ($values) {
 	if ($trade->member_from->member_id == $member->member_id and $trade->member_to->member_id == $member_about->member_id) {
 	} elseif ($trade->member_to->member_id == $member->member_id and $trade->member_from->member_id == $member_about->member_id) {
 	} else {
-		cError::getInstance()->Error("Members do not match the trade selected."); // Theoretically, must be a hacker
+		PageView::getInstance()->displayError("Members do not match the trade selected."); // Theoretically, must be a hacker
 		return;
 	}
 	

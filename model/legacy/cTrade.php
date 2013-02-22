@@ -65,7 +65,7 @@ class cTrade {
 		";
 		$row = PDOHelper::fetchRow($sql, array("id" => $tradeId));
 		if (empty($row)) {
-			cError::getInstance()->Error("Ha ocurrido un error actualizando los datos. Intentalo otra vez mas tarde");
+			PageView::getInstance()->displayError("Ha ocurrido un error actualizando los datos. Intentalo otra vez mas tarde");
 			return;
 		}
 
@@ -127,7 +127,7 @@ class cTrade {
 
 				case("FATAL"): // FATAL: The original method for dealing which is to abort the transaction
 
-					cError::getInstance()->Error("The trade database is out of balance!  Please contact your administrator at ". PHONE_ADMIN .".", ERROR_SEVERITY_HIGH);
+					PageView::getInstance()->displayError("The trade database is out of balance!  Please contact your administrator at ". PHONE_ADMIN .".", ERROR_SEVERITY_HIGH);
 					return FALSE;
 
 				break;

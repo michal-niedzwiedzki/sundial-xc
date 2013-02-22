@@ -32,12 +32,12 @@ if($_REQUEST["mode"] == "admin") {  // Administrator is adding to a member's acc
 $form->addElement("text", "first_name", "First Name", array("size" => 15, "maxlength" => 20));
 $form->addElement("text", "mid_name", "Middle Name", array("size" => 10, "maxlength" => 20));
 $form->addElement("text", "last_name", "Last Name", array("size" => 20, "maxlength" => 30));
-$form->addElement("static", null, null, null); 
+$form->addElement("static", null, null, null);
 
 $today=getdate();
-$options = array("language"=> "en", "format" => "dFY", "maxYear"=>$today["year"], "minYear"=>"1880"); 
+$options = array("language"=> "en", "format" => "dFY", "maxYear"=>$today["year"], "minYear"=>"1880");
 $form->addElement("date", "dob", "Date of Birth", $options);
-$form->addElement("text", "mother_mn", "Mother's Maiden Name", array("size" => 20, "maxlength" => 30)); 
+$form->addElement("text", "mother_mn", "Mother's Maiden Name", array("size" => 20, "maxlength" => 30));
 $form->addElement("static", null, null, null);
 $form->addElement("select","directory_list", "List this Person's Contact Information in the Directory?", array("Y"=>"Yes", "N"=>"No"));
 $form->addElement("text", "email", "Email Address", array("size" => 25, "maxlength" => 40));
@@ -95,22 +95,22 @@ if ($form->validate()) { // Form is validated so processes the data
 }
 
 //
-// The form has been submitted with valid data, so process it   
+// The form has been submitted with valid data, so process it
 //
 function process_data ($values) {
 	global $p, $user,$cErr, $today;
 	$list = "";
 
-	$values['primary_member'] = "N"; 
+	$values['primary_member'] = "N";
 
 	// [chris] fixed problem with passing an Array to htmlspecialchars()
 	$date = $values['dob'];
-	
+
 	$values['dob'] = htmlspecialchars($date['Y'] . '/' . $date['F'] . '/' . $date['d']);
-	
+
 	if($values['dob'] == $today['year']."/".$today['mon']."/".$today['mday'])
 		$values['dob'] = ""; // if birthdate was left as default, set to null
-	
+
 	$phone = new cPhone_uk($values['phone1']);
 	$values['phone1_area'] = $phone->area;
 	$values['phone1_number'] = $phone->SevenDigits();
@@ -118,11 +118,11 @@ function process_data ($values) {
 	$phone = new cPhone_uk($values['phone2']);
 	$values['phone2_area'] = $phone->area;
 	$values['phone2_number'] = $phone->SevenDigits();
-	$values['phone2_ext'] = $phone->ext;	
+	$values['phone2_ext'] = $phone->ext;
 	$phone = new cPhone_uk($values['fax']);
 	$values['fax_area'] = $phone->area;
 	$values['fax_number'] = $phone->SevenDigits();
-	$values['fax_ext'] = $phone->ext;	
+	$values['fax_ext'] = $phone->ext;
 
     // XSS guard
     foreach($values as $key => $value) {
@@ -131,19 +131,19 @@ function process_data ($values) {
 
 	$new_person = new cPerson($values);
 	$created = $new_person->SaveNewPerson();
-	
+
 	$member = new cMember();
 	$member->LoadMember($_REQUEST["member_id"]);
-	
+
 	if($created and $member->account_type == "S") {
 		$member->account_type = "J";  // Now it's a Joint account
 		$member->SaveMember();
-	}	
+	}
 
 	if($created) {
 		$list .= "Joint member created. Would you like to <A HREF=member_contact_create.php?mode=". $_REQUEST["mode"] ."&member_id=". $values["member_id"] .">add another</A>?<P>";
 	} else {
-		cError::getInstance()->Error("There was an error saving the joint member. Please try again later.");
+		return PageView::getInstance()->displayError("There was an error saving the joint member. Please try again later.");
 	}
    $p->DisplayPage($list);
 }
@@ -152,14 +152,14 @@ function process_data ($values) {
 //
 
 // TODO: All my validation functions should go into a new cFormValidation class
-		
+
 function verify_reasonable_dob($element_name,$element_value) {
 	global $today;
 	$date = $element_value;
 	$date_str = $date['Y'] . '/' . $date['F'] . '/' . $date['d'];
 //	echo $date_str ."=".$today['year']."/".$today['mon']."/".$today['mday'];
 
-	if ($date_str == $today['year']."/".$today['mon']."/".$today['mday']) 
+	if ($date_str == $today['year']."/".$today['mon']."/".$today['mday'])
 		// date wasn't changed by user, so no need to verify it
 		return true;
 	elseif ($today['year'] - $date['Y'] < 3)  // A little young to be trading, presumably a mistake
@@ -184,15 +184,15 @@ function verify_valid_email ($element_name,$element_value) {
 	if ($element_value=="")
 		return true;		// Currently not planning to require this field
 	if (strstr($element_value,"@") and strstr($element_value,"."))
-		return true;	
+		return true;
 	else
 		return false;
-	
+
 }
 
 function verify_phone_format ($element_name,$element_value) {
 	$phone = new cPhone_uk($element_value);
-	
+
 	if($phone->prefix)
 		return true;
 	else

@@ -12,7 +12,7 @@ $form = FormHelper::standard();
 if($_REQUEST["mode"] == "admin") {  // Administrator is editing a member's account
 	$user->MustBeLevel(1);
 	$form->addElement("hidden","mode","admin");
-	$form->addElement("hidden","member_id",$_REQUEST["member_id"]);		
+	$form->addElement("hidden","member_id",$_REQUEST["member_id"]);
 } else {  // Member is editing own account
 	cMember::getCurrent()->MustBeLoggedOn();
 	$user->VerifyPersonInAccount($_REQUEST["person_id"]); // Make sure hacker didn't change URL
@@ -37,7 +37,7 @@ if ($_REQUEST["mode"] == "admin") {
 	$today = getdate();
 	$options = array("language"=> "en", "format" => "dFY", "maxYear"=>$today["year"], "minYear"=>"1880");
 	$form->addElement("date", "dob", "Date of Birth", $options);
-	$form->addElement("text", "mother_mn", "Mother's Maiden Name", array("size" => 20, "maxlength" => 30)); 
+	$form->addElement("text", "mother_mn", "Mother's Maiden Name", array("size" => 20, "maxlength" => 30));
 	$form->addElement("static", null, null, null);
 }
 
@@ -89,28 +89,28 @@ $form->addRule('fax', 'Phone format invalid', 'verify_phone_format');
 if ($form->validate()) { // Form is validated so processes the data
    $form->freeze();
  	$form->process("process_data", false);
-} else {  // Otherwise we need to load the existing values			
+} else {  // Otherwise we need to load the existing values
 	$current_values = array ("first_name"=>$person->first_name, "mid_name"=>$person->mid_name, "last_name"=>$person->last_name, "directory_list"=>$person->directory_list, "email"=>$person->email, "phone1"=>$person->DisplayPhone(1), "phone2"=>$person->DisplayPhone(2), "fax"=>$person->DisplayPhone("fax"), "address_street1"=>$person->address_street1, "address_street2"=>$person->address_street2, "address_city"=>$person->address_city, "address_state_code"=>$person->address_state_code, "address_post_code"=>$person->address_post_code, "address_country"=>$person->address_country);
-	
+
 	if($_REQUEST["mode"] == "admin") {  // Load defaults for extra fields visible by administrators
         $user->MustBeLevel(1);
 
 		$current_values["mother_mn"] = $person->mother_mn;
-		
-		if ($person->dob) {		
+
+		if ($person->dob) {
 			$current_values["dob"] = array ('d'=>substr($person->dob,8,2),'F'=>date('n',strtotime($person->dob)),'Y'=>substr($person->dob,0,4));  // Using 'n' due to a bug in Quickform
 		} else { // If date of birth was left empty originally, display default date
 			$today = getdate();
 			$current_values["dob"] = array ('d'=>$today['mday'],'F'=>$today['mon'],'Y'=>$today['year']);
-		}		
-	}	
-		
+		}
+	}
+
 	$form->setDefaults($current_values);
     $p->DisplayPage($form->toHtml());  // display the form
 }
 
 //
-// The form has been submitted with valid data, so process it   
+// The form has been submitted with valid data, so process it
 //
 function process_data ($values) {
 	global $p, $user, $cErr, $person, $today;
@@ -127,7 +127,7 @@ function process_data ($values) {
 	$person->address_state_code =
                             htmlspecialchars($values["address_state_code"]);
 	$person->address_post_code = htmlspecialchars($values["address_post_code"]);
-	$person->address_country = htmlspecialchars($values["address_country"]);	
+	$person->address_country = htmlspecialchars($values["address_country"]);
 
 	$phone = new cPhone_uk($values['phone1']);
 	$person->phone1_area = $phone->area;
@@ -136,30 +136,30 @@ function process_data ($values) {
 	$phone = new cPhone_uk($values['phone2']);
 	$person->phone2_area = $phone->area;
 	$person->phone2_number = $phone->SevenDigits();
-	$person->phone2_ext = $phone->ext;	
+	$person->phone2_ext = $phone->ext;
 	$phone = new cPhone_uk($values['fax']);
 	$person->fax_area = $phone->area;
 	$person->fax_number = $phone->SevenDigits();
-	$person->fax_ext = $phone->ext;	
-	
+	$person->fax_ext = $phone->ext;
+
 	if($_REQUEST["mode"] == "admin")	{
         $user->MustBeLevel(1);
 
 		$person->mother_mn = htmlspecialchars($values["mother_mn"]);
-		
+
 		// [chris] Fixed issue with passing Array to htmlspecialchars()
 		$date = $values['dob'];
 		$dob = htmlspecialchars($date['Y'] . '/' . $date['F'] . '/' . $date['d']);
 //		echo $dob ."=". $today['year']."/".$today['mon']."/".$today['mday'];
-		if($dob != $today['year']."/".$today['mon']."/".$today['mday']) { 
-			$person->dob = $dob; 
+		if($dob != $today['year']."/".$today['mon']."/".$today['mday']) {
+			$person->dob = $dob;
 		} // if date left as default (today's date), we don't want to set it
-	} 	
-	
+	}
+
 	if($person->SavePerson()) {
-		$list .= "Changes saved.";	 
+		$list .= "Changes saved.";
 	} else {
-		cError::getInstance()->Error("There was an error saving the person. Please try again later.");
+		return PageView::getInstance()->displayError("There was an error saving the person. Please try again later.");
 	}
    $p->DisplayPage($list);
 }
@@ -182,15 +182,15 @@ function verify_valid_email ($element_name,$element_value) {
 	if ($element_value=="")
 		return true;		// Currently not planning to require this field
 	if (strstr($element_value,"@") and strstr($element_value,"."))
-		return true;	
+		return true;
 	else
 		return false;
-	
+
 }
 
 function verify_phone_format ($element_name,$element_value) {
 	$phone = new cPhone_uk($element_value);
-	
+
 	if($phone->prefix)
 		return true;
 	else
@@ -203,7 +203,7 @@ function verify_reasonable_dob($element_name,$element_value) {
 	$date_str = $date['Y'] . '/' . $date['F'] . '/' . $date['d'];
 //	echo $date_str ."=".$today['year']."/".$today['mon']."/".$today['mday'];
 
-	if ($date_str == $today['year']."/".$today['mon']."/".$today['mday']) 
+	if ($date_str == $today['year']."/".$today['mon']."/".$today['mday'])
 		// date wasn't changed by user, so no need to verify it
 		return true;
 	elseif ($today['year'] - $date['Y'] < 3)  // A little young to be trading, presumably a mistake

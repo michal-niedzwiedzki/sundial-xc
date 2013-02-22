@@ -19,7 +19,7 @@ class cListingGroup {
 	public function getListings() {
 		return (array)$this->listing;
 	}
-	
+
 	function InactivateAll($reactivate_date) {
 		if (!isset($this->listing))
 			return true;
@@ -32,7 +32,7 @@ class cListingGroup {
 				$success = $listing->SaveListing();
 
 				if (!$success)
-					cError::getInstance()->Error("Could not inactivate listing: '".$listing->title."'");
+					PageView::getInstance()->displayError("Could not inactivate listing: '".$listing->title."'");
 			}
 		}
 		return true;
@@ -47,7 +47,7 @@ class cListingGroup {
 			$success = $listing->SaveListing(false);
 
 			if (!$success)
-				cError::getInstance()->Error("Could not expire listing: '".$listing->title."'");
+				return PageView::getInstance()->displayError("Could not expire listing: '".$listing->title."'");
 		}
 		return true;
 	}

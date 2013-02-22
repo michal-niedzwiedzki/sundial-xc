@@ -56,55 +56,39 @@ final class MemberController extends Controller {
 
 	/**
 	 * @Title "Crear socio nuevo"
-	 * @Level 1
+	 * @Admin
 	 */
 	public function create() {
 		$form = new MemberCreateForm();
-		$this->view->form = $form;
-
-		$config = Config::getInstance();
 		if (!$form->validate()) {
+			$this->view->form = $form;
 			return;
 		}
-		$form->process();
+		$values = $form->process();
 
-		// Following are default values for which this form doesn't allow input
-		$values = $form->exportValues();
-		$values['security_q'] = "";
-		$values['security_a'] = "";
-		$values['status'] = "A";
-		$values['member_note'] = "";
-		$values['expire_date'] = "";
-		$values['away_date'] = "";
-		$values['balance'] = 5;
-		$values['primary_member'] = "Y";
-		$values['directory_list'] = "Y";
-
-		$date = $values['join_date'];
-		$values['join_date'] = $date['Y'] . '/' . $date['F'] . '/' . $date['d'];
-		$date = $values['dob'];
-		$values['dob'] = $date['Y'] . '/' . $date['F'] . '/' . $date['d'];
-		if ($values['dob'] == date("Y/m/d")) {
-			$values['dob'] = ""; // if birthdate was left as default, set to null
+		// save user
+		$user = new User();
+		$user->login = $values["login"];
+		$user->password = $values["password"];
+		$user->name = $values["name"];
+		$user->fullName = $values["name"] . " " . $values["surname"];
+		$user->email = $values["email"];
+		$user->isAdmin = $values["admin"];
+		$user->state = User::STATE_INACTIVE;
+		$user->bornOn = $values["dob"]["unix"];
+		if (!$user->save()) {
+			return PageView::getInstance()->displayError("Un error ha ocurrido en el momento de guardar los datos. Intentalo otra vez mas tarde");
 		}
-		$values['phone1_number'] = $values['phone1'];
-		$values['phone2_number'] = $values['phone2'];
 
-		$member = new cMember($values);
-		$person = new cPerson($values);
+		// send email to user
+		$config = Config::getInstance();
+		$message = new EmailMessage($config->admin->email, "Registration confirmation", "ID de soci@: ". $values['login'] ."\n". "Contraseña: ". $values['password']);
+		$message->to($user);
+		$message->save();
 
-		if ($person->SaveNewPerson() and $member->SaveNewMember()) {
-			$user = new cMember();
-			$user->LoadMember($values["member_id"]);
-			$config = Config::getInstance();
-			PageView::getInstance()->setMessage("Nuevo soci@ creado. Su ID es {$user->member_id} y contraseña es {$values["password"]}.");
-			$message = new EmailMessage(EMAIL_ADMIN, NEW_MEMBER_SUBJECT, NEW_MEMBER_MESSAGE . "\n\nID de soci@: ". $values['member_id'] ."\n". "Contraseña: ". $values['password']);
-			$message->to($user);
-			$message->save();
-			HTTPHelper::redirectSeeOther(Link::to("member", "summary", array("member_id" => $user->member_id)));
-		} else {
-			cError::getInstance()->Error("Un error ha ocurrido en el momento de guardar los datos. Intentalo otra vez mas tarde");
-		}
+		// redirect to user's profile
+		PageView::getInstance()->setMessage("Nuevo socio creado");
+		HTTPHelper::redirectSeeOther(Link::to("member", "summary", array("id" => $user->id)));
 	}
 
 	/**

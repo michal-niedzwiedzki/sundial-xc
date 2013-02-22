@@ -39,7 +39,7 @@ class cLoginHistory {
 		if (PDOHelper::update(DB::LOGINS, $params, "member_id = :id", array("id" => $this->member_id))) {
 			return TRUE;
 		}
-		cError::getInstance()->Error("Could not save changes to login history '". $this->member_id ."'. Please try again later.");	
+		PageView::getInstance()->displayError("Could not save changes to login history '". $this->member_id ."'. Please try again later.");	
 		return FALSE;
 	}
 

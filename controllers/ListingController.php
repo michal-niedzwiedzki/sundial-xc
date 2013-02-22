@@ -15,8 +15,7 @@ final class ListingController extends Controller {
 		$this->view->isOffered = $type == "Offer";
 
 		if (LIVE and $user->isAdmin()) {
-			PageView::getInstance()->displayError("Lo siento, no se puede crear servicios nuevos con la cuenta del administrador.\nEs una cuenta especial para la administración de la aplicación.");
-			return;
+			return PageView::getInstance()->displayError("Lo siento, no se puede crear servicios nuevos con la cuenta del administrador.\nEs una cuenta especial para la administración de la aplicación.");
 		}
 
 		$form = new ListingCreateForm($type, $userId, $adminMode);
@@ -40,7 +39,7 @@ final class ListingController extends Controller {
 			$this->view->saved = TRUE;
 			PageView::getInstance()->setMessage("El nuevo servicio ha sido creado.");
 		} else {
-			PageView::getInstance()->displayError("Ha ocurrido un error en el momento de guardar los cambios. Intentalo otra vez mas tarde.");
+			return PageView::getInstance()->displayError("Ha ocurrido un error en el momento de guardar los cambios. Intentalo otra vez mas tarde.");
 		}
 	}
 
@@ -57,8 +56,7 @@ final class ListingController extends Controller {
 		$this->view->isOffered = $type == "Offer";
 
 		if (LIVE and $user->isAdmin()) {
-			PageView::getInstance()->displayError("Lo siento, no se puede crear servicios nuevos con la cuenta del administrador.\nEs una cuenta especial para la administración de la aplicación.");
-			return;
+			return PageView::getInstance()->displayError("Lo siento, no se puede crear servicios nuevos con la cuenta del administrador.\nEs una cuenta especial para la administración de la aplicación.");
 		}
 
 		$listing = new cListing();

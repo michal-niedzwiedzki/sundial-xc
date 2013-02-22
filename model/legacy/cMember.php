@@ -53,7 +53,7 @@ class cMember {
 		try {
 			$memberId = PDOHelper::fetchCell("member_id", $sql, array("email" => $email));
 		} catch (Exception $e) {
-			cError::getInstance()->Error("Error cargando datos de soci@.");
+			PageView::getInstance()->displayError("Error cargando datos de soci@.");
 			return FALSE;
 		}
 		$member = new cMember();
@@ -139,8 +139,8 @@ class cMember {
 		";
 		$row = PDOHelper::fetchRow($sql, array("id" => $user));
 		empty($row)
-			? cError::getInstance()->Error("Tu id de soci@ or contraseña is incorrecto.  Intentalo otra vez o visita esta pagina  <A HREF=password_reset.php>aqui</A> para obtener una nueva contraseña.")
-			: cError::getInstance()->Error("Tu cuenta de usuario ha sido bloqueada, has intentado entrar demasiadas veces con una contraseña incorrecta. Pónte en contacto con nosotros para solucionar el problema");
+			? PageView::getInstance()->displayError("Tu id de soci@ or contraseña is incorrecto.  Intentalo otra vez o visita esta pagina  <A HREF=password_reset.php>aqui</A> para obtener una nueva contraseña.")
+			: PageView::getInstance()->displayError("Tu cuenta de usuario ha sido bloqueada, has intentado entrar demasiadas veces con una contraseña incorrecta. Pónte en contacto con nosotros para solucionar el problema");
 		$loginHistory->RecordLoginFailure($user);
 		return FALSE;
 	}
@@ -200,7 +200,7 @@ class cMember {
 		if ($out) {
 			return TRUE;
 		}
-		cError::getInstance()->Error("No se puede actualizar la contraseña ahora. Intentalo otra vez mas tarde");
+		PageView::getInstance()->displayError("No se puede actualizar la contraseña ahora. Intentalo otra vez mas tarde");
 		return FALSE;
 	}
 
@@ -270,7 +270,7 @@ class cMember {
 		$sql = "SELECT * FROM member WHERE member_id = :id";
 		$row = PDOHelper::fetchRow($sql, array("id" => $id));
 		if (empty($row)) {
-			cError::getInstance()->Error("Erro cargando datos de soci@. Intentalo otra vez mas tarde.");
+			PageView::getInstance()->displayError("Erro cargando datos de soci@. Intentalo otra vez mas tarde.");
 			return FALSE;
 		}
 		foreach ($row as $column => $value) {
@@ -284,7 +284,7 @@ class cMember {
 		";
 		$out = PDOHelper::fetchAll($sql, array("id" => $id));
 		if (empty($out)) {
-			cError::getInstance()->Error("Hay un error accediendo a los datos. Intentalo otra vez mas tarde.");
+			PageView::getInstance()->displayError("Hay un error accediendo a los datos. Intentalo otra vez mas tarde.");
 			return FALSE;
 		}
 		foreach ($out as $i => $row) {
@@ -344,7 +344,7 @@ class cMember {
 		);
 		$out = PDOHelper::update("member", $row, "member_id = :id", array("id" => $this->member_id));
 		if (!$out) {
-			cError::getInstance()->Error("No ha sido posible guardar los cambios para el usuario '". $this->member_id ."'. Intentalo otra vez mas tarde.");
+			PageView::getInstance()->displayError("No ha sido posible guardar los cambios para el usuario '". $this->member_id ."'. Intentalo otra vez mas tarde.");
 		}
 		foreach($this->person as $person) {
 			$person->SavePerson();
@@ -362,7 +362,7 @@ class cMember {
 			if($person->person_id == $person_id)
 				return true;
 		}
-		cError::getInstance()->Error("Invalid person id in URL.  This break-in attempt has been reported.",ERROR_SEVERITY_HIGH);
+		PageView::getInstance()->displayError("Invalid person id in URL.  This break-in attempt has been reported.",ERROR_SEVERITY_HIGH);
 		include("redirect.php");
 	}
 

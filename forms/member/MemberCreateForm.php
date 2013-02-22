@@ -4,42 +4,32 @@ final class MemberCreateForm extends Form {
 
 	public function __construct() {
 		$config = Config::getInstance();
+		$today = getdate();
 
 		parent::__construct();
-		$this->addElement("text", "member_id", "ID de soci@", array("size" => 10, "maxlength" => 15));
+		$this->addElement("text", "login", "Login", array("size" => 10, "maxlength" => 15));
 		$this->addElement("text", "password", "Contraseña", array("size" => 10, "maxlength" => 15));
-		$this->addElement("select", "member_role", "Tipo de soci@", array("0"=>"Soci@", "1"=>"Gestión", "2"=>"Administrador"));
-		$this->addElement("static", null, "Comentario del administrador", null);
-		$this->addElement("textarea", "admin_note", null, array("cols"=>45, "rows"=>2, "wrap"=>"soft", "maxlength" => 100));
+		$this->addElement("checkbox", "admin", "Administrador");
 
-		$today = getdate();
-		$options = array("language"=> "es", "format" => "dFY", "minYear"=>JOIN_YEAR_MINIMUM, "maxYear"=>$today["year"]);
-		$this->addElement("date", "join_date", "Fecha de inscripción", $options);
+		$this->addElement("text", "name", "Nobre o puesto", array("size" => 15, "maxlength" => 20));
+		$this->addElement("text", "surname", "Apellidos", array("size" => 20, "maxlength" => 30));
 
-		$this->addElement("text", "first_name", "Nombre", array("size" => 15, "maxlength" => 20));
-		$this->addElement("text", "mid_name", "Primer Apellido", array("size" => 20, "maxlength" => 30));
-		$this->addElement("text", "last_name", "Segundo Apellido", array("size" => 20, "maxlength" => 30));
-		$this->addElement("text", "fax_number", "DNI o Pasaporte", array("size" => 10, "maxlength" => 20));
-		$options = array("language"=> "es", "format" => "dFY", "maxYear"=>$today["year"], "minYear"=>"1900");
+		$options = array("language"=> "es", "format" => "dFY", "maxYear" => $today["year"], "minYear" => "1900");
 		$this->addElement("date", "dob", "Fecha de nacimiento", $options);
-		$this->addElement("select", "sex", "Sexo:", array("1"=>"F", "2"=>"M"));
 
 		$this->addElement("text", "email", "Dirección de correo", array("size" => 25, "maxlength" => 40));
-		$this->addElement("text", "phone1", "Primer teléfono", array("size" => 20));
-		$this->addElement("text", "phone2", "Segundo teléfono", array("size" => 20));
-		$this->addElement("text", "address_street1", "Dirección linea 1", array("size" => 25, "maxlength" => 50));
-		$this->addElement("text", "address_street2", "Dirección linea 2", array("size" => 25, "maxlength" => 50));
+		$this->addElement("text", "phone", "Teléfono", array("size" => 20));
+		$this->addElement("text", "address1", "Dirección linea 1", array("size" => 25, "maxlength" => 50));
+		$this->addElement("text", "address2", "Dirección linea 2", array("size" => 25, "maxlength" => 50));
+		$this->addElement("text", "post_code", "Codigo postal", array("size" => 10, "maxlength" => 10));
+		$this->addElement("text", "city", "Ciudad");
 
-		$frequency = array("0"=>"Nunca", "1"=>"Cada día", "7"=>"Cada semana", "30"=>"Cada mes");
-		$this->addElement("select", "email_updates", "Frecuencia de actualizaciones por correo electronico", $frequency);
+		$this->addElement('submit', 'btnSubmit', 'Crear Socio');
 
-		$this->addElement('submit', 'btnSubmit', 'Crear Soci@');
-
-		$this->addRule('member_id', 'ID de soci@ obligatorio', 'required');
+		$this->addRule('login', 'ID de soci@ obligatorio', 'required');
 		$this->addRule('password', 'La contraseña debe tener al menos 7 caracteres', 'minlength', 7);
-		$this->addRule('first_name', 'Insertar un nombre', 'required');
-		$this->addRule('mid_name', 'Insertar al menos un apellido', 'required');
-		$this->addRule('fax_number', 'Insertar identificación', 'required');
+		$this->addRule('name', 'Insertar un nombre', 'required');
+		$this->addRule('surname', 'Insertar al menos un apellido', 'required');
 
 		$this->registerRule("verifyLoginUnique", "function", "verifyLoginUnique", $this);
 		$this->addRule('member_id', 'Este ID de soci@ ya existe', 'verifyLoginUnique');

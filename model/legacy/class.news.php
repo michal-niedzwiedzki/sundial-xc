@@ -25,7 +25,7 @@ class cNews {
 			$this->news_id = mysql_insert_id();		
 			return true;
 		} else {
-			cError::getInstance()->Error("Could not save news item.");
+			PageView::getInstance()->displayError("Could not save news item.");
 			return false;
 		}		
 	}
@@ -53,7 +53,7 @@ class cNews {
 			$this->sequence = $row[3];
 			return true;
 		} else {
-			cError::getInstance()->Error("There was an error accessing the news table.  Please try again later.");
+			PageView::getInstance()->displayError("There was an error accessing the news table.  Please try again later.");
 			return FALSE;
 		}
 		

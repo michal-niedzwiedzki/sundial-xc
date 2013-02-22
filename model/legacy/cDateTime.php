@@ -22,7 +22,7 @@ class cDateTime {
 			if (!$redirect) {
 				return FALSE;
 			}
-			cError::getInstance()->Error("Date format invalid in cDateTime.");
+			PageView::getInstance()->displayError("Date format invalid in cDateTime.");
 			return FALSE;
 		}
 		$this->year = date("Y", $timestamp);

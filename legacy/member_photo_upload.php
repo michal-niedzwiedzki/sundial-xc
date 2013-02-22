@@ -4,7 +4,7 @@ if (ALLOW_IMAGES!=true)
 	header("location:http://".HTTP_BASE."/");
 	
 if(!extension_loaded('gd')) {
-	cError::getInstance()->Error("The GD extension is required for photo uploads!");
+	PageView::getInstance()->displayError("The GD extension is required for photo uploads!");
 	return;
 }
 
@@ -88,7 +88,7 @@ function SaveUploadProfile($filename) {
 		  return true;
 			}				
 		 else {
-			cError::getInstance()->Error("No ha sido posible guardar el archivo, posiblemente por un problema de permisos o por el tamaño del archivo. El tamaño maximo permitido es de ".MAX_FILE_UPLOAD." bytes.");
+			PageView::getInstance()->displayError("No ha sido posible guardar el archivo, posiblemente por un problema de permisos o por el tamaño del archivo. El tamaño maximo permitido es de ".MAX_FILE_UPLOAD." bytes.");
 			return false;
 		}
 	}
@@ -116,7 +116,7 @@ function process_data ($values) {
 
 	if ($_FILES['userfile']['size']==0) {
 	  if ($_FILES['profilefile']['size']==0) {
-			cError::getInstance()->Error("El tamaño del archivo es de 0 bytes.");
+			PageView::getInstance()->displayError("El tamaño del archivo es de 0 bytes.");
 			$output = 'El tamaño del archivo es de 0 bytes.';
 			$p->DisplayPage($output);
 			exit;
